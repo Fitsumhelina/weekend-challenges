@@ -3,14 +3,15 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use App\Models\Expense;
+use App\Models\Income;
 
-class ProfileController extends Controller
- {
-
+class TransactionController extends Controller
+{
     public function dashboard(Request $request): View
     {
-        $expenses = \App\Models\Expense::all();
-        $incomes = \App\Models\Income::all();
+        $expenses = Expense::all();
+        $incomes = Income::all();
         $isAdmin = $request->user() && $request->user()->hasRole('Admin');
         $user = $request->user();
         return view('dashboard', [
@@ -20,4 +21,32 @@ class ProfileController extends Controller
             'user' => $user,
         ]);
     }
- }
+
+    public function storeExpense(Request $request)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'category' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'amount' => 'required|numeric|min:0',
+        ]);
+
+        Expense::create($validated);
+
+        return redirect()->back()->with('success', 'Expense added successfully.');
+    }
+
+    public function storeIncome(Request $request)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'source' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'amount' => 'required|numeric|min:0',
+        ]);
+
+        Income::create($validated);
+
+        return redirect()->back()->with('success', 'Income added successfully.');
+    }
+}
