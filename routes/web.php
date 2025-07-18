@@ -17,6 +17,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/income', [ProfileController::class, 'income'])->name('income');
     Route::get('/income/{id}', [ProfileController::class, 'showIncome'])->name('income.show');
     Route::get('/expenses/{id}', [ProfileController::class, 'showExpense'])->name('expenses.show');
+    Route::post('/income', [TransactionController::class, 'storeIncome'])->name('income.store');
+    Route::post('/expenses', [TransactionController::class, 'storeExpense'])->name('expenses.store');
+
     Route::middleware(['role:Admin'])->group (function () {
         Route::post('/expenses', [ProfileController::class, 'storeExpense'])->name('expenses.store');
         Route::post('/income', [ProfileController::class, 'storeIncome'])->name('income.store');
