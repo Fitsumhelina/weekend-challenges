@@ -16,7 +16,7 @@
         <x-textarea-group label="Description" name="description" />
         <x-input-group label="Amount *" name="amount" type="number" step="0.01" required />
 
-        <button type="submit" class="w-full bg-{{ $color }}-600 hover:bg-{{ $color }}-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300">
+        <button type="submit" class="w-full bg-{{ $color }}-600 hover:bg-{{ $color }}-700 text-gray-600 dark:text-gray-300 font-semibold py-2 px-4 rounded-lg transition duration-300">
             {{ $title }}
         </button>
     </form>
