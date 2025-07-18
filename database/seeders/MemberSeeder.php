@@ -27,7 +27,7 @@ class MemberSeeder extends Seeder
             $user = User::create([
                 'name' => $userData['name'],
                 'email' => $userData['email'],
-                'password' => encrypt('1234'),
+                'password' => bcrypt('1234'),
             ]);
             $user->assignRole('member');    
         }
