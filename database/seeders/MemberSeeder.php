@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class MemberSeeder extends Seeder
@@ -16,8 +15,8 @@ class MemberSeeder extends Seeder
             ['name' => 'Abel', 'email' => 'abel@example.com'],
             ['name' => 'Marta', 'email' => 'marta@example.com'],
             ['name' => 'Selam', 'email' => 'selam@example.com'],
-            ['name' => 'Yonas', 'email' => 'yonas@example.com'],
-            ['name' => 'Lily', 'email' => 'lily@example.com'],
+            ['name' => 'Helen', 'email' => 'helen@example.com'],
+            ['name' => 'Jonas', 'email' => 'jonas@example.com'],
             ['name' => 'Samuel', 'email' => 'samuel@example.com'],
             ['name' => 'Ruth', 'email' => 'ruth@example.com'],
             ['name' => 'Daniel', 'email' => 'daniel@example.com'],
@@ -30,7 +29,7 @@ class MemberSeeder extends Seeder
                 'email' => $userData['email'],
                 'password' => encrypt('1234'),
             ]);
-            $user->assignRole('member');
+            $user->assignRole('member');    
         }
     }
 }

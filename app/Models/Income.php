@@ -6,5 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Income extends Model
 {
-    //
+    protected $fillable = [
+        'title',
+        'category',
+        'description',
+        'amount',
+        'created_By',
+        'updated_By'
+    ];
 }
