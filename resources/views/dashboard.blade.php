@@ -6,14 +6,14 @@
             </h2>
             @if($isAdmin)
                 <button onclick="toggleTransactionForm()" class="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 rounded-lg font-semibold shadow-lg transition duration-300 ease-in-out transform hover:scale-105">
-                    <i class="fas fa-plus mr-2"></i>Add Transaction
+                    <p class="fas fa-plus mr-2 text-gray-600 dark:text-gray-300">Add Transaction</p><p class="text-gray-600 dark:text-gray-300"></p>
                 </button>
             @endif
         </div>
     </x-slot>
 
     <div class="py-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-gray-600 dark:text-gray-300">
 
             {{-- Financial Summary --}}
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
