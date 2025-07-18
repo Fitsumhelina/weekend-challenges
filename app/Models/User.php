@@ -18,6 +18,16 @@ class User extends Authenticatable
         'password',
     ];
 
+ 
+    public function income(){
+            return $this->hasMany(Income::class);
+    }
+
+    public function expenses(){
+            return $this->hasMany(Expense::class);
+    }
+    
+
     protected $hidden = [
         'password',
         'remember_token',
