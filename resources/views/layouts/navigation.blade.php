@@ -4,10 +4,14 @@
         <div class="flex justify-between h-16">
             <div class="flex">
                 <!-- Logo -->
-                <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
+                <div class="flex items-center justify-center w-100 h-10 rounded-full bg-[#fff2f2] dark:bg-[#1D0002] overflow-hidden">
+                    <a href="/">
+                    <svg class="w-2- h-20" viewBox="0 0 100 100" fill="none">
+                        <circle cx="50" cy="50" r="28" stroke="#F53003" stroke-width="4" fill="#fff"/>
+                        <text x="50%" y="54%" text-anchor="middle" fill="#F53003" font-size="18" font-family="sans-serif" dy=".3em">TK</text>
+                    </svg>
                     </a>
+
                 </div>
 
                 <!-- Navigation Links -->
