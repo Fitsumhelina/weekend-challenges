@@ -5,7 +5,7 @@
                 {{ __('Financial Dashboard') }}
             </h2>
             @if($isAdmin)
-                <button onclick="toggleTransactionForm()" class="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 rounded-lg font-semibold shadow-lg transition duration-300 ease-in-out transform hover:scale-105">
+                <button onclick="toggleTransactionForm()" class="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-blue-800 text-white px-6 py-3 rounded-lg font-semibold shadow-lg transition duration-300 ease-in-out transform hover:scale-105">
                     <p class="fas fa-plus mr-2 text-gray-600 dark:text-gray-300">Add Transaction</p><p class="text-gray-600 dark:text-gray-300"></p>
                 </button>
             @endif
