@@ -88,8 +88,8 @@ class ProfileController extends Controller
                 'category' => $request->category,
                 'description' => $request->description,
                 'amount' => $request->amount,
-                'created_By' => auth()->id(),
-                'updated_By' => auth()->id(),
+                'created_By' => auth()->user()->id,
+                'updated_By' => auth()->user()->id,
             ]);
 
             return redirect()->route('dashboard')->with('success', 'Expense added successfully!');
@@ -112,8 +112,8 @@ class ProfileController extends Controller
                 'source' => $request->source,
                 'description' => $request->description,
                 'amount' => $request->amount,
-                'created_by' => auth()->id(),
-                'updated_by' => auth()->id(),
+                'created_by' => auth()->user()->id,
+                'updated_by' => auth()->user()->id,
             ]);
 
             return redirect()->route('dashboard')->with('success', 'Income added successfully!');
