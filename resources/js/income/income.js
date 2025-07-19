@@ -3,8 +3,9 @@ import ListHandler from "../base/ListHandler";
 class IncomeListHandler extends ListHandler {
     constructor(options) {
         super({
-            indexRoute: options.indexRoute,
-            csrfToken: options.csrfToken,
+            ...options,
+            indexRoute: Data.IncomeIndexRoute,
+            csrfToken: Data.csrfToken,
             entityName: 'income',
             routeName: '/income',
             modalAddFormId: 'createIncomeModal',
