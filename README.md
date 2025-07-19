@@ -1,4 +1,6 @@
-# Kitat Management
+# Kitat Management - CMS
+
+>Wee-2 challenge
 
 A Laravel-based application for managing kitats.
 
