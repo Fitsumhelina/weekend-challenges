@@ -16,8 +16,9 @@ class DatabaseSeeder extends Seeder
 
        $this->call([
            RoleSeeder::class,
-           AdminSeeder::class,
-           MemberSeeder::class,
+        //    AdminSeeder::class,
+        //    MemberSeeder::class,
+           UserSeeder::class,
        ]);
 
     //    Expense::factory()->count(20)->create();
