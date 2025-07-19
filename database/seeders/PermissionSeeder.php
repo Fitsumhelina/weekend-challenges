@@ -57,6 +57,7 @@ class PermissionSeeder extends Seeder
         $admin->syncPermissions(Permission::all());
 
         $member->syncPermissions([
+            'view home',
             'view expense',
             'view income',
         ]);

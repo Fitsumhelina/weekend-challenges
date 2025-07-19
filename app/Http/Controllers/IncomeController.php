@@ -22,7 +22,7 @@ class IncomeController extends Controller
 
    public function index(): View
    {
-       $this->authorize('view', Income::class);
+       
        $incomes = Income::latest()->paginate(10);
        return view('income.index', compact('incomes'));
    }
