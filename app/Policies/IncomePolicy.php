@@ -12,7 +12,7 @@ class IncomePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view income');
+        return $user->hasRole('admin') || $user->hasRole('member');
     }
 
     /**
@@ -20,7 +20,7 @@ class IncomePolicy
      */
     public function view(User $user, Income $income): bool
     {
-        return $user->can('view income');
+        return $user->hasRole('adm      in') || $user->hasRole('member');
     }
 
     /**
@@ -28,7 +28,7 @@ class IncomePolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create income');
+        return $user->hasRole('admin');
     }
 
     /**
@@ -36,7 +36,7 @@ class IncomePolicy
      */
     public function update(User $user, Income $income): bool
     {
-        return $user->can('update income');
+        return $user->hasRole('admin');
     }
 
     /**
@@ -44,7 +44,7 @@ class IncomePolicy
      */
     public function delete(User $user, Income $income): bool
     {
-        return $user->can('delete income');
+        return $user->hasRole('admin');
     }
 
     /**

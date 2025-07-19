@@ -12,7 +12,7 @@ class ExpensePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view expense');
+        return $user->hasRole('admin') || $user->hasRole('member');
     }
 
     /**
@@ -20,7 +20,7 @@ class ExpensePolicy
      */
     public function view(User $user, Expense $expense): bool
     {
-        return $user->can('view expense');
+        return $user->hasRole('admin') || $user->hasRole('member');
     }
 
     /**
@@ -28,7 +28,7 @@ class ExpensePolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create expense');
+        return $user->hasRole('admin');
     }
 
     /**
@@ -36,7 +36,7 @@ class ExpensePolicy
      */
     public function update(User $user, Expense $expense): bool
     {
-        return $user->can('update expense');
+        return $user->hasRole('admin');
     }
 
     /**
@@ -44,7 +44,7 @@ class ExpensePolicy
      */
     public function delete(User $user, Expense $expense): bool
     {
-        return $user->can('delete expense');
+        return $user->hasRole('admin');
     }
 
     /**
