@@ -24,12 +24,12 @@ class ExpenseController extends Controller
     {
         $this->authorize('view', Expense::class);
         $expenses = Expense::latest()->paginate(10);
-        return view('user.expense.index', compact('expenses'));
+        return view('expense.index', compact('expenses'));
     }
     public function create(): View
     {
         $this->authorize('create', Expense::class);
-        return view('user.expense.create');
+        return view('expense.create');
     }
     public function store(Request $request): RedirectResponse
     {
@@ -42,19 +42,19 @@ class ExpenseController extends Controller
         ]);
 
         Expense::create($data);
-        return Redirect::route('user.expense.index')->with('success', 'Expense created successfully.');
+        return Redirect::route('expense.index')->with('success', 'Expense created successfully.');
     }
     public function show($id): View
     {
         $expense = Expense::findOrFail($id);
         $this->authorize('view', $expense);
-        return view('user.expense.show', compact('expense'));
+        return view('expense.show', compact('expense'));
     }
     public function edit($id): View
     {
         $expense = Expense::findOrFail($id);
         $this->authorize('update', $expense);
-        return view('user.expense.edit', compact('expense'));
+        return view('expense.edit', compact('expense'));
     }
     public function update(Request $request, $id): RedirectResponse
     {
@@ -69,13 +69,13 @@ class ExpenseController extends Controller
         ]);
 
         $expense->update($data);
-        return Redirect::route('user.expense.index')->with('success', 'Expense updated successfully.');
+        return Redirect::route('expense.index')->with('success', 'Expense updated successfully.');
     }
     public function destroy($id): RedirectResponse
     {
         $expense = Expense::findOrFail($id);
         $this->authorize('delete', $expense);
         $expense->delete();
-        return Redirect::route('user.expense.index')->with('success', 'Expense deleted successfully.');
+        return Redirect::route('expense.index')->with('success', 'Expense deleted successfully.');
     }
 }   

@@ -24,14 +24,14 @@ class IncomeController extends Controller
    {
        $this->authorize('view', Income::class);
        $incomes = Income::latest()->paginate(10);
-       return view('user.income.index', compact('incomes'));
+       return view('income.index', compact('incomes'));
    }
 
 
     public function create(): View
     {
          $this->authorize('create', Income::class);
-         return view('user.income.create');
+         return view('income.create');
     }
 
     public function store(Request $request): RedirectResponse
@@ -45,7 +45,7 @@ class IncomeController extends Controller
         ]);
 
         Income::create($data);
-        return Redirect::route('user.income.index')->with('success', 'Income created successfully.');
+        return Redirect::route('income.index')->with('success', 'Income created successfully.');
     }
 
 
@@ -53,7 +53,7 @@ class IncomeController extends Controller
     {
         $income = Income::findOrFail($id);
         $this->authorize('view', $income);
-        return view('user.income.show', compact('income'));
+        return view('income.show', compact('income'));
     }
 
 
@@ -61,7 +61,7 @@ class IncomeController extends Controller
     {
         $income = Income::findOrFail($id);
         $this->authorize('update', $income);
-        return view('user.income.edit', compact('income'));
+        return view('income.edit', compact('income'));
     }
 
 
@@ -76,7 +76,7 @@ class IncomeController extends Controller
             'date' => 'required|date',
         ]);
         $income->update($data);
-        return Redirect::route('user.income.index')->with('success', 'Income updated successfully.');
+        return Redirect::route('income.index')->with('success', 'Income updated successfully.');
     }
 
 
@@ -85,7 +85,7 @@ class IncomeController extends Controller
         $income = Income::findOrFail($id);
         $this->authorize('delete', $income);
         $income->delete();
-        return Redirect::route('user.income.index')->with('success', 'Income deleted successfully.');
+        return Redirect::route('income.index')->with('success', 'Income deleted successfully.');
     }
 }
 
