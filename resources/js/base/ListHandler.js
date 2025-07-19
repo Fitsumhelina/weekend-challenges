@@ -482,4 +482,22 @@ export default class ListHandler {
 
         window.toastr.error(errorMessage);
     }
+
+    // Add this property to allow refresh after submit (default: false)
+    get isRefreshAfterSubmit() {
+        return this._isRefreshAfterSubmit || false;
+    }
+
+    set isRefreshAfterSubmit(value) {
+        this._isRefreshAfterSubmit = value;
+    }
+
+    // Add this property to allow file upload (default: false)
+    get hasFile() {
+        return this._hasFile || false;
+    }
+
+    set hasFile(value) {
+        this._hasFile = value;
+    }
 }
