@@ -11,9 +11,10 @@ return new class extends Migration
     {
       Schema::create('incomes', function (Blueprint $table) {
         $table->id();
-        $table->string(('title'));
+        $table->string('title');
         $table->decimal('amount', 15, 2);
-        $table->string('source')->nullable();
+        $table->unsignedBigInteger('source')->nullable();
+        $table->foreign('source')->references('id')->on('users')->nullOnDelete();
         $table->text('description')->nullable();
         $table->unsignedBigInteger('created_by')->nullable();
         $table->unsignedBigInteger('updated_by')->nullable();

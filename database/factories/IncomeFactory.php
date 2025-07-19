@@ -14,11 +14,11 @@ class IncomeFactory extends Factory
     {
         return [
             'title' => $this->faker->sentence(3),
-            'amount' => $this->faker->randomFloat(2, 100, 5000),
-            'source' => $this->faker->company(),
+            'source' => \App\Models\User::inRandomOrder()->first()->id,
             'description' => $this->faker->paragraph(),
-            'created_by' => 'abebe',
-            'updated_by' => 'abebe'
+            'amount' => $this->faker->randomFloat(2, 100, 5000),
+            'created_by' => \App\Models\User::inRandomOrder()->first()->id,
+            'updated_by' => \App\Models\User::inRandomOrder()->first()->id,
         ];
     }
 }

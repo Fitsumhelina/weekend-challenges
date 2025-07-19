@@ -2,75 +2,78 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Expense;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use App\Policies\GenericPolicy;
 
 class ExpenseController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    use \Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+
+    protected $genericPolicy;
+
+    public function __construct(GenericPolicy $genericPolicy)
+    {
+        $this->genericPolicy = $genericPolicy;
+    }
+
     public function index(): View
     {
-        // Logic to retrieve and display expenses
-        return view('expense.index');
+        $this->authorize('view', Expense::class);
+        $expenses = Expense::latest()->paginate(10);
+        return view('user.expense.index', compact('expenses'));
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create(): View
     {
-        // Logic to show the form for creating a new expense
-        return view('expense.create');
+        $this->authorize('create', Expense::class);
+        return view('user.expense.create');
     }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request): RedirectResponse
     {
-        // Logic to store the new expense
-        return Redirect::route('expense.index')->with('success', 'Expense created successfully.');
-    }
+        $this->authorize('create', Expense::class);
+        $data = $request->validate([
+            'title' => 'required|string|max:255',
+            'amount' => 'required|numeric',
+            'description' => 'required|string|max:255',
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
+        Expense::create($data);
+        return Redirect::route('user.expense.index')->with('success', 'Expense created successfully.');
+    }
     public function show($id): View
     {
-        // Logic to show a specific expense
-        return view('expense.show', compact('id'));
+        $expense = Expense::findOrFail($id);
+        $this->authorize('view', $expense);
+        return view('user.expense.show', compact('expense'));
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit($id): View
     {
-        // Logic to show the form for editing an expense
-        return view('expense.edit', compact('id'));
+        $expense = Expense::findOrFail($id);
+        $this->authorize('update', $expense);
+        return view('user.expense.edit', compact('expense'));
     }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, $id): RedirectResponse
     {
-        // Logic to update the specified expense
-        return Redirect::route('expense.index')->with('success', 'Expense updated successfully.');
-    }
+        $expense = Expense::findOrFail($id);
+        $this->authorize('update', $expense);
 
-    /**
-     * Remove the specified resource from storage.
-     */
+        $data = $request->validate([
+            'amount' => 'required|numeric',
+            'description' => 'required|string|max:255',
+            'date' => 'required|date',
+        ]);
+
+        $expense->update($data);
+        return Redirect::route('user.expense.index')->with('success', 'Expense updated successfully.');
+    }
     public function destroy($id): RedirectResponse
     {
-        // Logic to delete the specified expense
-        return Redirect::route('expense.index')->with('success', 'Expense deleted successfully.');
+        $expense = Expense::findOrFail($id);
+        $this->authorize('delete', $expense);
+        $expense->delete();
+        return Redirect::route('user.expense.index')->with('success', 'Expense deleted successfully.');
     }
-}
+}   

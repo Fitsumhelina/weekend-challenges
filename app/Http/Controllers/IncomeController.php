@@ -38,6 +38,9 @@ class IncomeController extends Controller
     {
         $this->authorize('create', Income::class);
         $data = $request->validate([
+            'title' => 'required|string|max:255',
+            'category' => 'required|string|max:255',
+            'description' => 'required|string|max:255',
             'amount' => 'required|numeric',
             'source' => 'required|string|max:255',
             'date' => 'required|date',
@@ -77,7 +80,7 @@ class IncomeController extends Controller
         return Redirect::route('user.income.index')->with('success', 'Income updated successfully.');
     }
 
-    
+
     public function destroy($id): RedirectResponse
     {
         $income = Income::findOrFail($id);
