@@ -1,7 +1,7 @@
 import './bootstrap';
-import './income';
-import './expense';
-import './permission';
+import './income/income';
+import './expense/expense';
+import './permission/permission';
 
 import Alpine from 'alpinejs';
 

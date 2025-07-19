@@ -2,7 +2,7 @@
     <nav class="mt-10">
         <ul>
             {{-- Permissions Link --}}
-            @can('view permissions')
+            @can('view permission')
                 <li class="mb-2">
                     <a href="{{ route('permissions.index') }}"
                         class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-300 text-gray-700 {{ request()->routeIs('permissions.*') ? 'bg-gray-300' : '' }}">
@@ -12,7 +12,7 @@
             @endcan
 
             {{-- Roles Link --}}
-            @can('view roles')
+            @can('view role')
                 <li class="mb-2">
                     <a href="{{ route('roles.index') }}"
                         class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-300 text-gray-700 {{ request()->routeIs('roles.*') ? 'bg-gray-300' : '' }}">
