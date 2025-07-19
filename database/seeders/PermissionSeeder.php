@@ -35,6 +35,12 @@ class PermissionSeeder extends Seeder
             'view permission',
             'update permission',
             'delete permission',
+
+            // User management
+            'create user',
+            'view user',
+            'update user',
+            'delete user',
         ];
 
         // Create or update permissions

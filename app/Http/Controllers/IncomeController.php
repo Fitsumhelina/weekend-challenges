@@ -2,75 +2,88 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Income;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use App\Policies\GenericPolicy;
 
 class IncomeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(): View
-    {
-        // Logic to retrieve and display incomes
-        return view('income.index');
-    }
+   use \Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
-    /**
-     * Show the form for creating a new resource.
-     */
+   protected $genericPolicy;
+
+   public function __construct(GenericPolicy $genericPolicy)
+   {
+       $this->genericPolicy = $genericPolicy;
+   }
+
+   public function index(): View
+   {
+       $this->authorize('view', Income::class);
+       $incomes = Income::latest()->paginate(10);
+       return view('user.income.index', compact('incomes'));
+   }
+
+
     public function create(): View
     {
-        // Logic to show the form for creating a new income
-        return view('income.create');
+         $this->authorize('create', Income::class);
+         return view('user.income.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request): RedirectResponse
     {
-        // Logic to store the new income
-        return Redirect::route('income.index')->with('success', 'Income created successfully.');
+        $this->authorize('create', Income::class);
+        $data = $request->validate([
+            'amount' => 'required|numeric',
+            'source' => 'required|string|max:255',
+            'date' => 'required|date',
+        ]);
+
+        Income::create($data);
+        return Redirect::route('user.income.index')->with('success', 'Income created successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
+
     public function show($id): View
     {
-        // Logic to show a specific income
-        return view('income.show', compact('id'));
+        $income = Income::findOrFail($id);
+        $this->authorize('view', $income);
+        return view('user.income.show', compact('income'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+
     public function edit($id): View
     {
-        // Logic to show the form for editing an income
-        return view('income.edit', compact('id'));
+        $income = Income::findOrFail($id);
+        $this->authorize('update', $income);
+        return view('user.income.edit', compact('income'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+
     public function update(Request $request, $id): RedirectResponse
     {
-        // Logic to update the income
-        return Redirect::route('income.index')->with('success', 'Income updated successfully.');
+        $income = Income::findOrFail($id);
+        $this->authorize('update', $income);
+        $data = $request->validate([    
+            'amount' => 'required|numeric',
+            'source' => 'required|string|max:255',
+            'date' => 'required|date',
+        ]);
+        $income->update($data);
+        return Redirect::route('user.income.index')->with('success', 'Income updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    
     public function destroy($id): RedirectResponse
     {
-        // Logic to delete the income
-        return Redirect::route('income.index')->with('success', 'Income deleted successfully.');
+        $income = Income::findOrFail($id);
+        $this->authorize('delete', $income);
+        $income->delete();
+        return Redirect::route('user.income.index')->with('success', 'Income deleted successfully.');
     }
 }
+
