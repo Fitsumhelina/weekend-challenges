@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Auth;
 use App\Policies\GenericPolicy;
 
 class IncomeController extends Controller
@@ -22,21 +23,29 @@ class IncomeController extends Controller
 
    public function index(): View
    {
-       
+       if (!$this->genericPolicy->view(Auth::user(), new Income())) {
+           abort(403, 'Unauthorized action.');
+       }
+
        $incomes = Income::latest()->paginate(10);
        return view('income.index', compact('incomes'));
    }
 
 
     public function create(): View
-    {
-         $this->authorize('create', Income::class);
-         return view('income.create');
+    {   
+        if (!$this->genericPolicy->view(Auth::user(), new Income())) {
+           abort(403, 'Unauthorized action.');
+        }
+
+       return view('income.create');
     }
 
     public function store(Request $request): RedirectResponse
     {
-        $this->authorize('create', Income::class);
+        if (!$this->genericPolicy->create(Auth::user(), new Income())) {
+           abort(403, 'Unauthorized action.');
+       }
         $data = $request->validate([
             'title' => 'required|string|max:255',
             'source' => 'required',
@@ -51,24 +60,31 @@ class IncomeController extends Controller
 
     public function show($id): View
     {
+        if (!$this->genericPolicy->view(Auth::user(), new Income())) {
+           abort(403, 'Unauthorized action.');
+       }
         $income = Income::findOrFail($id);
-        $this->authorize('view', $income);
-        return view('income.show', compact('income'));
+        return view('partials.income.show', compact('income'));
     }
 
 
     public function edit($id): View
     {
+        if (!$this->genericPolicy->view(Auth::user(), new Income())) {
+           abort(403, 'Unauthorized action.');
+       }
         $income = Income::findOrFail($id);
-        $this->authorize('update', $income);
-        return view('income.edit', compact('income'));
+        return view('partials.income.edit', compact('income'));
     }
 
 
     public function update(Request $request, $id): RedirectResponse
     {
+        if (!$this->genericPolicy->update(Auth::user(), new Income())) {
+           abort(403, 'Unauthorized action.');
+       }
+
         $income = Income::findOrFail($id);
-        $this->authorize('update', $income);
         $data = $request->validate([    
             'title' => 'required|string|max:255',
             'amount' => 'required|numeric',
@@ -82,8 +98,11 @@ class IncomeController extends Controller
 
     public function destroy($id): RedirectResponse
     {
+        if (!$this->genericPolicy->delete(Auth::user(), new Income())) {
+           abort(403, 'Unauthorized action.');
+       }
+
         $income = Income::findOrFail($id);
-        $this->authorize('delete', $income);
         $income->delete();
         return Redirect::route('income.index')->with('success', 'Income deleted successfully.');
     }

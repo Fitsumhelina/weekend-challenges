@@ -22,7 +22,7 @@ class ExpenseController extends Controller
 
     public function index(): View
     {
-        $this->authorize('view', Expense::class);
+        
         $expenses = Expense::latest()->paginate(10);
         return view('expense.index', compact('expenses'));
     }
