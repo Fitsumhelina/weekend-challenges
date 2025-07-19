@@ -17,15 +17,13 @@ class UserSeeder extends Seeder
 
             if ($role) {
                 for ($i = 1; $i <= 3; $i++) {
-                    // Create a user instance with custom email and name
                     $user = User::factory()->make([
                         'email' => "{$roleName}{$i}@gmail.com",
                         'name' => ucfirst($roleName) . " User {$i}",
                     ]);
 
-                    $user->save(); // Persist user to DB
+                    $user->save();
 
-                    // Assign role to user
                     $user->assignRole($role);
                 }
             }
