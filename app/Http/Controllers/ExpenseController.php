@@ -36,8 +36,9 @@ class ExpenseController extends Controller
         $this->authorize('create', Expense::class);
         $data = $request->validate([
             'title' => 'required|string|max:255',
-            'amount' => 'required|numeric',
+            'category' => 'required',
             'description' => 'required|string|max:255',
+            'amount' => 'required|numeric',
         ]);
 
         Expense::create($data);
@@ -61,9 +62,10 @@ class ExpenseController extends Controller
         $this->authorize('update', $expense);
 
         $data = $request->validate([
+            'title' => 'required|string|max:255',
+            'category' => 'required',
             'amount' => 'required|numeric',
             'description' => 'required|string|max:255',
-            'date' => 'required|date',
         ]);
 
         $expense->update($data);

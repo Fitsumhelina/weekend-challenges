@@ -39,11 +39,9 @@ class IncomeController extends Controller
         $this->authorize('create', Income::class);
         $data = $request->validate([
             'title' => 'required|string|max:255',
-            'category' => 'required|string|max:255',
+            'source' => 'required',
             'description' => 'required|string|max:255',
             'amount' => 'required|numeric',
-            'source' => 'required|string|max:255',
-            'date' => 'required|date',
         ]);
 
         Income::create($data);
@@ -72,8 +70,9 @@ class IncomeController extends Controller
         $income = Income::findOrFail($id);
         $this->authorize('update', $income);
         $data = $request->validate([    
+            'title' => 'required|string|max:255',
             'amount' => 'required|numeric',
-            'source' => 'required|string|max:255',
+            'source' => 'required',
             'date' => 'required|date',
         ]);
         $income->update($data);
