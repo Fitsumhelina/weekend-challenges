@@ -8,9 +8,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use App\Policies\GenericPolicy;
+use Illuminate\Support\Facades\Auth;
+
 
 class ExpenseController extends Controller
 {
+
+    
     use \Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
     protected $genericPolicy;
@@ -22,18 +26,25 @@ class ExpenseController extends Controller
 
     public function index(): View
     {
+         if (!$this->genericPolicy->view(Auth::user(), new Expense())) {
+           abort(403, 'Unauthorized action.');
+       }
         
         $expenses = Expense::latest()->paginate(10);
         return view('expense.index', compact('expenses'));
     }
     public function create(): View
     {
-        $this->authorize('create', Expense::class);
+        if (!$this->genericPolicy->view(Auth::user(), new Expense())) {
+           abort(403, 'Unauthorized action.');
+        }
         return view('expense.create');
     }
     public function store(Request $request): RedirectResponse
     {
-        $this->authorize('create', Expense::class);
+        if (!$this->genericPolicy->create(Auth::user(), new Expense())) {
+           abort(403, 'Unauthorized action.');
+       }
         $data = $request->validate([
             'title' => 'required|string|max:255',
             'category' => 'required',
@@ -46,20 +57,26 @@ class ExpenseController extends Controller
     }
     public function show($id): View
     {
+        if (!$this->genericPolicy->view(Auth::user(), new Expense())) {
+           abort(403, 'Unauthorized action.');
+       }
         $expense = Expense::findOrFail($id);
-        $this->authorize('view', $expense);
         return view('expense.show', compact('expense'));
     }
     public function edit($id): View
     {
+        if (!$this->genericPolicy->view(Auth::user(), new Expense())) {
+           abort(403, 'Unauthorized action.');
+       }
         $expense = Expense::findOrFail($id);
-        $this->authorize('update', $expense);
         return view('expense.edit', compact('expense'));
     }
     public function update(Request $request, $id): RedirectResponse
     {
+        if (!$this->genericPolicy->update(Auth::user(), new Expense())) {
+           abort(403, 'Unauthorized action.');
+       }
         $expense = Expense::findOrFail($id);
-        $this->authorize('update', $expense);
 
         $data = $request->validate([
             'title' => 'required|string|max:255',
@@ -73,8 +90,10 @@ class ExpenseController extends Controller
     }
     public function destroy($id): RedirectResponse
     {
+        if (!$this->genericPolicy->delete(Auth::user(), new Expense())) {
+           abort(403, 'Unauthorized action.');
+         }
         $expense = Expense::findOrFail($id);
-        $this->authorize('delete', $expense);
         $expense->delete();
         return Redirect::route('expense.index')->with('success', 'Expense deleted successfully.');
     }
