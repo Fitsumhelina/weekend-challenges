@@ -19,7 +19,7 @@ class Expense extends Model
         
     ];
 
-    public function user()
+    public function createdByUser()
     {
         return $this->belongsTo('App\Models\User', 'created_By');
     }
