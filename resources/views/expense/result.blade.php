@@ -1,99 +1,57 @@
-<div class="p-6">
-    @if ($expenses->isEmpty())
-        <p class="text-gray-600 text-center py-4">No expenses found.</p>
-    @else
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Title
-                        </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Category
-                        </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Amount
-                        </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Description
-                        </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Created By
-                        </th>
-                    
-                        @can ('update expense')
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Actions
-                        </th>
-                        @endcan
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    @foreach ($expenses as $expense)
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                {{ $expense->title }}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{ $expense->category }}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                ${{ number_format($expense->amount, 2) }}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{ Str::limit($expense->description, 50) }}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{ $expense->createdByUser->name ?? 'N/A' }}
-                            </td>
-            
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <div class="flex items-center space-x-2">
-                                    @can('view expense')
-                                        <button
-                                            class="expense-view-btn text-blue-600 hover:text-blue-900 transition duration-150 ease-in-out"
-                                            title="View Expense"
-                                            data-id="{{ $expense->id }}"
-                                            data-bs-toggle="modal" data-bs-target="#viewExpenseModal"
-                                        >
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                    @endcan
-                                    @can('update expense')
-                                        <button
-                                            class="expense-edit-btn text-indigo-600 hover:text-indigo-900 transition duration-150 ease-in-out"
-                                            title="Edit Expense"
-                                            data-id="{{ $expense->id }}"
-                                            data-bs-toggle="modal" data-bs-target="#editExpenseModal"
-                                        >
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                    @endcan
-                                    @can('delete expense')
-                                        <form action="{{ route('expense.destroy', $expense->id) }}" method="POST" class="inline-block">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button
-                                                type="button"
-                                                class="expense-delete-btn text-red-600 hover:text-red-900 transition duration-150 ease-in-out"
-                                                title="Delete Expense"
-                                            >
-                                                <i class="fas fa-trash-alt"></i>
-                                            </button>
-                                        </form>
-                                    @endcan
-                                </div>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+<div class="overflow-x-auto rounded-lg shadow-md">
+    <table class="min-w-full bg-white">
+        <thead class="bg-gray-200 text-gray-700 uppercase text-sm leading-normal">
+            <tr>
+                <th class="py-3 px-6 text-left">Title</th>
+                <th class="py-3 px-6 text-left">Catagory</th>
+                <th class="py-3 px-6 text-left">Amount</th>
+                <th class="py-3 px-6 text-left">Date</th>
+                <th class="py-3 px-6 text-left">Created By</th>
+                <th class="py-3 px-6 text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody class="text-gray-600 text-sm font-light">
+            @forelse ($expenses as $expense)
+                <tr class="border-b border-gray-200 hover:bg-gray-100">
+                    <td class="py-3 px-6 text-left whitespace-nowrap">{{ $expense->title }}</td>
+                    <td class="py-3 px-6 text-left">{{ $expense->category }}</td>
+                    <td class="py-3 px-6 text-left">{{ number_format($expense->amount, 2) }}</td>
+                    <td class="py-3 px-6 text-left">{{ \Carbon\Carbon::parse($expense->date)->format('M d, Y') }}</td>
+                    <td class="py-3 px-6 text-left">{{ $expense->createdByUser->name ?? 'Unknown' }}</td>
+                    <td class="py-3 px-6 text-center">
+                        <div class="flex item-center justify-center space-x-2">
+                            @can('view expense')
+                                <button class="view-expense-btn w-8 h-8 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 flex items-center justify-center transition duration-300" data-id="{{ $expense->id }}" title="View">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                </button>
+                            @endcan
+                            @can('update expense')
+                                <button class="edit-expense-btn w-8 h-8 rounded-full bg-yellow-100 text-yellow-600 hover:bg-yellow-200 flex items-center justify-center transition duration-300" data-id="{{ $expense->id }}" title="Edit">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                </button>
+                            @endcan
+                            @can('delete expense')
+                                <form action="{{ route('expense.destroy', $expense->id) }}" method="POST" class="inline-block">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="button" class="delete-expense-btn w-8 h-8 rounded-full bg-red-100 text-red-600 hover:bg-red-200 flex items-center justify-center transition duration-300" title="Delete">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                    </button>
+                                </form>
+                            @endcan
+                        </div>
+                    </td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="5" class="py-4 px-6 text-center text-gray-500">No expense$expense records found.</td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
+</div>
 
-        {{-- Pagination --}}
-        <div class="mt-4">
-            {{ $expenses->links('pagination::tailwind') }}
-        </div>
-    @endif
+{{-- Pagination Links --}}
+<div class="mt-6">
+    {{ $expenses->links() }}
 </div>
