@@ -29,7 +29,9 @@
     </div>
 
     <div class="mb-4">
-        <label for="source" class="block text-gray-700 text-sm font-bold mb-2">Source:</label>
+        <label for="source" class="block text-gray-700 text-sm font-bold mb-2">Source (User ID):</label>
+        {{-- If you want a dropdown of users, you'd need to pass users to this partial from the controller --}}
+        {{-- For now, keeping it as a text input for the user ID --}}
         <input type="text" name="source" id="source"
                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('source') border-red-500 @enderror"
                value="{{ old('source', $income->source ?? '') }}" required>

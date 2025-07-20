@@ -6,6 +6,7 @@
                 <th class="py-3 px-6 text-left">Amount</th>
                 <th class="py-3 px-6 text-left">Source</th>
                 <th class="py-3 px-6 text-left">Date</th>
+                <th class="py-3 px-6 text-left">Created By</th>
                 <th class="py-3 px-6 text-center">Actions</th>
             </tr>
         </thead>
@@ -16,6 +17,7 @@
                     <td class="py-3 px-6 text-left">{{ number_format($income->amount, 2) }}</td>
                     <td class="py-3 px-6 text-left">{{ $income->sourceUser->name ?? 'Unknown' }}</td>
                     <td class="py-3 px-6 text-left">{{ \Carbon\Carbon::parse($income->date)->format('M d, Y') }}</td>
+                    <td class="py-3 px-6 text-left">{{ $income->createdByUser->name ?? 'Unknown' }}</td>
                     <td class="py-3 px-6 text-center">
                         <div class="flex item-center justify-center space-x-2">
                             @can('view income')
