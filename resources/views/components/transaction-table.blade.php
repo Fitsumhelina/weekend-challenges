@@ -1,4 +1,4 @@
-@props(['title', 'items', 'type', 'color', 'icon', 'emptyText', 'isAdmin'])
+@props(['title', 'items', 'type', 'color', 'icon', 'emptyText'])
 
 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden mb-8">
     <div class="bg-{{ $color }}-50 dark:bg-{{ $color }}-900/20 px-6 py-4 border-b border-{{ $color }}-200 dark:border-{{ $color }}-800">
@@ -17,9 +17,9 @@
                     </th>
                     <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Description</th>
                     <th class="px-6 py-4 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Amount</th>
-                    @if($isAdmin)
+                    @can ('update income') 
                         <th class="px-6 py-4 text-center text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Actions</th>
-                    @endif
+                    @endcan
                 </tr>
             </thead>
             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -41,7 +41,7 @@
                             <td class="px-6 py-4 text-right text-sm font-semibold text-{{ $color }}-600 dark:text-{{ $color }}-400">
                                 {{ $type === 'income' ? '+' : '-' }}${{ number_format($item->amount, 2) }}
                             </td>
-                            @if($isAdmin)
+                            @can ('delete income')
                                 <td class="px-6 py-4 text-center">
                                     <div class="flex justify-center space-x-2">
                                         <a href="{{ route("$type.show", $item->id) }}" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
@@ -57,17 +57,17 @@
                                         </form>
                                     </div>
                                 </td>
-                            @endif
+                            @enccan
                         </tr>
                     @endforeach
                 @else
                     <tr>
-                        <td colspan="{{ $isAdmin ? 6 : 5 }}" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                        <td colspan="6" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
                             <i class="fas {{ $type === 'income' ? 'fa-hand-holding-usd' : 'fa-receipt' }} text-4xl mb-4"></i>
                             <p class="text-lg font-medium">{{ $emptyText }}</p>
-                            @if($isAdmin)
+                            @can ('create income')
                                 <p class="text-sm">Click "Add Transaction" to create your first {{ $type }} entry</p>
-                            @endif
+                            @can
                         </td>
                     </tr>
                 @endif

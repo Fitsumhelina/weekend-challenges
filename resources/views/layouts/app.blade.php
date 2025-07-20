@@ -18,7 +18,7 @@
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
             @include('layouts.navigation')
             <div class="flex-1">
-                <!-- @include('layouts.sidebar') -->
+                @include('layouts.sidebar')
                     <div class="flex-1">
                         @isset($header)
                             <header class="bg-white dark:bg-gray-800 shadow">
@@ -29,7 +29,7 @@
                         @endisset
 
                         <main>
-                            {{ $slot }}
+                            @yield('content')
                         </main>
                      </div>
             </div>
