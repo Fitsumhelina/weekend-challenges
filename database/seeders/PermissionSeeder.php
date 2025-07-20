@@ -41,6 +41,12 @@ class PermissionSeeder extends Seeder
             'view user',
             'update user',
             'delete user',
+
+            #other permissions
+            'view home',
+            'view report',
+            'view sidebar',
+            'view dashboard',
         ];
 
         // Create or update permissions

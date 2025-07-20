@@ -19,6 +19,12 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('income.index')" :active="request()->routeIs('income.*')">
+                        {{ __('Income') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('expense.index')" :active="request()->routeIs('expense.*')">
+                        {{ __('Expenses') }}    
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -74,6 +80,12 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('income.index')" :active="request()->routeIs('income.*')">
+                {{ __('Income') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('expense.index')" :active="request()->routeIs('expense.*')">
+                {{ __('Expenses') }}
+            </x-responsive-nav-link>  
         </div>
 
         <!-- Responsive Settings Options -->

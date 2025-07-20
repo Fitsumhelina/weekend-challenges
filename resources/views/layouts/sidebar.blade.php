@@ -1,4 +1,4 @@
-@can ('view user')
+@can ('view sidebar')
 <aside class="w-64 h-screen bg-white shadow-md">
     <nav class="mt-10">
         <ul>
