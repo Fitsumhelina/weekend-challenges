@@ -2,7 +2,6 @@
 
 @section('content')
 <div class="container mx-auto px-4 py-8">
-    <!-- <h1 class="text-4xl font-extrabold text-gray-900 mb-8 text-center">Financial Dashboard</h1> -->
 
     {{-- Summary Cards --}}
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
@@ -39,8 +38,8 @@
     </div>
 
     {{-- Recent Transactions Section --}}
-    <div class="bg-white rounded-xl shadow-lg p-6">
-        <h2 class="text-2xl font-bold text-gray-800 mb-6">Recent Transactions</h2>
+    <div class="bg-white rounded-xl shadow-lg p-6 mt-12">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6">Recent Records</h2>
 
         {{-- Tab Buttons --}}
         <div class="flex border-b border-gray-200 mb-6">
@@ -71,7 +70,8 @@
                         <tr class="border-b border-gray-200 hover:bg-gray-50">
                             <td class="py-3 px-6 text-left">{{ $income->title }}</td>
                             <td class="py-3 px-6 text-left text-green-600">${{ number_format($income->amount, 2) }}</td>
-                            <td class="py-3 px-6 text-left">{{ $income->source }}</td> {{-- Assuming source is a string name --}}
+                            {{-- Assuming income->source is the user's name or a string, if it's an ID, you'd need a relationship --}}
+                            <td class="py-3 px-6 text-left">{{ $income->source }}</td>
                             <td class="py-3 px-6 text-left">{{ \Carbon\Carbon::parse($income->date)->format('M d, Y') }}</td>
                         </tr>
                     @empty
@@ -100,7 +100,8 @@
                         <tr class="border-b border-gray-200 hover:bg-gray-50">
                             <td class="py-3 px-6 text-left">{{ $expense->title }}</td>
                             <td class="py-3 px-6 text-left text-red-600">${{ number_format($expense->amount, 2) }}</td>
-                            <td class="py-3 px-6 text-left">{{ $expense->category }}</td> {{-- Assuming category is a string name --}}
+                            {{-- Assuming expense->category is a string name --}}
+                            <td class="py-3 px-6 text-left">{{ $expense->category }}</td>
                             <td class="py-3 px-6 text-left">{{ \Carbon\Carbon::parse($expense->date)->format('M d, Y') }}</td>
                         </tr>
                     @empty
@@ -120,7 +121,21 @@
 <script>
     // Ensure the correct table is shown on page load
     document.addEventListener('DOMContentLoaded', function() {
-        showTable('incomes'); // Default to showing incomes
+        console.log('DOM Content Loaded. Initializing dashboard tabs.');
+        try {
+            showTable('incomes'); // Default to showing incomes
+        } catch (e) {
+            console.error('Error calling showTable on DOMContentLoaded:', e);
+        }
     });
+    if (typeof showTable === 'function') {
+        const originalShowTable = showTable;
+        window.showTable = function(type) {
+            console.log('showTable function called with type:', type);
+            originalShowTable(type);
+        };
+    } else {
+        console.warn('showTable function not found in global scope. Ensure dashboard.js is loaded correctly.');
+    }
 </script>
 @endpush
