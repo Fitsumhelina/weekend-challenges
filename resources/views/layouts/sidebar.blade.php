@@ -1,3 +1,4 @@
+@can ('view user')
 <aside class="w-64 h-screen bg-white shadow-md">
     <nav class="mt-10">
         <ul>
@@ -35,3 +36,4 @@
         </ul>
     </nav>
 </aside>
+@endcan
