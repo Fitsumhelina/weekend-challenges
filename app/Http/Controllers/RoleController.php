@@ -28,7 +28,7 @@ class RoleController extends Controller
         return view('user.roles.result', compact('roles'))->render();
     }
 
-    return view('user.roles.index', compact('roles', 'allPermissions'));
+    return view('roles.index', compact('roles', 'allPermissions'));
 }
     public function create()
     {
@@ -36,7 +36,7 @@ class RoleController extends Controller
             abort(403, 'Unauthorized action.');
         }
         $permissions = Permission::all();
-        return view('user.roles.create', compact('permissions'));
+        return view('roles.create', compact('permissions'));
     }
 
     public function store(RoleRequest $request)
@@ -56,7 +56,7 @@ class RoleController extends Controller
             abort(403, 'Unauthorized action.');
         }
         $allPermissions = Permission::all();
-        return view('user.roles.partials.form', compact('role', 'allPermissions'));
+        return view('roles.partials.form', compact('role', 'allPermissions'));
     }
 
     public function update(RoleRequest $request, Role $role)

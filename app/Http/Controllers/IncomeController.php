@@ -27,7 +27,7 @@ class IncomeController extends Controller
            abort(403, 'Unauthorized action.');
        }
 
-       $incomes = Income::latest()->paginate(10);
+       $incomes = Income::paginate(10);
        return view('income.index', compact('incomes'));
    }
 

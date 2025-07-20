@@ -3,9 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\UserController;
 
-
-Route::get('roles/', [RoleController::class, 'index'])->name('roles.index');
+Route::get('roles', [RoleController::class, 'index'])->name('roles.index');
 Route::get('roles/create', [RoleController::class, 'create'])->name('roles.create');
 Route::post('roles', [RoleController::class, 'store'])->name('roles.store');
 Route::get('roles/{role}/edit', [RoleController::class, 'edit'])->name('roles.edit');
@@ -18,5 +18,7 @@ Route::resource('permissions', PermissionController::class)->except(['create', '
 Route::get('permissions/{id}/edit', [PermissionController::class, 'edit'])->name('permissions.edit');
 Route::match(['PUT', 'PATCH'], '/permissions/{permission}', [PermissionController::class, 'update'])->name('roles.permissions');
 // Route::put('permissions/{permission}', [PermissionController::class, 'update'])->name('permissions.update');
+
+Route::get('users', [UserController::class, 'index']) ->name('users.index');
 
 

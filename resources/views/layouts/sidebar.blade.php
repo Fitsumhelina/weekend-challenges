@@ -20,6 +20,17 @@
                     </a>
                 </li>
             @endcan
+
+            {{-- user Link --}}
+            @can('view user')
+                <li class="mb-2">
+                    <a href="{{ route('users.index') }}"
+                        class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-300 text-gray-700 {{ request()->routeIs('roles.*') ? 'bg-gray-300' : '' }}">
+                        user
+                    </a>
+                </li>
+            @endcan
+
        
         </ul>
     </nav>
