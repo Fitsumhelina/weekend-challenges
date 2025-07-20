@@ -32,7 +32,7 @@
                             <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">{{ $item->title }}</td>
                             <td class="px-6 py-4">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-{{ $color }}-100 text-{{ $color }}-800 dark:bg-{{ $color }}-900/20 dark:text-{{ $color }}-300">
-                                    {{ $type === 'income' ? $item->source ?? 'Other' : $item->category ?? 'Uncategorized' }}
+                                    {{ $type === 'income' ? ($item->source ?? 'Other') : ($item->category ?? 'Uncategorized') }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300 max-w-xs truncate">
@@ -57,7 +57,7 @@
                                         </form>
                                     </div>
                                 </td>
-                            @enccan
+                            @endcan
                         </tr>
                     @endforeach
                 @else
@@ -67,7 +67,7 @@
                             <p class="text-lg font-medium">{{ $emptyText }}</p>
                             @can ('create income')
                                 <p class="text-sm">Click "Add Transaction" to create your first {{ $type }} entry</p>
-                            @can
+                            @endcan
                         </td>
                     </tr>
                 @endif

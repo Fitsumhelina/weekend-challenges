@@ -1,6 +1,6 @@
 @can ('view sidebar')
 <aside class="w-64 h-screen bg-white shadow-md">
-    <nav class="mt-10">
+    <nav class="mt-2">
         <ul>
             {{-- Permissions Link --}}
             @can('view permission')
