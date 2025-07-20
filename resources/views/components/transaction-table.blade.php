@@ -32,7 +32,7 @@
                             <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">{{ $item->title }}</td>
                             <td class="px-6 py-4">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-{{ $color }}-100 text-{{ $color }}-800 dark:bg-{{ $color }}-900/20 dark:text-{{ $color }}-300">
-                                    {{ $type === 'income' ? ($item->source ?? 'Other') : ($item->category ?? 'Uncategorized') }}
+                                    {{ $type === 'income' ? $item->source ?? 'Other' : $item->category ?? 'Uncategorized' }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300 max-w-xs truncate">
@@ -44,7 +44,7 @@
                             @can ('delete income')
                                 <td class="px-6 py-4 text-center">
                                     <div class="flex justify-center space-x-2">
-                                        <a href="{{ route("$type.show", $item->id) }}" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+                                        <a href="{{ route("$type.destroy", $item->id) }}" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         <form action="{{ route("$type.delete", $item->id) }}" method="POST" class="inline">

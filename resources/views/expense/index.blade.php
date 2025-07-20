@@ -10,15 +10,7 @@
         </x-slot>
         <div>
              @can('view expense')
-                <div id="expenses-table" class="hidden">
-                    <x-transaction-table 
-                        title="Expense" 
-                        items="{{ $expenses }}" 
-                        type="expense"
-                        color="red" 
-                        icon="fa-coins" 
-                        emptyText="No expense recorded yet" />
-                </div>
+        
             @endcan
         </div>
 </x-app-layout>

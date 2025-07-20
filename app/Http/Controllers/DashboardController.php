@@ -10,10 +10,21 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $incomes = Income::latest()->take(10)->get();
-        $expenses = Expense::latest()->take(10)->get();
-        // $isAdmin = auth()->user()->hasRole('admin'); // adjust as needed
+        $totalIncome = Income::sum('amount');
+        $totalExpenses = Expense::sum('amount');
+        $netBalance = $totalIncome - $totalExpenses;
 
-        return view('dashboard', compact('incomes', 'expenses'));
+        // Fetch recent transactions
+        $recentIncome = Income::orderBy('created_at', 'desc')->take(5)->get();
+        $recentExpenses = Expense::orderBy('created_at', 'desc')->take(5)->get();
+
+        return view('dashboard', [
+            'totalIncome' => $totalIncome,
+            'totalExpenses' => $totalExpenses,
+            'netBalance' => $netBalance,
+            'incomes' => $recentIncome,
+            'expenses' => $recentExpenses,
+        ]);
     }
+
 }
