@@ -9,7 +9,8 @@
     </div>
     <div class="mb-4">
         <p class="text-gray-700 text-sm font-bold">Source:</p>
-        <p class="text-gray-900 text-lg">{{ $income->source }}</p>
+        {{-- Assuming $income->source is a user_id and there's a 'user' relationship on the Income model --}}
+        <p class="text-gray-900 text-lg">{{ $income->user->name ?? 'N/A' }}</p>
     </div>
     <div class="mb-4">
         <p class="text-gray-700 text-sm font-bold">Description:</p>

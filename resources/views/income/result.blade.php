@@ -14,7 +14,7 @@
                 <tr class="border-b border-gray-200 hover:bg-gray-100">
                     <td class="py-3 px-6 text-left whitespace-nowrap">{{ $income->title }}</td>
                     <td class="py-3 px-6 text-left">{{ number_format($income->amount, 2) }}</td>
-                    <td class="py-3 px-6 text-left">{{ $income->source }}</td>
+                    <td class="py-3 px-6 text-left">{{ $income->sourceUser->name ?? 'Unknown' }}</td>
                     <td class="py-3 px-6 text-left">{{ \Carbon\Carbon::parse($income->date)->format('M d, Y') }}</td>
                     <td class="py-3 px-6 text-center">
                         <div class="flex item-center justify-center space-x-2">

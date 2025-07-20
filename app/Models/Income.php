@@ -18,14 +18,18 @@ class Income extends Model
         'updated_By'
     ];
 
-
-    public function user()
+    public function createdByUser()
     {
-        return $this->belongsTo('App\Models\User', 'created_By');
+        return $this->belongsTo(User::class, 'created_By');
     }
 
     public function updatedByUser()
     {
-        return $this->belongsTo('App\Models\User', 'updated_By');
+        return $this->belongsTo(User::class, 'updated_By');
+    }
+
+    public function sourceUser()
+    {
+        return $this->belongsTo(User::class, 'source');
     }
 }
