@@ -6,7 +6,7 @@
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-3xl font-bold text-gray-800">Income Dashboard</h1>
             @can('create income')
-                <button id="createIncomeBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out">
+                <button  class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out" data-bs-toggle="modal" id="createIncomeBtn" data-bs-target="#incomeCreateModal">
                     Add New Income
                 </button>
             @endcan
@@ -51,8 +51,8 @@
         </div>
     </div>
 
-    {{-- Create/Edit Income Modal --}}
-    <div id="incomeModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    {{-- Create Income Modal --}}
+    <div id="incomeCreateModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
         <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-2/3 lg:w-1/2 shadow-lg rounded-md bg-white">
             <div class="flex justify-between items-center pb-3">
                 <h3 class="text-2xl leading-6 font-medium text-gray-900" id="modalTitle"></h3>
@@ -65,6 +65,8 @@
             </div>
         </div>
     </div>
+    {{-- Edit Income Modal}}
+
 
     {{-- View Income Modal --}}
     <div id="viewIncomeModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
@@ -103,7 +105,17 @@
 </div>
 @endsection
 
-@push('scripts')
+@section('scripts')
+    <script>
+        const Data = {
+            IncomeIndexRoute: "{{ route('income.index') }}",
+            csrfToken: "{{ csrf_token() }}"
+          
+        };
+    </script>
+@endsection
+
+<!-- @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const incomeModal = document.getElementById('incomeModal');
@@ -222,4 +234,4 @@
         });
     });
 </script>
-@endpush
+@endpush -->
