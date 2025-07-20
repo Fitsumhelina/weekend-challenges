@@ -3,8 +3,8 @@
         <thead class="bg-gray-200 text-gray-700 uppercase text-sm leading-normal">
             <tr>
                 <th class="py-3 px-6 text-left">Title</th>
-                <th class="py-3 px-6 text-left">Catagory</th>
                 <th class="py-3 px-6 text-left">Amount</th>
+                <th class="py-3 px-6 text-left">Catagory</th>
                 <th class="py-3 px-6 text-left">Date</th>
                 <th class="py-3 px-6 text-left">Created By</th>
                 <th class="py-3 px-6 text-center">Actions</th>
@@ -14,8 +14,8 @@
             @forelse ($expenses as $expense)
                 <tr class="border-b border-gray-200 hover:bg-gray-100">
                     <td class="py-3 px-6 text-left whitespace-nowrap">{{ $expense->title }}</td>
-                    <td class="py-3 px-6 text-left">{{ $expense->category }}</td>
                     <td class="py-3 px-6 text-left">{{ number_format($expense->amount, 2) }}</td>
+                    <td class="py-3 px-6 text-left">{{ $expense->category }}</td>
                     <td class="py-3 px-6 text-left">{{ \Carbon\Carbon::parse($expense->date)->format('M d, Y') }}</td>
                     <td class="py-3 px-6 text-left">{{ $expense->createdByUser->name ?? 'Unknown' }}</td>
                     <td class="py-3 px-6 text-center">

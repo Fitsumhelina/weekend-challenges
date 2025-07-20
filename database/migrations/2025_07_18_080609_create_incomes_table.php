@@ -17,10 +17,10 @@ return new class extends Migration
         $table->foreign('source')->references('id')->on('users')->nullOnDelete();
         $table->text('description')->nullable();
         $table->unsignedBigInteger('created_by')->nullable();
-        $table->unsignedBigInteger('updated_by')->nullable();
-        $table->timestamps();
         $table->foreign('created_by')->references('id')->on('users')->nullOnDelete();
+        $table->unsignedBigInteger('updated_by')->nullable();
         $table->foreign('updated_by')->references('id')->on('users')->nullOnDelete();
+        $table->timestamps();
     });
 
     }
