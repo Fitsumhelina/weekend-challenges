@@ -24,6 +24,14 @@ class UserController extends Controller
         $users = User::paginate(10);
         return view('users.index', compact('users'));
     }
+    public function show(User $id)
+    {
+        if (!$this->genericPolicy->view(Auth::user(), $id)) {
+            abort(403, 'Unauthorized action.');
+        }
+        $user = User::findOrFail($id);
+        return view('users.show', compact('user'));
+    }
     public function create()
     {
         if (!$this->genericPolicy->view(Auth::user(), new User())) {
