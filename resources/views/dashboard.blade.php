@@ -1,94 +1,126 @@
-<x-app-layout>
-    {{-- Header --}}
-    <x-slot name="header">
-        <div class="px-4 sm:px-6 lg:px-8 text-gray-600 dark:text-gray-300">
-            <h2 class="font-semibold text-3xl text-gray-800 dark:text-gray-200 leading-tight">
-                {{ __('Financial Dashboard') }}
-            </h2>
-        </div>
+@extends('layouts.app')
 
-        {{-- Cards --}}
-        <div class="w-full px-4 sm:px-6 lg:px-8 mt-4">
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                <x-financial-card 
-                    title="Total Income"
-                    amount="{{ number_format($totalIncome, 2) }}"
-                    color="green"
-                    icon="fa-arrow-up" />
+@section('content')
+<div class="container mx-auto px-4 py-8">
+    <!-- <h1 class="text-4xl font-extrabold text-gray-900 mb-8 text-center">Financial Dashboard</h1> -->
 
-                <x-financial-card 
-                    title="Total Expenses"
-                    amount="{{ number_format($totalExpenses, 2) }}"
-                    color="red"
-                    icon="fa-arrow-down" />
-
-                <x-financial-card 
-                    title="Net Balance"
-                    amount="{{ number_format($netBalance, 2) }}"
-                    color="blue"
-                    icon="fa-balance-scale" />
+    {{-- Summary Cards --}}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center justify-center transform hover:scale-105 transition duration-300 ease-in-out">
+            <div class="text-blue-600 mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c1.657 0 3 1.343 3 3v5a3 3 0 01-3 3H7a3 3 0 01-3-3v-5c0-1.657 1.343-3 3-3h5z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M7 8V5a2 2 0 012-2h4a2 2 0 012 2v3" />
+                </svg>
             </div>
-        </div>
-    </x-slot>
-
-    {{-- Main Content --}}
-    <div class="px-4 sm:px-6 lg:px-8 py-6 min-h-[calc(100vh-10rem)]">
-        {{-- Tab Navigation --}}
-        <div class="mb-4 flex space-x-4">
-            <button id="tab-expenses-table" onclick="showTable('expenses')" class="table-tab px-4 py-2 font-semibold rounded-t-lg focus:outline-none text-red-700 border-b-2 border-red-600">
-                Expenses
-            </button>
-            <button id="tab-incomes-table" onclick="showTable('incomes')" class="table-tab px-4 py-2 font-semibold rounded-t-lg focus:outline-none text-gray-600 border-b-2 border-transparent">
-                Income
-            </button>
+            <p class="text-xl font-semibold text-gray-600">Total Income</p>
+            <p class="text-4xl font-bold text-green-600 mt-2">${{ number_format($totalIncome, 2) }}</p>
         </div>
 
-        {{-- Tables --}}
-        <div id="expenses-table">
-            <x-transaction-table 
-                title="Expenses" 
-                :items="$expenses" 
-                type="expense"
-                color="red" 
-                icon="fa-credit-card" 
-                emptyText="No expenses recorded yet" />
+        <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center justify-center transform hover:scale-105 transition duration-300 ease-in-out">
+            <div class="text-red-600 mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+            </div>
+            <p class="text-xl font-semibold text-gray-600">Total Expenses</p>
+            <p class="text-4xl font-bold text-red-600 mt-2">${{ number_format($totalExpenses, 2) }}</p>
         </div>
 
-        <div id="incomes-table" class="hidden">
-            <x-transaction-table 
-                title="Income" 
-                :items="$incomes" 
-                type="income"
-                color="green" 
-                icon="fa-coins" 
-                emptyText="No income recorded yet" />
+        <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center justify-center transform hover:scale-105 transition duration-300 ease-in-out">
+            <div class="text-purple-600 mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M18 6l-3 1m0 0l3 9a5.002 5.002 0 01-6.001 0M18 7l-3 9m-9-9a3 3 0 110-6 3 3 0 010 6zm7 9a3 3 0 110-6 3 3 0 010 6zm7 0a3 3 0 110-6 3 3 0 010 6z" />
+                </svg>
+            </div>
+            <p class="text-xl font-semibold text-gray-600">Net Balance</p>
+            <p class="text-4xl font-bold {{ $netBalance >= 0 ? 'text-green-600' : 'text-red-600' }} mt-2">${{ number_format($netBalance, 2) }}</p>
         </div>
     </div>
 
-    @section('scripts')
-    <script>
-        function showTable(type) {
-            const expensesTable = document.getElementById('expenses-table');
-            const incomesTable = document.getElementById('incomes-table');
-            const tabExpenses = document.getElementById('tab-expenses-table');
-            const tabIncomes = document.getElementById('tab-incomes-table');
+    {{-- Recent Transactions Section --}}
+    <div class="bg-white rounded-xl shadow-lg p-6">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6">Recent Transactions</h2>
 
-            expensesTable.classList.add('hidden');
-            incomesTable.classList.add('hidden');
-            tabExpenses.classList.remove('border-b-2', 'border-red-600', 'text-red-700');
-            tabExpenses.classList.add('border-b-2', 'border-transparent', 'text-gray-600');
-            tabIncomes.classList.remove('border-b-2', 'border-green-600', 'text-green-700');
-            tabIncomes.classList.add('border-b-2', 'border-transparent', 'text-gray-600');
+        {{-- Tab Buttons --}}
+        <div class="flex border-b border-gray-200 mb-6">
+            <button id="tab-incomes-table" onclick="showTable('incomes')"
+                    class="py-3 px-6 text-lg font-medium border-b-2 border-green-600 text-green-700 focus:outline-none transition duration-300 ease-in-out">
+                Recent Incomes
+            </button>
+            <button id="tab-expenses-table" onclick="showTable('expenses')"
+                    class="py-3 px-6 text-lg font-medium border-b-2 border-transparent text-gray-600 hover:text-red-700 hover:border-red-600 focus:outline-none transition duration-300 ease-in-out">
+                Recent Expenses
+            </button>
+        </div>
 
-            if (type === 'expenses') {
-                expensesTable.classList.remove('hidden');
-                tabExpenses.classList.add('border-b-2', 'border-red-600', 'text-red-700');
-            } else {
-                incomesTable.classList.remove('hidden');
-                tabIncomes.classList.add('border-b-2', 'border-green-600', 'text-green-700');
-            }
-        }
-    </script>
-    @endsection
+        {{-- Recent Incomes Table --}}
+        <div id="incomes-table" class="overflow-x-auto">
+            <h3 class="text-xl font-semibold text-gray-700 mb-4">Last 5 Incomes</h3>
+            <table class="min-w-full bg-white border border-gray-200 rounded-lg">
+                <thead class="bg-gray-100 text-gray-700 uppercase text-sm leading-normal">
+                    <tr>
+                        <th class="py-3 px-6 text-left">Title</th>
+                        <th class="py-3 px-6 text-left">Amount</th>
+                        <th class="py-3 px-6 text-left">Source</th>
+                        <th class="py-3 px-6 text-left">Date</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-600 text-sm font-light">
+                    @forelse ($incomes as $income)
+                        <tr class="border-b border-gray-200 hover:bg-gray-50">
+                            <td class="py-3 px-6 text-left">{{ $income->title }}</td>
+                            <td class="py-3 px-6 text-left text-green-600">${{ number_format($income->amount, 2) }}</td>
+                            <td class="py-3 px-6 text-left">{{ $income->source }}</td> {{-- Assuming source is a string name --}}
+                            <td class="py-3 px-6 text-left">{{ \Carbon\Carbon::parse($income->date)->format('M d, Y') }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="py-4 px-6 text-center text-gray-500">No recent income records.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
 
-</x-app-layout>
+        {{-- Recent Expenses Table --}}
+        <div id="expenses-table" class="overflow-x-auto hidden">
+            <h3 class="text-xl font-semibold text-gray-700 mb-4">Last 5 Expenses</h3>
+            <table class="min-w-full bg-white border border-gray-200 rounded-lg">
+                <thead class="bg-gray-100 text-gray-700 uppercase text-sm leading-normal">
+                    <tr>
+                        <th class="py-3 px-6 text-left">Title</th>
+                        <th class="py-3 px-6 text-left">Amount</th>
+                        <th class="py-3 px-6 text-left">Category</th>
+                        <th class="py-3 px-6 text-left">Date</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-600 text-sm font-light">
+                    @forelse ($expenses as $expense)
+                        <tr class="border-b border-gray-200 hover:bg-gray-50">
+                            <td class="py-3 px-6 text-left">{{ $expense->title }}</td>
+                            <td class="py-3 px-6 text-left text-red-600">${{ number_format($expense->amount, 2) }}</td>
+                            <td class="py-3 px-6 text-left">{{ $expense->category }}</td> {{-- Assuming category is a string name --}}
+                            <td class="py-3 px-6 text-left">{{ \Carbon\Carbon::parse($expense->date)->format('M d, Y') }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="py-4 px-6 text-center text-gray-500">No recent expense records.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+@endsection
+
+@push('scripts')
+<script src="{{ asset('js/dashboard.js') }}"></script>
+<script>
+    // Ensure the correct table is shown on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        showTable('incomes'); // Default to showing incomes
+    });
+</script>
+@endpush
