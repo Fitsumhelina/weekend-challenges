@@ -41,23 +41,7 @@
                             <td class="px-6 py-4 text-right text-sm font-semibold text-{{ $color }}-600 dark:text-{{ $color }}-400">
                                 {{ $type === 'income' ? '+' : '-' }}${{ number_format($item->amount, 2) }}
                             </td>
-                            @can ('delete income')
-                                <td class="px-6 py-4 text-center">
-                                    <div class="flex justify-center space-x-2">
-                                        <a href="{{ route("$type.destroy", $item->id) }}" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <form action="{{ route("$type.delete", $item->id) }}" method="POST" class="inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" onclick="return confirm('Delete this {{ $type }}?')" 
-                                                    class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            @endcan
+
                         </tr>
                     @endforeach
                 @else
