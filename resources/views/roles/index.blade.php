@@ -39,11 +39,7 @@
                 <input type="text" name="search" id="role-search" placeholder="Search roles..."
                        value="{{ request('search') }}"
                        class="flex-grow w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 shadow-sm">
-                <select name="per_page" id="role-per_page" class="px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 shadow-sm">
-                    <option value="10" @if(request('per_page', 10) == 10) selected @endif>10 per page</option>
-                    <option value="25" @if(request('per_page') == 25) selected @endif>25 per page</option>
-                    <option value="50" @if(request('per_page') == 50) selected @endif>50 per page</option>
-                </select>
+                
                 <button type="submit" class="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out w-full sm:w-auto">
                     Search
                 </button>
