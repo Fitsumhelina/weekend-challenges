@@ -142,7 +142,8 @@
             // Clear form content on close for the combined modal
             if (modal.id === 'createRoleModal') {
                 // Reset form to its initial create state, passing allPermissions
-                roleModalContent.innerHTML = `@include('roles.partials.form', ['role' => null, 'allPermissions' => json_decode('${json_encode($allPermissions->toArray())}')])`;
+                // Render the create form HTML server-side and inject it here
+                roleModalContent.innerHTML = `{!! str_replace(["\r", "\n", "'"], ["", "", "\\'"], view('roles.partials.form', ['role' => null, 'allPermissions' => $allPermissions])->render()) !!}`;
             }
         }
 
@@ -169,7 +170,16 @@
             createRoleBtn.addEventListener('click', function () {
                 roleModalTitle.textContent = 'Create New Role';
                 // Ensure the form is reset to create state, passing allPermissions
-                roleModalContent.innerHTML = `@include('roles.partials.form', ['role' => null, 'allPermissions' => json_decode('${json_encode($allPermissions->toArray())}')])`;
+                // Fetch the create form HTML via AJAX and inject it
+                fetch('/roles/create')
+                    .then(response => response.text())
+                    .then(html => {
+                        roleModalContent.innerHTML = html;
+                    })
+                    .catch(error => {
+                        console.error('Error loading create form:', error);
+                        toastr.error('Failed to load create role form.');
+                    });
                 openModal(roleModal);
             });
         }
