@@ -8,11 +8,11 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('posts', function (Blueprint $table) {
+        Schema::create('kitat', function (Blueprint $table) {
             $table->id();
-            $table->string('title')->nullable();
             $table->text('description')->nullable();
-            $table->unsignedInteger('dept')->nullable();
+            $table->string('amount')->nullable();
+            $table->unsignedInteger('interest')->nullable();
             $table->timestamps();
             $table->softDeletes();
             $table->unsignedBigInteger('created_by')->nullable();

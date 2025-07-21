@@ -26,9 +26,9 @@ class User extends Authenticatable
     public function expenses(){
             return $this->hasMany(Expense::class);
     }
-    
+
     public function posts(){
-            return $this->hasMany(post::class);
+            return $this->hasMany(kitat::class);
     }
     
 
