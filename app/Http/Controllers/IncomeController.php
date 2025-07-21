@@ -41,9 +41,7 @@ class IncomeController extends Controller
                        ->appends(request()->query()); // Keep search/per_page in pagination links
 
     
-       if (request()->ajax()) {
-           return view('income.result', compact('incomes'));
-       }
+       
 
        // 1. Get the daily tax rate from `kitat`
         $taxRate = kitat::first()->amount ?? 0;
@@ -53,14 +51,20 @@ class IncomeController extends Controller
             return $income->status === 'pending';
         });
 
-        // 3. Calculate total debt for all pending incomes
-        $totalDebt = $pendingIncomes->sum(function ($income) use ($taxRate) {
-            $incomeDate = Carbon::parse($income->date);
-            $days = $incomeDate->diffInDays(now());
-            return $days * $taxRate;
-        });
+        foreach ($incomes as $income) {
+            if ($income->status === 'pending') {
+                $days = Carbon::parse($income->date)->diffInDays(now());
+                $income->debt = $taxRate * $days;
+            } else {
+                $income->debt = 0;
+          }
+         }
 
-       return view('income.index', compact('incomes', 'users','totalDebt'));
+         if (request()->ajax()) {
+           return view('income.result', compact('incomes'));
+        }
+
+       return view('income.index', compact('incomes', 'users'));
    }
 
 
