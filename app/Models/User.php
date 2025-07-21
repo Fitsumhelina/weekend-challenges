@@ -27,6 +27,10 @@ class User extends Authenticatable
             return $this->hasMany(Expense::class);
     }
     
+    public function posts(){
+            return $this->hasMany(post::class);
+    }
+    
 
     protected $hidden = [
         'password',
