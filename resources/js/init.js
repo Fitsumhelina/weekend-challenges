@@ -1,5 +1,6 @@
 // resources/js/init.js
 import { IncomeListHandler } from './income/income';
+import { ExpenseListHandler } from './expense/expense';
 
 const openModal = (modalElement) => {
     modalElement.classList.remove('hidden');
@@ -14,6 +15,13 @@ const closeModal = (modalElement) => {
 if (document.getElementById('income-list-container')) {
     new IncomeListHandler({
         indexRoute: AppData.IncomeIndexRoute,
+        csrfToken: AppData.csrfToken,
+    });
+}
+
+if (document.getElementById('expense-list-container')) {
+    new ExpenseListHandler({
+        indexRoute: AppData.ExpenseIndexRoute,
         csrfToken: AppData.csrfToken,
     });
 }

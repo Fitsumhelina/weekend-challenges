@@ -33,12 +33,21 @@
             </div>
         @endif
 
-        {{-- Search Form --}}
-        <form action="{{ route('expense.index') }}" method="GET" class="mb-6">
+     {{-- Search Form and Items per page --}}
+        <form action="{{ route('income.index') }}" method="GET" class="mb-6" id="income-search-form">
             <div class="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
-                <input type="text" name="search" placeholder="Search expenses..."
+                <input type="text" name="search" placeholder="Search incomes..."
                        value="{{ request('search') }}"
                        class="flex-grow w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 shadow-sm">
+
+                <select name="per_page" onchange="this.form.submit()"
+                        class="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 shadow-sm">
+                    <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10 per page</option>
+                    <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25 per page</option>
+                    <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50 per page</option>
+                    <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100 per page</option>
+                </select>
+
                 <button type="submit" class="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out w-full sm:w-auto">
                     Search
                 </button>
@@ -52,22 +61,21 @@
     </div>
 
     {{-- Create/Edit expense Modal --}}
-    <div id="expenseModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <div id="expenseFormModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
         <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-2/3 lg:w-1/2 shadow-lg rounded-md bg-white">
             <div class="flex justify-between items-center pb-3">
-                <h3 class="text-2xl leading-6 font-medium text-gray-900" id="modalTitle"></h3>
-                <button class="text-gray-400 hover:text-gray-600 close-modal">
+                <h3 class="text-2xl leading-6 font-medium text-gray-900" id="expenseFormModalTitle"></h3>
+                <button class="text-gray-400 hover:text-gray-600 close-modal" data-modal-id="expenseFormModal">
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
-            <div class="mt-2 px-7 py-3">
-                @include('expense.partials.form')
+            <div class="mt-2 px-7 py-3" id="expenseFormModalContent">
             </div>
         </div>
     </div>
 
     {{-- View expense Modal --}}
-    <div id="viewexpenseModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <div id="viewExpenseModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
         <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-2/3 lg:w-1/2 shadow-lg rounded-md bg-white">
             <div class="flex justify-between items-center pb-3">
                 <h3 class="text-2xl leading-6 font-medium text-gray-900">expense Details</h3>
@@ -75,18 +83,18 @@
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
-            <div class="mt-2 px-7 py-3" id="viewexpenseContent">
+            <div class="mt-2 px-7 py-3" id="viewExpenseContent">
                 {{-- Content will be loaded here via AJAX --}}
             </div>
         </div>
     </div>
 
     {{-- Delete Confirmation Modal --}}
-    <div id="deleteConfirmationModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <div class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full items-center justify-center z-50" id="deleteConfirmationModal">
         <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
             <div class="flex justify-between items-center pb-3">
                 <h3 class="text-xl leading-6 font-medium text-gray-900">Confirm Deletion</h3>
-                <button class="text-gray-400 hover:text-gray-600 close-modal">
+                <button class="text-gray-400 hover:text-gray-600 close-modal" data-modal-id="deleteConfirmationModal">
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
@@ -103,123 +111,46 @@
 </div>
 @endsection
 
+
+@section('scripts')
+    <script>
+        const AppData = {
+            ExpenseIndexRoute: "{{ route('expense.index') }}",
+            ExpenseCreateRoute: "{{ route('expense.create') }}",
+            csrfToken: "{{ csrf_token() }}"
+        };
+
+        // These functions are now global and can be called from imported modules
+        window.openModal = function(modalElement) {
+            if (modalElement) {
+                modalElement.classList.remove('hidden');
+                modalElement.classList.add('flex');
+            }
+        };
+
+        window.closeModal = function(modalElement) {
+            if (modalElement) {
+                modalElement.classList.add('hidden');
+                modalElement.classList.remove('flex');
+            }
+        };
+
+        // This function needs to be globally accessible for income.js
+        window.initSelect2ForSource = function(selectElement, placeholderText = "Select a source") {
+            if (typeof jQuery !== 'undefined' && $.fn.select2) {
+                if (!$(selectElement).data('select2')) {
+                    $(selectElement).select2({
+                        placeholder: placeholderText,
+                        allowClear: true,
+                        dropdownParent: $(selectElement).closest('.modal') // Important for z-index issues in modals
+                    });
+                }
+            } else {
+                console.warn("jQuery or Select2 not loaded. Cannot initialize Select2.");
+            }
+        };
+    </script>
+@endsection
+
 @push('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const expenseModal = document.getElementById('expenseModal');
-        const viewexpenseModal = document.getElementById('viewexpenseModal');
-        const deleteConfirmationModal = document.getElementById('deleteConfirmationModal');
-        const createexpenseBtn = document.getElementById('createexpenseBtn');
-        const modalTitle = document.getElementById('modalTitle');
-        const expenseForm = document.getElementById('expenseForm');
-        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-        const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
-        let deleteForm = null; // To store the form for deletion
-
-        // Function to open modal
-        function openModal(modal) {
-            modal.classList.remove('hidden');
-            modal.classList.add('flex', 'items-center', 'justify-center');
-        }
-
-        // Function to close modal
-        function closeModal(modal) {
-            modal.classList.add('hidden');
-            modal.classList.remove('flex', 'items-center', 'justify-center');
-        }
-
-        // Close modals when clicking outside or on close buttons
-        document.querySelectorAll('.close-modal').forEach(button => {
-            button.addEventListener('click', function() {
-                closeModal(expenseModal);
-                closeModal(viewexpenseModal);
-                closeModal(deleteConfirmationModal);
-            });
-        });
-
-        expenseModal.addEventListener('click', function(event) {
-            if (event.target === expenseModal) {
-                closeModal(expenseModal);
-            }
-        });
-
-        viewexpenseModal.addEventListener('click', function(event) {
-            if (event.target === viewexpenseModal) {
-                closeModal(viewexpenseModal);
-            }
-        });
-
-        deleteConfirmationModal.addEventListener('click', function(event) {
-            if (event.target === deleteConfirmationModal) {
-                closeModal(deleteConfirmationModal);
-            }
-        });
-
-        // Create expense Button
-        if (createexpenseBtn) {
-            createexpenseBtn.addEventListener('click', function () {
-                modalTitle.textContent = 'Create New expense';
-                expenseForm.action = "{{ route('expense.store') }}";
-                expenseForm.querySelector('input[name="_method"]').value = 'POST';
-                expenseForm.reset(); // Clear form fields
-                document.getElementById('expense_id').value = ''; // Clear ID for create
-                openModal(expenseModal);
-            });
-        }
-
-        // Edit expense Button (Delegated event listener)
-        document.getElementById('expense-list-container').addEventListener('click', function (event) {
-            if (event.target.classList.contains('edit-expense-btn')) {
-                const expenseId = event.target.dataset.id;
-                modalTitle.textContent = 'Edit expense';
-                expenseForm.action = `/expense/${expenseId}`; // Laravel route will handle PUT
-                expenseForm.querySelector('input[name="_method"]').value = 'PUT';
-
-                fetch(`/expense/${expenseId}/edit`)
-                    .then(response => response.json())
-                    .then(data => {
-                        document.getElementById('title').value = data.title;
-                        document.getElementById('amount').value = data.amount;
-                        document.getElementById('source').value = data.source;
-                        document.getElementById('description').value = data.description;
-                        document.getElementById('date').value = data.date;
-                        document.getElementById('expense_id').value = data.id; // Set ID for update
-                        openModal(expenseModal);
-                    })
-                    .catch(error => console.error('Error fetching expense for edit:', error));
-            }
-
-            // View expense Button (Delegated event listener)
-            if (event.target.classList.contains('view-expense-btn')) {
-                const expenseId = event.target.dataset.id;
-                fetch(`/expense/${expenseId}`)
-                    .then(response => response.text()) // Fetch HTML partial
-                    .then(html => {
-                        document.getElementById('viewexpenseContent').innerHTML = html;
-                        openModal(viewexpenseModal);
-                    })
-                    .catch(error => console.error('Error fetching expense for view:', error));
-            }
-
-            // Delete expense Button (Delegated event listener)
-            if (event.target.classList.contains('delete-expense-btn')) {
-                deleteForm = event.target.closest('form');
-                openModal(deleteConfirmationModal);
-            }
-        });
-
-        // Confirm Delete Action
-        confirmDeleteBtn.addEventListener('click', function () {
-            if (deleteForm) {
-                deleteForm.submit();
-            }
-            closeModal(deleteConfirmationModal);
-        });
-
-        // Cancel Delete Action
-        cancelDeleteBtn.addEventListener('click', function () {
-            closeModal(deleteConfirmationModal);
-        });
-    });
-</script>
 @endpush
