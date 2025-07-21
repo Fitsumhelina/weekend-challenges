@@ -1,7 +1,5 @@
-// resources/js/app.js
 import './bootstrap';
-// import './income/init'
-import './income/init'; // Ensure this import is correct based on your directory structure
+import './init';
 
 import 'toastr/build/toastr.min.css';
 import toastr from 'toastr';

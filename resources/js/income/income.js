@@ -6,9 +6,9 @@ export class IncomeListHandler extends ListHandler {
             ...options,
             entityName: 'income',
             routeName: 'income', 
-            modalAddFormId: 'incomeCreateModal', 
-            modalEditFormId: 'incomeEditModal', 
-            modalViewFormId: 'IncomeViewModal', 
+            modalAddFormId: 'incomeModal', 
+            modalEditFormId: 'incomeModal', 
+            modalViewFormId: 'viewIncomeModal', 
         });
     }
 
@@ -26,8 +26,5 @@ export class IncomeListHandler extends ListHandler {
         super.setupEventListeners();
         const namespace = `.${this.entityName}Handler`;
 
-        $(document).on('shown.bs.modal', `#${this.modalAddFormId}, #${this.modalEditFormId}`, () => {
-            this.initSourceSelect2();
-        });
     } 
 }

@@ -116,10 +116,37 @@
 
 @section('scripts')
     <script>
-        // AppData is essential for ListHandler to get routes and CSRF token
         const AppData = {
             IncomeIndexRoute: "{{ route('income.index') }}",
+            IncomeCreateRoute: "{{ route('income.create') }}",
             csrfToken: "{{ csrf_token() }}"
         };
+
+        function openModal(modalElement) {
+            modalElement.classList.remove('hidden');
+            modalElement.classList.add('flex');
+        }
+
+        function closeModal(modalElement) {
+            modalElement.classList.add('hidden');
+            modalElement.classList.remove('flex');
+        }
+
+        function initSelect2ForSource(selectElement, placeholderText = "Select a source") {
+            if (typeof jQuery !== 'undefined' && $.fn.select2) {
+                if (!$(selectElement).data('select2')) { 
+                    $(selectElement).select2({
+                        placeholder: placeholderText,
+                        allowClear: true,
+                        dropdownParent: $(selectElement).closest('.modal') // Important for z-index issues in modals
+                    });
+                }
+            } else {
+                console.warn("jQuery or Select2 not loaded. Cannot initialize Select2.");
+            }
+        }
     </script>
 @endsection
+
+@push('scripts')
+@endpush
