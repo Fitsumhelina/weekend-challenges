@@ -88,8 +88,8 @@ class IncomeController extends Controller
             'description' => 'nullable|string|max:255',
         ]);
 
-        $data['created_By'] = Auth::id(); // Automatically set created_By
-        $data['updated_By'] = Auth::id(); // Set updated_By on creation too
+        $data['created_by'] = Auth::id(); // Automatically set created_By
+        $data['updated_by'] = Auth::id(); // Set updated_By on creation too
 
         Income::create($data);
         return Redirect::route('income.index')->with('success', 'Income added successfully.');
@@ -132,8 +132,8 @@ class IncomeController extends Controller
             'description' => 'nullable|string|max:255',
         ]);
 
-        // Automatically set updated_By to the current authenticated user's ID
-        $data['updated_By'] = Auth::id();
+        // Automatically set updated_by to the current authenticated user's ID
+        $data['updated_by'] = Auth::id();
 
         $income->update($data);
         return Redirect::route('income.index')->with('success', 'Income updated successfully.');

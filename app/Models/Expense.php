@@ -14,19 +14,19 @@ class Expense extends Model
         'category',
         'description',
         'amount',
-        'created_By',
-        'updated_By'
-        
+        'date',
+        'created_by',
+        'updated_by'
     ];
 
     public function createdByUser()
     {
-        return $this->belongsTo('App\Models\User', 'created_By');
+        return $this->belongsTo('App\Models\User', 'created_by');
     }
 
     public function updatedByUser()
     {
-        return $this->belongsTo('App\Models\User', 'updated_By');
+        return $this->belongsTo('App\Models\User', 'updated_by');
     }
 
 }
