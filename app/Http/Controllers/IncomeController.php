@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Income;
+use App\Models\kitat;
 use App\Models\User; // Import the User model if you need to pass users to the form
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -10,8 +11,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Auth;
 use App\Policies\GenericPolicy;
-// use Illuminate\Http\JsonResponse; // No longer needed for edit/show if returning HTML partials
-
+use Carbon\Carbon;
 class IncomeController extends Controller
 {
    use \Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -40,13 +40,27 @@ class IncomeController extends Controller
                        ->paginate($perPage)
                        ->appends(request()->query()); // Keep search/per_page in pagination links
 
-       $users = User::all();
-       // For AJAX pagination/search, we'll return a partial if it's an AJAX request
+    
        if (request()->ajax()) {
            return view('income.result', compact('incomes'));
        }
 
-       return view('income.index', compact('incomes', 'users'));
+       // 1. Get the daily tax rate from `kitat`
+        $taxRate = kitat::first()->amount ?? 0;
+
+        // 2. Filter incomes with status = pending
+        $pendingIncomes = $incomes->filter(function ($income) {
+            return $income->status === 'pending';
+        });
+
+        // 3. Calculate total debt for all pending incomes
+        $totalDebt = $pendingIncomes->sum(function ($income) use ($taxRate) {
+            $incomeDate = Carbon::parse($income->date);
+            $days = $incomeDate->diffInDays(now());
+            return $days * $taxRate;
+        });
+
+       return view('income.index', compact('incomes', 'users','totalDebt'));
    }
 
 
