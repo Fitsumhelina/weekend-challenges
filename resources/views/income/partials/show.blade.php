@@ -35,6 +35,16 @@
         <p class="text-gray-900 text-lg">{{ $income->created_at->format('M d, Y H:i:s') }}</p>
     </div>
     <div class="mb-4">
+        <p class="text-gray-700 text-sm font-bold">Status:</p>
+        <p class="text-green-900 text-lg">{{ $income->status }}</p>
+    </div>
+    @if ($income->status === 'pending')
+        <div class="mb-4">
+            <p class="text-green-700 text-sm font-bold">Dept:</p>
+            <p class="text-gray-900 text-lg">{{ number_format($income->debt, 2) }}</p>
+        </div>
+    @endif
+    <div class="mb-4">
         <p class="text-gray-700 text-sm font-bold">Last Updated At:</p>
         <p class="text-gray-900 text-lg">{{ $income->updated_at->format('M d, Y H:i:s') }}</p>
     </div>

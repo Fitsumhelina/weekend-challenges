@@ -1,7 +1,3 @@
-{{-- resources/views/income/partials/form.blade.php --}}
-{{-- The modal header and form tag are now handled by the parent index.blade.php and ListHandler --}}
-{{-- This partial only provides the body of the form --}}
-
 <form id="incomeForm" method="POST" action="{{ isset($income) ? route('income.update', $income->id) : route('income.store') }}">
     @csrf
     @if(isset($income))
