@@ -1,10 +1,7 @@
-{{-- resources/views/income/form.blade.php --}}
-<div class="modal-header">
-    <h5 class="modal-title" id="{{ isset($income) ? 'incomeEditModalLabel' : 'incomeCreateModalLabel' }}">
-        {{ isset($income) ? 'Edit Income' : 'Create New Income' }}
-    </h5>
-    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-</div>
+{{-- resources/views/income/partials/form.blade.php --}}
+{{-- The modal header and form tag are now handled by the parent index.blade.php and ListHandler --}}
+{{-- This partial only provides the body of the form --}}
+
 <form id="incomeForm" method="POST" action="{{ isset($income) ? route('income.update', $income->id) : route('income.store') }}">
     @csrf
     @if(isset($income))
@@ -31,7 +28,8 @@
 
         <div class="mb-4">
             <label for="source" class="block text-gray-700 text-sm font-bold mb-2">Source:</label>
-            <select name="source" id="source" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+            {{-- Add select2-ajax class for Select2 initialization --}}
+            <select name="source" id="source" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline select2-ajax" required>
                 <option value="">Select a source</option>
                 @foreach($users as $user)
                     <option value="{{ $user->id }}" {{ (isset($income) && $income->source == $user->id) ? 'selected' : '' }}>{{ $user->name }}</option>
@@ -52,9 +50,9 @@
             <span class="text-red-500 text-xs italic" id="date-error"></span>
         </div>
     </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary">
+    <div class="modal-footer flex justify-end space-x-2 p-4 border-t border-gray-200">
+        <button type="button" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 transition duration-300 close-modal" data-modal-id="incomeFormModal">Close</button>
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out">
             {{ isset($income) ? 'Update Income' : 'Add Income' }}
         </button>
     </div>

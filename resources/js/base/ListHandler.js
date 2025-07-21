@@ -5,36 +5,25 @@ export default class ListHandler {
         this.csrfToken = options.csrfToken;
         this.entityName = options.entityName;
         this.routeName = options.routeName;
-        this.modalAddFormId = options.modalAddFormId;
-        this.modalEditFormId = options.modalEditFormId;
-        this.modalViewFormId = options.modalViewFormId;
+        this.modalAddFormId = options.modalAddFormId; // e.g., 'incomeFormModal'
+        this.modalEditFormId = options.modalEditFormId; // e.g., 'incomeFormModal'
+        this.modalViewFormId = options.modalViewFormId; // e.g., 'viewIncomeModal'
+        this.modalFormContentId = options.modalFormContentId; // New: ID of the div inside the form modal where content is injected
+        this.modalFormTitleId = options.modalFormTitleId; // New: ID of the title element inside the form modal
         this.initialized = false;
+        this.currentDeleteForm = null; // To store the form reference for delete confirmation
+
+        // Bind custom modal functions - ensure these are available globally or passed correctly
+        this.openModal = options.openModal || window.openModal; // Fallback to global if not provided
+        this.closeModal = options.closeModal || window.closeModal; // Fallback to global if not provided
+
         this.initialize();
-
-        // Bind custom modal functions
-        this.openModal = options.openModal || this._defaultOpenModal;
-        this.closeModal = options.closeModal || this._defaultCloseModal;
-    }
-
-    // Default modal open/close using Tailwind CSS classes
-    _defaultOpenModal(modalElement) {
-        if (modalElement) {
-            modalElement.classList.remove('hidden');
-            modalElement.classList.add('flex'); // Assuming 'flex' makes it visible
-        }
-    }
-
-    _defaultCloseModal(modalElement) {
-        if (modalElement) {
-            modalElement.classList.add('hidden');
-            modalElement.classList.remove('flex');
-        }
     }
 
     get loadingOverlay() {
         return `
-            <div class="position-absolute w-100 h-100 d-flex align-items-center justify-content-center" style="top: 0; left: 0; background: rgba(255,255,255,0.7); z-index: 1000;">
-                <div class="spinner-border text-primary" role="status">
+            <div class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-70 z-10">
+                <div class="spinner-border text-blue-500" role="status">
                     <span class="visually-hidden">Loading...</span>
                 </div>
             </div>
@@ -44,40 +33,37 @@ export default class ListHandler {
     initialize() {
         if (this.initialized) return;
         this.setupEventListeners();
-        this.initialized = true; // Set initialized to true
+        this.initialized = true;
     }
 
     setupEventListeners() {
+        // Listener for the "Add New" button
         const createButton = document.getElementById(`create${this.entityName.charAt(0).toUpperCase() + this.entityName.slice(1)}Btn`);
         if (createButton) {
             createButton.addEventListener('click', this.handleCreate.bind(this));
         }
 
+        // Event delegation for edit, view, delete buttons within the list container
         const listContainer = document.getElementById(`${this.entityName}-list-container`);
         if (listContainer) {
             listContainer.addEventListener('click', (event) => {
-                // Edit Button
-                if (event.target.closest('.edit-income-btn')) {
-                    const button = event.target.closest('.edit-income-btn');
-                    const id = button.dataset.id;
-                    this.loadEditForm(id);
-                }
+                const target = event.target.closest('button'); // Get the closest button
+                if (!target) return;
 
-                // View Button
-                if (event.target.closest('.view-income-btn')) {
-                    const button = event.target.closest('.view-income-btn');
-                    const id = button.dataset.id;
-                    this.loadViewForm(id);
-                }
+                const id = target.dataset.id;
 
-                // Delete Button
-                if (event.target.closest('.delete-income-btn')) {
-                    const form = event.target.closest('form');
+                if (target.classList.contains('edit-income-btn')) {
+                    this.loadForm(this.modalEditFormId, `/${this.routeName}/${id}/edit`, 'edit');
+                } else if (target.classList.contains('view-income-btn')) {
+                    this.loadForm(this.modalViewFormId, `/${this.routeName}/${id}`, 'view');
+                } else if (target.classList.contains('delete-income-btn')) {
+                    const form = target.closest('form');
                     this.handleDelete(form);
                 }
             });
         }
 
+        // Search form and per_page select
         const searchForm = document.getElementById(`${this.entityName}-search-form`);
         if (searchForm) {
             searchForm.addEventListener('submit', this.handleSearch.bind(this));
@@ -87,25 +73,33 @@ export default class ListHandler {
             }
         }
 
-        // Handle form submission inside the modal
-        const modalFormContent = document.getElementById(`${this.entityName}FormContent`);
-        if (modalFormContent) {
-            modalFormContent.addEventListener('submit', (event) => {
+        // Event delegation for form submission within the form modal
+        // We listen on the content container, not the modal itself, for dynamic forms
+        const formModalContentDiv = document.getElementById(this.modalFormContentId);
+        if (formModalContentDiv) {
+            formModalContentDiv.addEventListener('submit', (event) => {
                 const form = event.target.closest('form');
-                if (form && (form.id === 'incomeForm' || form.id === 'editForm' || form.id === 'createForm')) {
-                    event.preventDefault();
+                // Ensure it's the form we want to handle (e.g., check its ID if needed)
+                if (form) {
+                    event.preventDefault(); // Prevent default form submission
                     this.handleFormSubmission(form);
                 }
             });
         }
 
-        // Modal close buttons
-        const modalElements = document.querySelectorAll(`#${this.modalAddFormId}, #${this.modalViewFormId}, #deleteConfirmationModal`);
-        modalElements.forEach(modal => {
-            const closeButtons = modal.querySelectorAll('.close-modal');
-            closeButtons.forEach(button => {
-                button.addEventListener('click', () => this.closeModal(modal));
-            });
+        // Modal close buttons (using event delegation for dynamically loaded content)
+        // Listen on the document for clicks on any element with 'close-modal' class
+        document.addEventListener('click', (event) => {
+            const closeButton = event.target.closest('.close-modal');
+            if (closeButton) {
+                const modalIdToClose = closeButton.dataset.modalId || closeButton.closest('.fixed.inset-0')?.id;
+                if (modalIdToClose) {
+                    const modalElement = document.getElementById(modalIdToClose);
+                    if (modalElement) {
+                        this.closeModal(modalElement);
+                    }
+                }
+            }
         });
 
         // Delete confirmation buttons
@@ -126,89 +120,84 @@ export default class ListHandler {
         }
     }
 
+    // New method to handle loading form content into a modal
+    loadForm(modalId, url, type) { // type can be 'create', 'edit', 'view'
+        const modalElement = document.getElementById(modalId);
+        const modalContentDiv = document.getElementById(this.modalFormContentId); // For create/edit
+        const modalViewContentDiv = document.getElementById('viewIncomeContent'); // For view modal
+
+        if (!modalElement) {
+            console.error(`Modal element with ID '${modalId}' not found.`);
+            window.toastr.error('Modal container not found.');
+            return;
+        }
+
+        // Determine where to inject content and set title
+        let targetContentDiv;
+        let modalTitleElement;
+
+        if (type === 'create' || type === 'edit') {
+            targetContentDiv = modalContentDiv;
+            modalTitleElement = document.getElementById(this.modalFormTitleId);
+            if (modalTitleElement) {
+                modalTitleElement.textContent = type === 'create' ? `Add New ${this.entityName.charAt(0).toUpperCase() + this.entityName.slice(1)}` : `Edit ${this.entityName.charAt(0).toUpperCase() + this.entityName.slice(1)}`;
+            }
+        } else if (type === 'view') {
+            targetContentDiv = modalViewContentDiv;
+            // View modal has its own static title, or title set by partial
+        }
+
+        if (!targetContentDiv) {
+            console.error(`Target content div not found for modal type '${type}'.`);
+            window.toastr.error('Modal content area not found.');
+            return;
+        }
+
+        // Show loading overlay
+        targetContentDiv.innerHTML = this.loadingOverlay;
+        this.openModal(modalElement); // Open the modal container
+
+        fetch(url, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest' // Important for Laravel to detect AJAX request
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                // If the response is not OK, try to parse JSON for errors, otherwise throw generic error
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.indexOf("application/json") !== -1) {
+                    return response.json().then(errorData => {
+                        throw new Error(errorData.message || 'Server error occurred.');
+                    });
+                } else {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+            }
+            return response.text();
+        })
+        .then(html => {
+            targetContentDiv.innerHTML = html; // Inject the fetched HTML
+            // Call postFormRender if it's a create/edit form, allowing child classes to init components
+            if ((type === 'create' || type === 'edit') && typeof this.postFormRender === 'function') {
+                this.postFormRender();
+            }
+        })
+        .catch(error => {
+            console.error(`Error fetching ${type} form:`, error);
+            window.toastr.error(`Failed to load ${type} form: ${error.message || 'An unknown error occurred.'}`);
+            this.closeModal(modalElement); // Close modal on error
+        });
+    }
+
     handleCreate() {
-        const modalElement = document.getElementById(this.modalAddFormId);
-        const formContentDiv = document.getElementById(`${this.entityName}FormContent`);
-        const modalTitle = document.getElementById('modalTitle');
-
-        if (modalTitle) modalTitle.textContent = `Add New ${this.entityName.charAt(0).toUpperCase() + this.entityName.slice(1)}`;
-
-        // Clear previous form errors
-        this.clearFormErrors(formContentDiv ? formContentDiv.querySelector('form') : null);
-
-        // Fetch the fresh form content via AJAX
-        fetch(`/${this.routeName}/create`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.text();
-            })
-            .then(html => {
-                if (formContentDiv) {
-                    formContentDiv.innerHTML = html;
-                    this.openModal(modalElement);
-                    this.postFormRender(); // Call hook after content is rendered
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching create form:', error);
-                window.toastr.error('Failed to load create form.');
-            });
+        // Call the generic loadForm method for create
+        this.loadForm(this.modalAddFormId, `/${this.routeName}/create`, 'create');
     }
 
-    loadEditForm(id) {
-        const modalElement = document.getElementById(this.modalEditFormId);
-        const formContentDiv = document.getElementById(`${this.entityName}FormContent`);
-        const modalTitle = document.getElementById('modalTitle');
-
-        if (modalTitle) modalTitle.textContent = `Edit ${this.entityName.charAt(0).toUpperCase() + this.entityName.slice(1)}`;
-
-        // Clear previous form errors
-        this.clearFormErrors(formContentDiv ? formContentDiv.querySelector('form') : null);
-
-        fetch(`/${this.routeName}/${id}/edit`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.text();
-            })
-            .then(html => {
-                if (formContentDiv) {
-                    formContentDiv.innerHTML = html;
-                    this.openModal(modalElement);
-                    this.postFormRender(); // Call hook after content is rendered
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching edit form:', error);
-                window.toastr.error('Failed to load edit form.');
-            });
-    }
-
-    loadViewForm(id) {
-        const modalElement = document.getElementById(this.modalViewFormId);
-        const viewContentDiv = document.getElementById('viewIncomeContent'); // Specific ID for view content
-
-        fetch(`/${this.routeName}/${id}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.text();
-            })
-            .then(html => {
-                if (viewContentDiv) {
-                    viewContentDiv.innerHTML = html;
-                    this.openModal(modalElement);
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching view form:', error);
-                window.toastr.error('Failed to load details.');
-            });
-    }
+    // loadEditForm and loadViewForm are now handled by the generic loadForm
+    // but the event listeners in setupEventListeners will call loadForm directly.
+    // So these specific methods are not strictly needed anymore if setupEventListeners is updated.
 
     handleDelete(form) {
         this.currentDeleteForm = form;
@@ -221,59 +210,50 @@ export default class ListHandler {
         const method = form.querySelector('input[name="_method"]')?.value || form.method;
         const url = form.action;
 
-        // Clear previous errors before new submission
-        this.clearFormErrors(form);
+        this.clearFormErrors(form); // Clear previous errors
 
         fetch(url, {
             method: 'POST', // Always POST for _method spoofing
             headers: {
                 'X-CSRF-TOKEN': this.csrfToken,
-                // 'Content-Type': 'application/json', // Only if sending JSON
                 'X-Requested-With': 'XMLHttpRequest' // Important for Laravel AJAX detection
             },
             body: formData
         })
         .then(response => {
-            // Check if it's a JSON response (for validation errors) or a redirect
             const contentType = response.headers.get("content-type");
             if (contentType && contentType.indexOf("application/json") !== -1) {
                 return response.json().then(data => {
                     if (!response.ok) {
-                        this.handleFormErrors(form, data); // Pass the errors to a dedicated handler
+                        this.handleFormErrors(form, data);
                         throw new Error(data.message || 'Form submission failed.');
                     }
                     return data;
                 });
             } else {
-                // Assume it's a redirect or success HTML response
                 if (!response.ok) {
-                    // Handle non-JSON error responses (e.g., 403, 500 HTML pages)
                     window.toastr.error('An unexpected error occurred. Please try again.');
                     throw new Error('Non-JSON error response');
                 }
-                return response.text(); // Return text to allow refresh or partial update
+                return response.text();
             }
         })
         .then(data => {
-            if (typeof data === 'string' && data.includes('income-list-container')) {
-                // If the response is the updated list HTML, update the list
-                document.getElementById('income-list-container').innerHTML = data;
-            } else if (data && data.message) {
-                // If data is JSON with a message (e.g., success message from store/update)
-                window.toastr.success(data.message);
-                this.refreshList(); // Refresh list after success
-            } else {
-                // Fallback for success without explicit message or list update
+            // Check if the response is an HTML partial (e.g., updated list)
+            if (typeof data === 'string' && data.includes(`${this.entityName}-list-container`)) {
+                document.getElementById(`${this.entityName}-list-container`).innerHTML = data;
                 window.toastr.success(`${this.entityName.charAt(0).toUpperCase() + this.entityName.slice(1)} saved successfully!`);
-                this.refreshList();
+            } else if (data && data.message) {
+                window.toastr.success(data.message);
+            } else {
+                window.toastr.success(`${this.entityName.charAt(0).toUpperCase() + this.entityName.slice(1)} saved successfully!`);
             }
-            this.closeModal(document.getElementById(this.modalAddFormId)); // Close modal on success
+            this.refreshList(); // Ensure list is refreshed
+            this.closeModal(document.getElementById(this.modalAddFormId)); // Close the unified form modal
         })
         .catch(error => {
             console.error('Form Submission Error:', error);
-            // Error handling is done in handleFormErrors, so no need for general toastr here
-            // unless it's a network error not caught by handleFormErrors
-            if (!error.responseJSON && !error.message) { // Generic network error not handled by validation
+            if (!error.responseJSON && !error.message) {
                  window.toastr.error('Network error or server unreachable.');
             }
         });
@@ -285,7 +265,6 @@ export default class ListHandler {
         const formData = new FormData(form);
         const params = new URLSearchParams(formData);
 
-        // Update the URL in the browser's address bar
         window.history.pushState({}, '', `${this.indexRoute}?${params.toString()}`);
 
         fetch(`${this.indexRoute}?${params.toString()}`, {
@@ -305,8 +284,8 @@ export default class ListHandler {
 
     refreshList() {
         const currentUrl = new URL(window.location.href);
-        currentUrl.searchParams.set('per_page', currentUrl.searchParams.get('per_page') || '10'); // Maintain current per_page or default
-        currentUrl.searchParams.set('search', currentUrl.searchParams.get('search') || ''); // Maintain search term
+        currentUrl.searchParams.set('per_page', currentUrl.searchParams.get('per_page') || '10');
+        currentUrl.searchParams.set('search', currentUrl.searchParams.get('search') || '');
 
         fetch(currentUrl.toString(), {
             headers: {
@@ -323,7 +302,6 @@ export default class ListHandler {
         });
     }
 
-    // New method to clear previous error messages from the form
     clearFormErrors(form) {
         if (!form) return;
         form.querySelectorAll('.text-red-500.text-xs.italic').forEach(span => {
@@ -331,24 +309,21 @@ export default class ListHandler {
         });
     }
 
-    // Renamed handleFormError to handleFormErrors for clarity and consistency
-    handleFormErrors(form, errors) { // Changed parameter from 'error' to 'errors' for clarity
+    handleFormErrors(form, errors) {
         console.error('Form Errors:', errors);
-        // Clear all previous error messages
         this.clearFormErrors(form);
 
         if (errors && errors.errors) {
             let hasFieldErrors = false;
             for (const field in errors.errors) {
                 const errorMessages = errors.errors[field];
-                const errorElement = form.querySelector(`#${field}-error`); // Use querySelector for specific IDs
+                const errorElement = form.querySelector(`#${field}-error`);
                 if (errorElement) {
-                    errorElement.textContent = errorMessages[0]; // Use textContent for setting text
+                    errorElement.textContent = errorMessages[0];
                     hasFieldErrors = true;
                 }
             }
 
-            // Show general error message if there are no specific field errors or if a general message is present
             if (!hasFieldErrors && errors.message) {
                 window.toastr.error(errors.message);
             }

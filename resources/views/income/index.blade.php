@@ -6,6 +6,7 @@
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-3xl font-bold text-gray-800">Income Dashboard</h1>
             @can('create income')
+                {{-- Add a specific ID for the create button that ListHandler can target --}}
                 <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out" id="createIncomeBtn">
                     Add New Income
                 </button>
@@ -60,29 +61,29 @@
         </div>
     </div>
 
-    {{-- Create/Edit Income Modal --}}
-    <div id="incomeModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    {{-- Create/Edit Income Modal Container --}}
+    {{-- This modal will dynamically load content for both create and edit forms --}}
+    <div id="incomeFormModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50 items-center justify-center">
         <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-2/3 lg:w-1/2 shadow-lg rounded-md bg-white">
             <div class="flex justify-between items-center pb-3">
-                <h3 class="text-2xl leading-6 font-medium text-gray-900" id="modalTitle"></h3>
-                <button class="text-gray-400 hover:text-gray-600 close-modal">
+                <h3 class="text-2xl leading-6 font-medium text-gray-900" id="incomeFormModalTitle"></h3>
+                <button class="text-gray-400 hover:text-gray-600 close-modal" data-modal-id="incomeFormModal">
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
-            {{-- Content will be loaded here via AJAX (form.blade.php) --}}
-            <div class="mt-2 px-7 py-3" id="incomeFormContent">
-                {{-- Form will be injected here by ListHandler --}}
-                @include('income.partials.form', ['income' => null, 'users' => $users])
+            {{-- This div will be populated with the form.blade.php content via AJAX --}}
+            <div class="mt-2 px-7 py-3" id="incomeFormModalContent">
+                {{-- Initial content can be empty or a loading spinner --}}
             </div>
         </div>
     </div>
 
     {{-- View Income Modal --}}
-    <div id="viewIncomeModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <div id="viewIncomeModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50 items-center justify-center">
         <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-2/3 lg:w-1/2 shadow-lg rounded-md bg-white">
             <div class="flex justify-between items-center pb-3">
                 <h3 class="text-2xl leading-6 font-medium text-gray-900">Income Details</h3>
-                <button class="text-gray-400 hover:text-gray-600 close-modal">
+                <button class="text-gray-400 hover:text-gray-600 close-modal" data-modal-id="viewIncomeModal">
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
@@ -93,11 +94,11 @@
     </div>
 
     {{-- Delete Confirmation Modal --}}
-    <div id="deleteConfirmationModal" class="fixed inset-0 bg-gray-600 bg-opacity-50  h-full w-full hidden z-50">
-        <div class="relative top-10 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+    <div class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full items-center justify-center z-50" id="deleteConfirmationModal">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
             <div class="flex justify-between items-center pb-3">
                 <h3 class="text-xl leading-6 font-medium text-gray-900">Confirm Deletion</h3>
-                <button class="text-gray-400 hover:text-gray-600 close-modal">
+                <button class="text-gray-400 hover:text-gray-600 close-modal" data-modal-id="deleteConfirmationModal">
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
@@ -122,19 +123,25 @@
             csrfToken: "{{ csrf_token() }}"
         };
 
-        function openModal(modalElement) {
-            modalElement.classList.remove('hidden');
-            modalElement.classList.add('flex');
-        }
+        // These functions are now global and can be called from imported modules
+        window.openModal = function(modalElement) {
+            if (modalElement) {
+                modalElement.classList.remove('hidden');
+                modalElement.classList.add('flex');
+            }
+        };
 
-        function closeModal(modalElement) {
-            modalElement.classList.add('hidden');
-            modalElement.classList.remove('flex');
-        }
+        window.closeModal = function(modalElement) {
+            if (modalElement) {
+                modalElement.classList.add('hidden');
+                modalElement.classList.remove('flex');
+            }
+        };
 
-        function initSelect2ForSource(selectElement, placeholderText = "Select a source") {
+        // This function needs to be globally accessible for income.js
+        window.initSelect2ForSource = function(selectElement, placeholderText = "Select a source") {
             if (typeof jQuery !== 'undefined' && $.fn.select2) {
-                if (!$(selectElement).data('select2')) { 
+                if (!$(selectElement).data('select2')) {
                     $(selectElement).select2({
                         placeholder: placeholderText,
                         allowClear: true,
@@ -144,7 +151,7 @@
             } else {
                 console.warn("jQuery or Select2 not loaded. Cannot initialize Select2.");
             }
-        }
+        };
     </script>
 @endsection
 

@@ -1,30 +1,39 @@
-import ListHandler from "../base/ListHandler"; 
+import ListHandler from "../base/ListHandler";
+import $ from 'jquery'; // Ensure jQuery is imported if you're using it directly here
 
 export class IncomeListHandler extends ListHandler {
     constructor(options) {
         super({
             ...options,
             entityName: 'income',
-            routeName: 'income', 
-            modalAddFormId: 'incomeCreateModal', 
-            modalEditFormId: 'incomeEditModal', 
-            modalViewFormId: 'viewIncomeModal', 
+            routeName: 'income',
+            // Use the unified modal ID for both create and edit forms
+            modalAddFormId: 'incomeFormModal',
+            modalEditFormId: 'incomeFormModal',
+            modalViewFormId: 'viewIncomeModal', // This remains separate for viewing
+            // Specify the content container for the form modal
+            modalFormContentId: 'incomeFormModalContent',
+            // Specify the title element for the form modal
+            modalFormTitleId: 'incomeFormModalTitle',
         });
     }
 
-     initSourceSelect2() {
-        // Use the generic function for this modal
-        const $select = $('.select2-ajax[name="user_id"]');
-        initSourceSelect2($select);
-    }
-
+    // This method will be called by ListHandler after the form HTML is injected
     postFormRender() {
-        this.initSourceSelect2(); 
+        // Initialize Select2 for the 'source' dropdown within the *currently loaded* form
+        // Ensure the select element has the ID 'source' and the class 'select2-ajax'
+        const $select = $('#source.select2-ajax');
+        if ($select.length) {
+            // Call the globally defined initSelect2ForSource function
+            window.initSelect2ForSource($select, "Select a source user");
+        } else {
+            console.warn("Select2 element with ID 'source' and class 'select2-ajax' not found for initialization.");
+        }
     }
 
     setupEventListeners() {
         super.setupEventListeners();
-        const namespace = `.${this.entityName}Handler`;
-
-    } 
+        // No need for specific 'shown.bs.modal' listeners here anymore,
+        // as postFormRender handles Select2 initialization after AJAX content load.
+    }
 }
