@@ -36,7 +36,7 @@
 
                     <td class="py-3 px-6 text-left">{{ $income->createdByUser->name ?? 'Unknown' }}</td>
                     <td class="py-3 px-6 text-center">
-                        <div class="flex item-center justify-center space-x-2">    
+                        <div class="flex items-center justify-center space-x-2">
                             @can('update income')
                                 @if($income->status === 'pending')
                                     <form action="{{ route('income.approve', $income->id) }}" method="POST" class="inline-block">
@@ -54,7 +54,7 @@
                                     </form>
                                 @endif
                             @endcan
-                            
+
                             @can('view income')
                                 <button type="button"
                                         class="view-income-btn w-8 h-8 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 flex items-center justify-center transition duration-300"
@@ -70,7 +70,7 @@
                                 </button>
                             @endcan
 
-                                @can('delete income')
+                            @can('delete income')
                                 <form action="{{ route('income.destroy', $income->id) }}" method="POST" class="inline-block">
                                     @csrf
                                     @method('DELETE')
@@ -81,13 +81,12 @@
                                     </button>
                                 </form>
                             @endcan
-
                         </div>
                     </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="6" class="text-center text-gray-500 py-4">No income records found.</td>
+                    <td colspan="8" class="text-center text-gray-500 py-4">No income records found.</td>
                 </tr>
             @endforelse
         </tbody>
@@ -95,5 +94,5 @@
 </div>
 
 <div class="mt-4">
-    {{ $incomes->links() }} {{-- Use the default Tailwind CSS pagination if configured, or your custom one --}}
+    {{ $incomes->links() }}
 </div>
