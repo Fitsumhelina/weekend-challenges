@@ -3,14 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Income;
-use App\Models\User; // Import the User model
+use App\Models\User; // Import the User model if you need to pass users to the form
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Auth;
 use App\Policies\GenericPolicy;
-use Illuminate\Http\JsonResponse;
+// use Illuminate\Http\JsonResponse; // No longer needed for edit/show if returning HTML partials
 
 class IncomeController extends Controller
 {
@@ -29,64 +29,79 @@ class IncomeController extends Controller
            abort(403, 'Unauthorized action.');
        }
 
-       // Eager load all necessary relationships: sourceUser, createdByUser, updatedByUser
-       $incomes = Income::with(['sourceUser', 'createdByUser', 'updatedByUser'])->paginate(10);
+       $search = request('search');
+       $perPage = request('per_page', 10); // Default to 10 if not specified
+
+       $incomes = Income::with(['sourceUser', 'createdByUser', 'updatedByUser'])
+                       ->when($search, function ($query, $search) {
+                           $query->where('title', 'like', '%' . $search . '%')
+                                 ->orWhere('description', 'like', '%' . $search . '%');
+                       })
+                       ->paginate($perPage)
+                       ->appends(request()->query()); // Keep search/per_page in pagination links
+
+
+       // For AJAX pagination/search, we'll return a partial if it's an AJAX request
+       if (request()->ajax()) {
+           return view('income.result', compact('incomes'));
+       }
+
        return view('income.index', compact('incomes'));
    }
 
 
+    // This method will now return only the form partial for creation
     public function create(): View
-    {   
-        if (!$this->genericPolicy->view(Auth::user(), new Income())) {
+    {
+        if (!$this->genericPolicy->create(Auth::user(), new Income())) { // Should be 'create' for form display
            abort(403, 'Unauthorized action.');
         }
 
-       // If you want to populate a dropdown for 'source' with user names,
-       // you would pass the users here:
-       // $users = User::all();
-       // return view('income.create', compact('users'));
-       return view('income.create');
+       // If you need users for a dropdown in your form, fetch them here
+       $users = User::all(); // Assuming 'source' is a user ID dropdown
+       return view('income.form', compact('users')); // Return the form partial
     }
 
     public function store(Request $request): RedirectResponse
     {
         if (!$this->genericPolicy->create(Auth::user(), new Income())) {
            abort(403, 'Unauthorized action.');
-       }
+        }
+
         $data = $request->validate([
             'title' => 'required|string|max:255',
-            'source' => 'required|exists:users,id', // Validate that source is a valid user ID
-            'description' => 'nullable|string|max:255',
             'amount' => 'required|numeric',
+            'source' => 'required|exists:users,id',
             'date' => 'required|date',
+            'description' => 'nullable|string|max:255',
         ]);
 
-        // Automatically set created_By to the current authenticated user's ID
-        $data['created_By'] = Auth::id();
+        $data['created_By'] = Auth::id(); // Automatically set created_By
+        $data['updated_By'] = Auth::id(); // Set updated_By on creation too
 
         Income::create($data);
-        return Redirect::route('income.index')->with('success', 'Income created successfully.');
+        return Redirect::route('income.index')->with('success', 'Income added successfully.');
     }
 
-
-    public function show($id): View
+    // This method will now return only the view details partial
+    public function show($id): View // Changed from JsonResponse to View
     {
         if (!$this->genericPolicy->view(Auth::user(), new Income())) {
            abort(403, 'Unauthorized action.');
-       }
-        // Eager load all necessary relationships for the show view
-        $income = Income::with(['sourceUser', 'createdByUser', 'updatedByUser'])->findOrFail($id);
-        return view('income.partials.show', compact('income'));
+        }
+        $income = Income::with('sourceUser', 'createdByUser', 'updatedByUser')->findOrFail($id);
+        return view('income.show', compact('income')); // Return the show partial
     }
 
-
-    public function edit($id): JsonResponse
+    // This method will now return only the form partial for editing
+    public function edit($id): View // Changed from JsonResponse to View
     {
-        if (!$this->genericPolicy->view(Auth::user(), new Income())) {
+        if (!$this->genericPolicy->update(Auth::user(), new Income())) { // Should be 'update' for form display
            abort(403, 'Unauthorized action.');
        }
         $income = Income::findOrFail($id);
-        return response()->json($income); // Return income data as JSON
+        $users = User::all(); // Pass users for the dropdown
+        return view('income.form', compact('income', 'users')); // Return the form partial
     }
 
 
@@ -97,10 +112,10 @@ class IncomeController extends Controller
        }
 
         $income = Income::findOrFail($id);
-        $data = $request->validate([    
+        $data = $request->validate([
             'title' => 'required|string|max:255',
             'amount' => 'required|numeric',
-            'source' => 'required|exists:users,id', // Validate that source is a valid user ID
+            'source' => 'required|exists:users,id',
             'date' => 'required|date',
             'description' => 'nullable|string|max:255',
         ]);

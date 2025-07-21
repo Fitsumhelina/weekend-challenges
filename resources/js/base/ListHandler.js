@@ -1,3 +1,4 @@
+// resources/js/base/ListHandler.js (Modified)
 // Base list handler for all structure components
 export default class ListHandler {
     constructor(options) {
@@ -26,6 +27,13 @@ export default class ListHandler {
         if (this.initialized) return;
         this.setupEventListeners();
         this.initialized = true;
+    }
+
+    // New method to be overridden by child classes for post-render initialization
+    postFormRender() {
+        // This method can be overridden by child classes (e.g., IncomeListHandler)
+        // to initialize specific elements like Select2 after the form content
+        // has been loaded into the modal.
     }
 
     setupEventListeners() {
@@ -57,27 +65,33 @@ export default class ListHandler {
             (e) => this.handlePagination(e)
         );
 
-        // Handle create form submission
+        // Handle create form submission (modified to call postFormRender)
         $(`#${this.modalAddFormId}`).on(
             `submit${namespace}`,
-            '#createForm',
+            '#incomeForm', // Changed from '#createForm' to '#incomeForm'
             (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                return this.handleCreate(e);
+                return this.handleSubmitForm(e); // Assuming a generic submit handler
+            }
+        );
+        // Handle edit form submission (modified to call postFormRender)
+        $(`#${this.modalEditFormId}`).on(
+            `submit${namespace}`,
+            '#incomeForm', // Changed from '#editForm' to '#incomeForm'
+            (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                return this.handleSubmitForm(e); // Assuming a generic submit handler
             }
         );
 
-        // Handle edit form submission
-        $(`#${this.modalEditFormId}`).on(
-            `submit${namespace}`,
-            '#editForm',
-            (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                return this.handleEdit(e);
-            }
-        );
+        // Handle add new button click
+        $(document).on(`click${namespace}`, '#createIncomeBtn', (e) => { // Using specific ID
+            e.preventDefault();
+            this.handleCreate();
+        });
+
 
         // Handle edit button click
         $(document).on(
@@ -97,346 +111,242 @@ export default class ListHandler {
         $(document).on(
             `click${namespace}`,
             `.${this.entityName}-delete-btn`,
-            (e) => this.handleDelete(e)
+            (e) => {
+                e.preventDefault(); // Prevent default form submission
+                this.deleteForm = $(e.currentTarget).closest('form');
+                this.openModal('deleteConfirmationModal'); // Use actual ID
+            }
         );
 
-        // Clear form fields when modal is closed
-        const modalSelector = `#${this.modalAddFormId}, #${this.modalEditFormId}, #${this.modalViewFormId}`;
-        $(document).on(`hidden.bs.modal${namespace}`, modalSelector, () => {
-            const modal = document.getElementById(this.modalAddFormId);
-            if (modal) {
-                const form = modal.querySelector('form');
-                if (form) {
-                    try {
-                        // Try using form.reset() first
-                        form.reset();
-                    } catch (e) {
-                        // If form.reset() fails, manually reset fields
-                        form.querySelectorAll('input, select, textarea').forEach(input => {
-                            switch (input.type) {
-                                case 'checkbox':
-                                case 'radio':
-                                    input.checked = false;
-                                    break;
-                                case 'select-one':
-                                case 'select-multiple':
-                                    input.selectedIndex = 0;
-                                    break;
-                                default:
-                                    if (input.name === 'year') {
-                                        input.value = new Date().getFullYear().toString().slice(-2);
-                                    } else if (input.name === 'last_serial') {
-                                        input.value = '0';
-                                    } else {
-                                        input.value = '';
-                                    }
-                            }
-                        });
-                    }
-                }
-            }
-            $(modalSelector).find('.error').text('');
+        // Handle delete confirmation
+        $(document).on(
+            `click${namespace}`,
+            '#confirmDeleteBtn', // Use actual ID
+            () => this.handleDeleteConfirmation()
+        );
+
+        // Handle cancel delete
+        $(document).on(
+            `click${namespace}`,
+            '#cancelDeleteBtn', // Use actual ID
+            () => this.closeModal('deleteConfirmationModal')
+        );
+
+        // Close modal buttons
+        $(document).on(`click${namespace}`, '.close-modal', (e) => {
+            const modalId = $(e.currentTarget).closest('.fixed').attr('id'); // Get the ID of the parent modal
+            this.closeModal(modalId);
         });
     }
 
-    get capitalizedName() {
-        return this.entityName.charAt(0).toUpperCase() + this.entityName.slice(1);
-    }
-
     handleSearch() {
-        this.performAjaxRequest(
-            this.indexRoute,
-            'GET',
-            $(`#${this.entityName}-search-form`).serialize()
-        );
+        const query = $(`#${this.entityName}-search`).val();
+        const perPage = $(`#${this.entityName}-per_page`).val();
+        this.fetchList(query, perPage);
     }
 
     handlePerPageChange() {
+        const query = $(`#${this.entityName}-search`).val();
         const perPage = $(`#${this.entityName}-per_page`).val();
-        const currentUrl = new URL(window.location.href);
-        currentUrl.searchParams.set('per_page', perPage);
-        currentUrl.searchParams.set('page', '1');
-        this.performAjaxRequest(currentUrl.toString(), 'GET');
+        this.fetchList(query, perPage);
     }
 
     handlePagination(e) {
         e.preventDefault();
-        const url = $(e.target).attr('href');
-        this.performAjaxRequest(url, 'GET');
+        const url = $(e.currentTarget).attr('href');
+        this.fetchList(null, null, url); // Pass url directly
     }
 
-    async handleFormSubmit(e, options) {
-        e.preventDefault();
-        const {
-            form,
-            method,
-            successMessage,
-            errorMessage,
-            modalId,
-            hasFile = false
-        } = options;
+    // Generic form submission handler (for create and edit)
+    handleSubmitForm(e) {
+        const form = $(e.currentTarget);
+        const actionUrl = form.attr('action');
+        const method = form.attr('method'); // This will be POST or PUT/DELETE
 
-        const submitButton = form.find('button[type="submit"]');
-        const buttonState = this.toggleButtonLoading(submitButton);
+        // Clear previous errors
+        form.find('.text-red-500').text('');
 
-        try {
-            let data;
-            let contentType = 'application/x-www-form-urlencoded';
-            let processData = true;
+        // Show loading overlay (optional, depends on your UI)
+        // $(`#${this.modalAddFormId} .modal-content, #${this.modalEditFormId} .modal-content`).append(this.loadingOverlay);
 
-            if (hasFile) {
-                data = new FormData(form[0]);
-                if (method === 'PUT') {
-                    data.append('_method', 'PUT');
+        $.ajax({
+            url: actionUrl,
+            type: method,
+            data: form.serialize(),
+            headers: {
+                'X-CSRF-TOKEN': this.csrfToken
+            },
+            success: (response) => {
+                toastr.success(response.message || `${this.entityName} saved successfully!`);
+                this.closeModal(this.modalAddFormId); // Close the relevant modal
+                this.closeModal(this.modalEditFormId); // Close the relevant modal
+                this.fetchList(); // Refresh list
+            },
+            error: (xhr) => {
+                // Remove loading overlay
+                // $(`#${this.modalAddFormId} .loading-overlay, #${this.modalEditFormId} .loading-overlay`).remove();
+                if (xhr.status === 422) {
+                    this.handleFormError(xhr.responseJSON, form);
+                } else {
+                    this.handleAjaxError(xhr);
                 }
-                contentType = false;
-                processData = false;
-            } else {
-                data = form.serialize();
-                if (method === 'PUT') {
-                    data += '&_method=PUT';
-                }
             }
+        });
+    }
 
-            const response = await $.ajax({
-                url: form.attr('action'),
-                type: 'POST',
-                data: data,
-                processData: processData,
-                contentType: contentType,
-                headers: {
-                    'X-CSRF-TOKEN': this.csrfToken,
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                cache: false
-            });
+    handleCreate() {
+        const modalElement = document.getElementById(this.modalAddFormId);
+        const formContentArea = modalElement.querySelector('#incomeFormContent'); // Specific ID for income form content
+        const modalTitle = modalElement.querySelector('#modalTitle'); // Get the modal title element
 
-            $(`#${modalId}`).modal('hide');
-            window.toastr.success(successMessage);
-            
-            if (this.isRefreshAfterSubmit) {
-                window.location.reload();
-            } else {
-                await this.refreshList();
-            }
-        } catch (error) {
-            console.error('Form Submit Error:', error);
-            
-            // Handle validation errors first
-            if (error.responseJSON?.errors) {
-                this.handleFormError(error, form);
-            } 
-            // Then handle general error messages
-            else if (error.responseJSON?.message) {
-                window.toastr.error(error.responseJSON.message);
-            } 
-            // Fallback to default error message
-            else {
-                window.toastr.error(errorMessage || 'An error occurred while processing your request.');
-            }
-        } finally {
-            this.toggleButtonLoading(submitButton, buttonState);
+        if (modalTitle) {
+            modalTitle.textContent = `Add New ${this.entityName.charAt(0).toUpperCase() + this.entityName.slice(1)}`;
         }
-    }
 
-    handleCreate(e) {
-        return this.handleFormSubmit(e, {
-            form: $(e.currentTarget),
-            method: 'POST',
-            successMessage: `${this.capitalizedName} created successfully.`,
-            errorMessage: `An error occurred while saving the ${this.entityName}.`,
-            modalId: this.modalAddFormId,
-            hasFile: this.hasFile
-        });
-    }
-
-    handleEdit(e) {
-        return this.handleFormSubmit(e, {
-            form: $(e.currentTarget),
-            method: 'PUT',
-            successMessage: `${this.capitalizedName} updated successfully.`,
-            errorMessage: `An error occurred while updating the ${this.entityName}.`,
-            modalId: this.modalEditFormId,
-            hasFile: this.hasFile
-        });
-    }
-
-    handleView(e) {
-        return this.handleFormSubmit(e, {
-            form: $(e.currentTarget),
-            method: 'GET',
-            successMessage: `${this.capitalizedName} details loaded successfully.`,
-            errorMessage: `An error occurred while loading the ${this.entityName} details.`,
-            modalId: this.modalViewFormId
-        });
+        fetch(`/${this.routeName}/create`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.text();
+            })
+            .then(html => {
+                formContentArea.innerHTML = html;
+                this.openModal(this.modalAddFormId);
+                this.postFormRender(); // Call the post-render hook
+            })
+            .catch(error => console.error('Error fetching create form:', error));
     }
 
     loadEditForm(e) {
-        e.preventDefault();
         const id = $(e.currentTarget).data('id');
-        if (!id) {
-            console.error(`${this.capitalizedName} ID not found`);
-            return;
+        const modalElement = document.getElementById(this.modalEditFormId);
+        const formContentArea = modalElement.querySelector('#incomeFormContent'); // Specific ID for income form content
+        const modalTitle = modalElement.querySelector('#modalTitle'); // Get the modal title element
+
+        if (modalTitle) {
+            modalTitle.textContent = `Edit ${this.entityName.charAt(0).toUpperCase() + this.entityName.slice(1)}`;
         }
 
-        const editButton = $(e.currentTarget);
-        const buttonState = this.toggleButtonLoading(editButton);
-
-        const modalSelector = `#${this.modalEditFormId}`;
-
-        // Ensure routeName starts with a slash and doesn't end with one
-        const routeName = this.routeName.startsWith('/') ? this.routeName : `/${this.routeName}`;
-        const cleanRouteName = routeName.endsWith('/') ? routeName.slice(0, -1) : routeName;
-
-        $.ajax({
-            url: `${cleanRouteName}/${id}/edit`,
-            type: 'GET',
-            headers: { 'X-CSRF-TOKEN': this.csrfToken },
-            success: (response) => {
-                $(modalSelector).modal('show');
-                $(`${modalSelector} .modal-content`).html(response);
-            },
-            error: (error) => {
-                window.toastr.error(`Failed to load ${this.entityName} details.`);
-                console.error(`Error loading ${this.entityName} edit form:`, error);
-            },
-            complete: () => this.toggleButtonLoading(editButton, buttonState)
-        });
+        fetch(`/${this.routeName}/${id}/edit`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.text();
+            })
+            .then(html => {
+                formContentArea.innerHTML = html;
+                this.openModal(this.modalEditFormId);
+                this.postFormRender(); // Call the post-render hook
+            })
+            .catch(error => console.error('Error fetching edit form:', error));
     }
 
     loadViewForm(e) {
-        e.preventDefault();
         const id = $(e.currentTarget).data('id');
-        if (!id) {
-            console.error(`${this.capitalizedName} ID not found`);
-            return;
-        }
+        const modalElement = document.getElementById(this.modalViewFormId);
+        const viewContentArea = modalElement.querySelector('#viewIncomeContent'); // Specific ID for income view content
 
-        const viewButton = $(e.currentTarget);
-        const buttonState = this.toggleButtonLoading(viewButton);
-
-        const modalSelector = `#${this.modalViewFormId}`;
-
-        // Ensure routeName starts with a slash and doesn't end with one
-        const routeName = this.routeName.startsWith('/') ? this.routeName : `/${this.routeName}`;
-        const cleanRouteName = routeName.endsWith('/') ? routeName.slice(0, -1) : routeName;
-
-        $.ajax({
-            url: `${cleanRouteName}/${id}/show`,
-            type: 'GET',
-            headers: { 'X-CSRF-TOKEN': this.csrfToken },
-            success: (response) => {
-                $(modalSelector).modal('show');
-                $(`${modalSelector} .modal-content`).html(response);
-            },
-            error: (error) => {
-                window.toastr.error(`Failed to load ${this.entityName} details.`);
-                console.error(`Error loading ${this.entityName} view form:`, error);
-            },
-            complete: () => this.toggleButtonLoading(viewButton, buttonState)
-        });
-    }
-
-    handleDelete(e) {
-        e.preventDefault();
-        const form = $(e.currentTarget).closest('form');
-
-        window.Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-        }).then(async (result) => {
-            if (result.isConfirmed) {
-                try {
-                    const response = await this.performAjaxRequest(
-                        form.attr('action'),
-                        'PATCH',
-                        form.serialize() + '&_method=PATCH'
-                    );
-                    window.toastr.success(response.message);
-                    await this.refreshList();
-                } catch (error) {
-                    window.toastr.error(`Failed to delete ${this.entityName}.`);
+        fetch(`/${this.routeName}/${id}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
-            }
-        });
+                return response.text();
+            })
+            .then(html => {
+                viewContentArea.innerHTML = html;
+                this.openModal(this.modalViewFormId);
+                // Call postFormRender if there are specific JS init for view modal, otherwise it might not be needed
+                // this.postFormRender();
+            })
+            .catch(error => console.error('Error fetching view details:', error));
     }
 
-    toggleButtonLoading(button, state = null) {
-        if (state) {
-            return button
-                .prop('disabled', false)
-                .attr('title', state.title)
-                .html(state.html);
+    handleDeleteConfirmation() {
+        if (this.deleteForm) {
+            // Submit the form for actual deletion
+            this.deleteForm.submit();
+        }
+        this.closeModal('deleteConfirmationModal');
+    }
+
+    fetchList(search = null, perPage = null, url = null) {
+        let fetchUrl = url || this.indexRoute;
+        const params = new URLSearchParams();
+
+        if (search !== null) {
+            params.append('search', search);
+        } else if ($(`#${this.entityName}-search`).val()) {
+            params.append('search', $(`#${this.entityName}-search`).val());
         }
 
-        const currentState = {
-            html: button.html(),
-            title: button.attr('title')
-        };
+        if (perPage !== null) {
+            params.append('per_page', perPage);
+        } else if ($(`#${this.entityName}-per_page`).val()) {
+            params.append('per_page', $(`#${this.entityName}-per_page`).val());
+        }
 
-        button
-            .prop('disabled', true)
-            .attr('title', '')
-            .html(`
-                <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-                ${button.data('loading-text') || 'Loading...'}
-            `);
+        const queryString = params.toString();
+        if (queryString) {
+            fetchUrl = `${fetchUrl.split('?')[0]}?${queryString}`;
+        }
 
-        return currentState;
+        fetch(fetchUrl, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest' // Important for Laravel's isAjax()
+                }
+            })
+            .then(response => response.text())
+            .then(html => {
+                // Assuming you have a container with this ID in your index.blade.php
+                document.getElementById(`${this.entityName}-list-container`).innerHTML = html;
+            })
+            .catch(error => console.error('Error fetching list:', error));
     }
 
-    async refreshList() {
-        await this.performAjaxRequest(
-            this.indexRoute,
-            'GET',
-            $(`#${this.entityName}-search-form`).serialize()
-        );
+    openModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex'); // Assuming Tailwind 'flex' for display
+        }
+    }
+
+    closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            // Clear form/content when closing if needed
+            const formContentArea = modal.querySelector('#incomeFormContent');
+            if (formContentArea) {
+                formContentArea.innerHTML = '';
+            }
+            const viewContentArea = modal.querySelector('#viewIncomeContent');
+            if (viewContentArea) {
+                viewContentArea.innerHTML = '';
+            }
+            // Clear validation errors on modal close
+            $(modal).find('.text-red-500').text('');
+        }
     }
 
     debounce(func, delay) {
-        let debounceTimer;
-        return (...args) => {
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(() => func.apply(this, args), delay);
+        let timeout;
+        return function(...args) {
+            const context = this;
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(context, args), delay);
         };
     }
 
-    async performAjaxRequest(url, type, data = {}) {
-        const searchResults = $(`#${this.entityName}-search-results`);
-        searchResults.prepend(this.loadingOverlay);
-
-        try {
-            const response = await $.ajax({
-                url,
-                type,
-                data,
-                headers: { 'X-CSRF-TOKEN': this.csrfToken }
-            });
-            this.handleAjaxResponse(response);
-            return response;
-        } catch (error) {
-            this.handleAjaxError(error);
-            throw error;
-        } finally {
-            searchResults.find('.position-absolute').remove();
-        }
-    }
-
-    handleAjaxResponse(response) {
-        $(`#${this.entityName}-search-results`).html(response);
-    }
-
     handleAjaxError(error) {
-        console.error('Ajax Error:', error);
+        console.error('AJAX Error:', error);
         let errorMessage = 'An error occurred. Please try again.';
 
         if (error.responseJSON) {
-            // Prioritize user-friendly message if available
             if (error.responseJSON.message) {
                 errorMessage = error.responseJSON.message;
             } else if (error.responseJSON.errors) {
@@ -452,35 +362,31 @@ export default class ListHandler {
         window.toastr.error(errorMessage);
     }
 
-    handleFormError(error, form) {
-        console.error('Form Error:', error);
-        let errorMessage = 'An error occurred. Please try again.';
+    handleFormError(errors, form) { // Renamed parameter from 'error' to 'errors' for clarity
+        console.error('Form Errors:', errors);
+        // Clear all previous error messages
+        form.find('span.text-red-500').text('');
 
-        if (error.responseJSON) {
-            // Handle field-specific errors first
-            if (error.responseJSON.errors) {
-                let hasFieldErrors = false;
-                $.each(error.responseJSON.errors, (field, messages) => {
-                    const errorElement = form.find(`#${field}-error`);
-                    if (errorElement.length) {
-                        errorElement.text(messages[0]);
-                        hasFieldErrors = true;
-                    }
-                });
-                
-                // If we have field errors, don't show the general error message
-                if (hasFieldErrors) {
-                    return;
+        if (errors && errors.errors) {
+            let hasFieldErrors = false;
+            for (const field in errors.errors) {
+                const errorMessages = errors.errors[field];
+                const errorElement = form.find(`#${field}-error`);
+                if (errorElement.length) {
+                    errorElement.text(errorMessages[0]);
+                    hasFieldErrors = true;
                 }
             }
 
-            // Show general error message if available
-            if (error.responseJSON.message) {
-                errorMessage = error.responseJSON.message;
+            // Show general error message if there are no specific field errors or if a general message is present
+            if (!hasFieldErrors && errors.message) {
+                window.toastr.error(errors.message);
             }
+        } else if (errors.message) {
+            window.toastr.error(errors.message);
+        } else {
+            window.toastr.error('An unknown error occurred during form submission.');
         }
-
-        window.toastr.error(errorMessage);
     }
 
     // Add this property to allow refresh after submit (default: false)
