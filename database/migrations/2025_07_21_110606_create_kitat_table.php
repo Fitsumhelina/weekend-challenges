@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('kitat', function (Blueprint $table) {
+        Schema::create('kitats', function (Blueprint $table) {
             $table->id();
             $table->text('description')->nullable();
             $table->string('amount')->nullable();
