@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Income;
-use App\Models\kitat;
+use App\Models\Kitat;
 use App\Models\User; // Import the User model if you need to pass users to the form
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -43,7 +43,7 @@ class IncomeController extends Controller
 
         $users = User::all();
 
-        $taxRate = kitat::first()->amount ?? 0;
+        $taxRate = Kitat::first()->amount ?? 0;
 
         foreach ($incomes as $income) {
             if ($income->status === 'pending') {
