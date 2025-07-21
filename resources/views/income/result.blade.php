@@ -4,10 +4,10 @@
             <tr>
                 <th class="py-3 px-6 text-left">Title</th>
                 <th class="py-3 px-6 text-left">Amount</th>
-                <th class="py-3 px-6 text-left">Source</th>
+                <th class="py-3 px-6 text-left">From</th>
                 <th class="py-3 px-6 text-left">Date</th>
                 <th class="py-3 px-6 text-left">Status</th>
-                <th class="py-3 px-6 text-left">Debt</th>
+                <th class="py-3 px-6 text-left">Interest</th>
                 <th class="py-3 px-6 text-left">Created By</th>
                 <th class="py-3 px-6 text-center">Actions</th>
             </tr>

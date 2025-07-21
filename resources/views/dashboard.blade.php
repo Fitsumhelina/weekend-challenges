@@ -61,7 +61,7 @@
                     <tr>
                         <th class="py-3 px-6 text-left">Title</th>
                         <th class="py-3 px-6 text-left">Amount</th>
-                        <th class="py-3 px-6 text-left">Source</th>
+                        <th class="py-3 px-6 text-left">From</th>
                         <th class="py-3 px-6 text-left">Date</th>
                     </tr>
                 </thead>
@@ -71,7 +71,7 @@
                             <td class="py-3 px-6 text-left">{{ $income->title }}</td>
                             <td class="py-3 px-6 text-left text-green-600">${{ number_format($income->amount, 2) }}</td>
                             {{-- Assuming income->source is the user's name or a string, if it's an ID, you'd need a relationship --}}
-                            <td class="py-3 px-6 text-left">{{ $income->source }}</td>
+                            <td class="py-3 px-6 text-left">{{ $income->sourceUser->name }}</td>
                             <td class="py-3 px-6 text-left">{{ \Carbon\Carbon::parse($income->date)->format('M d, Y') }}</td>
                         </tr>
                     @empty
