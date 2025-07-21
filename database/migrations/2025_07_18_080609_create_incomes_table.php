@@ -16,6 +16,7 @@ return new class extends Migration
         $table->unsignedBigInteger('source')->nullable();
         $table->foreign('source')->references('id')->on('users')->nullOnDelete();
         $table->text('description')->nullable();
+        $table->enum('status', ['pending', 'paid'])->default('pending');
         $table->unsignedBigInteger('created_by')->nullable();
         $table->foreign('created_by')->references('id')->on('users')->nullOnDelete();
         $table->unsignedBigInteger('updated_by')->nullable();

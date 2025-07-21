@@ -14,6 +14,7 @@ class Income extends Model
         'source',
         'description',
         'amount',
+        'status',
         'created_By',
         'updated_By'
     ];

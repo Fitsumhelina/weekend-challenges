@@ -49,6 +49,8 @@ class PermissionSeeder extends Seeder
             'view dashboard',
         ];
 
+      
+
         // Create or update permissions
         foreach ($permissions as $permission) {
             Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'web']);
