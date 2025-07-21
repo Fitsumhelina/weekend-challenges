@@ -10,7 +10,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $totalIncome = Income::sum('amount');
+        $totalIncome = Income::where('status', 'paid')->sum('amount');
         $totalExpenses = Expense::sum('amount');
         $netBalance = $totalIncome - $totalExpenses;
 
