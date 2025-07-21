@@ -40,13 +40,13 @@ class IncomeController extends Controller
                        ->paginate($perPage)
                        ->appends(request()->query()); // Keep search/per_page in pagination links
 
-
+       $users = User::all();
        // For AJAX pagination/search, we'll return a partial if it's an AJAX request
        if (request()->ajax()) {
            return view('income.result', compact('incomes'));
        }
 
-       return view('income.index', compact('incomes'));
+       return view('income.index', compact('incomes', 'users'));
    }
 
 

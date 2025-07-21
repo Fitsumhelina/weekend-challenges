@@ -1,14 +1,14 @@
 // resources/js/app.js
 import './bootstrap';
-import './init'
-// import './article'; // If you have a separate article entry point that also initializes ArticleListHandler
+// import './income/init'
+import './income/init'; // Ensure this import is correct based on your directory structure
+
 import 'toastr/build/toastr.min.css';
 import toastr from 'toastr';
-// import Swal from 'sweetalert2'; // Uncomment if you are using SweetAlert2
 
 import Alpine from 'alpinejs';
 
-window.Alpine = Alpine;
+window.Alpine = Alpine; 
 
 Alpine.start();
 

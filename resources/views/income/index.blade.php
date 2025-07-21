@@ -72,6 +72,7 @@
             {{-- Content will be loaded here via AJAX (form.blade.php) --}}
             <div class="mt-2 px-7 py-3" id="incomeFormContent">
                 {{-- Form will be injected here by ListHandler --}}
+                @include('income.partials.form', ['income' => null, 'users' => $users])
             </div>
         </div>
     </div>
@@ -122,6 +123,3 @@
         };
     </script>
 @endsection
-
-@push('scripts')
-@endpush
