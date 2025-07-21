@@ -116,26 +116,39 @@
 </div>
 @endsection
 
-@push('scripts')
-<script src="{{ asset('js/dashboard.js') }}"></script>
+@section('scripts')
 <script>
-    // Ensure the correct table is shown on page load
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('DOM Content Loaded. Initializing dashboard tabs.');
-        try {
-            showTable('incomes'); // Default to showing incomes
-        } catch (e) {
-            console.error('Error calling showTable on DOMContentLoaded:', e);
+    function showTable(type) {
+        const incomeTable = document.getElementById('incomes-table');
+        const expenseTable = document.getElementById('expenses-table');
+
+        const incomeTab = document.getElementById('tab-incomes-table');
+        const expenseTab = document.getElementById('tab-expenses-table');
+
+        if (type === 'incomes') {
+            incomeTable.classList.remove('hidden');
+            expenseTable.classList.add('hidden');
+
+            incomeTab.classList.add('border-green-600', 'text-green-700');
+            incomeTab.classList.remove('border-transparent', 'text-gray-600');
+
+            expenseTab.classList.remove('border-red-600', 'text-red-700');
+            expenseTab.classList.add('border-transparent', 'text-gray-600');
+        } else {
+            incomeTable.classList.add('hidden');
+            expenseTable.classList.remove('hidden');
+
+            incomeTab.classList.remove('border-green-600', 'text-green-700');
+            incomeTab.classList.add('border-transparent', 'text-gray-600');
+
+            expenseTab.classList.add('border-red-600', 'text-red-700');
+            expenseTab.classList.remove('border-transparent', 'text-gray-600');
         }
-    });
-    if (typeof showTable === 'function') {
-        const originalShowTable = showTable;
-        window.showTable = function(type) {
-            console.log('showTable function called with type:', type);
-            originalShowTable(type);
-        };
-    } else {
-        console.warn('showTable function not found in global scope. Ensure dashboard.js is loaded correctly.');
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        showTable('incomes');
+    });
 </script>
-@endpush
+@endsection
+
