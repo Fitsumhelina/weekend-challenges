@@ -1,52 +1,40 @@
-<div class="overflow-x-auto rounded-lg shadow-md">
-    <table class="min-w-full bg-white">
-        <thead class="bg-gray-200 text-gray-700 uppercase text-sm leading-normal">
-            <tr>
-                <th class="py-3 px-6 text-left">Title</th>
-                <th class="py-3 px-6 text-left">Amount</th>
-                <th class="py-3 px-6 text-left">Source</th>
-                <th class="py-3 px-6 text-left">Date</th>
-                <th class="py-3 px-6 text-left">Status</th>
-                <th class="py-3 px-6 text-left">Debt</th>
-                <th class="py-3 px-6 text-left">Created By</th>
-                <th class="py-3 px-6 text-center">Actions</th>
-            </tr>
-        </thead>
-        <tbody class="text-gray-600 text-sm font-light">
-            @forelse ($incomes as $income)
-                <tr class="border-b border-gray-200 hover:bg-gray-100">
-                    <td class="py-3 px-6 text-left whitespace-nowrap">{{ $income->title }}</td>
-                    <td class="py-3 px-6 text-left">{{ number_format($income->amount, 2) }}</td>
-                    <td class="py-3 px-6 text-left">{{ $income->sourceUser->name ?? 'Unknown' }}</td>
-                    <td class="py-3 px-6 text-left">{{ \Carbon\Carbon::parse($income->date)->format('M d, Y') }}</td>
-                    <td class="py-3 px-6 text-left">{{ $income->status }}</td>
-                    <td class="py-3 px-6 text-left">
-                        @if ($income->status === 'pending')
-                            <span class="text-red-600 font-semibold">
-                                {{ number_format($income->debt, 2) }} Br
-                            </span>
-                        @else
-                            <span class="text-gray-400">—</span>
-                        @endif
-                    </td>
+<td class="py-3 px-6 text-center">
+    <div class="flex items-center justify-center space-x-2">
+        @can('update income')
+            <form action="{{ route('income.approve', $income->id) }}" method="POST" class="inline-block">
+                @csrf
+                @method('PATCH')
+                <button type="submit"
+                        class="w-8 h-8 rounded-full bg-green-100 text-green-600 hover:bg-green-200 flex items-center justify-center transition duration-300 {{ $income->status !== 'pending' ? 'opacity-50 cursor-not-allowed' : '' }}"
+                        title="Approve" {{ $income->status !== 'pending' ? 'disabled' : '' }}>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" class="w-4 h-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M5 13l4 4L19 7"/>
+                    </svg>
+                </button>
+            </form>
+        @endcan
 
-                    <td class="py-3 px-6 text-left">{{ $income->createdByUser->name ?? 'Unknown' }}</td>
-                    <td class="py-3 px-6 text-center">
+        @can('view income')
+            <button type="button"
+                    class="view-income-btn w-8 h-8 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 flex items-center justify-center transition duration-300"
+                    title="View" data-id="{{ $income->id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+            </button>
+        @endcan
+
+        @can('update income')
+            <button type="button"
+                    class="edit-income-btn w-8 h-8 rounded-full bg-yellow-100 text-yellow-600 hover:bg-yellow-200 flex items-center justify-center transition duration-300 {{ $income->status === 'pending' ? 'opacity-50 cursor-not-allowed' : '' }}"
+                    title="Edit" data-id="{{ $income->id }}" {{ $income->status === 'pending' ? 'disabled' : '' }}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+            </button>
+        @endcan
+
                         <div class="flex item-center justify-center space-x-2">
-                            @can('view income')
-                                <button type="button"
-                                        class="view-income-btn w-8 h-8 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 flex items-center justify-center transition duration-300"
-                                        title="View" data-id="{{ $income->id }}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                                </button>
-                            @endcan
-                            @can('update income')
-                                <button type="button"
-                                        class="edit-income-btn w-8 h-8 rounded-full bg-yellow-100 text-yellow-600 hover:bg-yellow-200 flex items-center justify-center transition duration-300"
-                                        title="Edit" data-id="{{ $income->id }}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
-                                </button>
-                            @endcan
+
+                                 
                             @can('update income')
                                 @if($income->status === 'pending')
                                     <form action="{{ route('income.approve', $income->id) }}" method="POST" class="inline-block">
@@ -65,7 +53,22 @@
                                 @endif
                             @endcan
 
-                            @can('delete income')
+                            @can('view income')
+                                <button type="button"
+                                        class="view-income-btn w-8 h-8 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 flex items-center justify-center transition duration-300"
+                                        title="View" data-id="{{ $income->id }}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                </button>
+                            @endcan
+                            @can('update income')
+                                <button type="button"
+                                        class="edit-income-btn w-8 h-8 rounded-full bg-yellow-100 text-yellow-600 hover:bg-yellow-200 flex items-center justify-center transition duration-300"
+                                        title="Edit" data-id="{{ $income->id }}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                                </button>
+                            @endcan
+
+                                @can('delete income')
                                 <form action="{{ route('income.destroy', $income->id) }}" method="POST" class="inline-block">
                                     @csrf
                                     @method('DELETE')
@@ -76,6 +79,7 @@
                                     </button>
                                 </form>
                             @endcan
+
                         </div>
                     </td>
                 </tr>

@@ -147,6 +147,7 @@ class IncomeController extends Controller
 
             $income = Income::findOrFail($id);
             $income->status = 'paid';
+            $income->amount = $income->amount + ($income->debt ?? 0);
             $income->updated_By = Auth::id();
             $income->save();
 
