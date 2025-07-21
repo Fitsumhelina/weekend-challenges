@@ -6,7 +6,7 @@
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-3xl font-bold text-gray-800">Income Dashboard</h1>
             @can('create income')
-                {{-- Add a specific ID for the create button that ListHandler can target --}}
+            {{-- Add a specific ID for the create button that ListHandler can target --}}
                 <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out" id="createIncomeBtn">
                     Add New Income
                 </button>
