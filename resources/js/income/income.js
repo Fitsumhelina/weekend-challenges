@@ -6,8 +6,8 @@ export class IncomeListHandler extends ListHandler {
             ...options,
             entityName: 'income',
             routeName: 'income', 
-            modalAddFormId: 'incomeModal', 
-            modalEditFormId: 'incomeModal', 
+            modalAddFormId: 'incomeCreateModal', 
+            modalEditFormId: 'incomeEditModal', 
             modalViewFormId: 'viewIncomeModal', 
         });
     }

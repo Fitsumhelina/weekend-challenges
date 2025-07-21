@@ -93,8 +93,8 @@
     </div>
 
     {{-- Delete Confirmation Modal --}}
-    <div id="deleteConfirmationModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
-        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+    <div id="deleteConfirmationModal" class="fixed inset-0 bg-gray-600 bg-opacity-50  h-full w-full hidden z-50">
+        <div class="relative top-10 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
             <div class="flex justify-between items-center pb-3">
                 <h3 class="text-xl leading-6 font-medium text-gray-900">Confirm Deletion</h3>
                 <button class="text-gray-400 hover:text-gray-600 close-modal">

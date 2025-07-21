@@ -57,9 +57,8 @@ class IncomeController extends Controller
            abort(403, 'Unauthorized action.');
         }
 
-       // If you need users for a dropdown in your form, fetch them here
-       $users = User::all(); // Assuming 'source' is a user ID dropdown
-       return view('income.form', compact('users')); // Return the form partial
+       $users = User::all();
+       return view('income.partials.form', compact('users')); // Return the form partial
     }
 
     public function store(Request $request): RedirectResponse
@@ -90,7 +89,7 @@ class IncomeController extends Controller
            abort(403, 'Unauthorized action.');
         }
         $income = Income::with('sourceUser', 'createdByUser', 'updatedByUser')->findOrFail($id);
-        return view('income.show', compact('income')); // Return the show partial
+        return view('income.partials.show', compact('income')); // Return the show partial
     }
 
     // This method will now return only the form partial for editing
@@ -101,7 +100,7 @@ class IncomeController extends Controller
        }
         $income = Income::findOrFail($id);
         $users = User::all(); // Pass users for the dropdown
-        return view('income.form', compact('income', 'users')); // Return the form partial
+        return view('income.partials.form', compact('income', 'users')); // Return the form partial
     }
 
 
