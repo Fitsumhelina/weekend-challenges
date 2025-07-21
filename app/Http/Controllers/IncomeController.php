@@ -33,7 +33,7 @@ class IncomeController extends Controller
         $search = request('search');
         $perPage = request('per_page', 10); // Default to 10 if not specified
 
-        $incomes = Income::with(['sourceUser', 'createdByUser', 'updatedByUser'])
+        $incomes = Income::orderBy('created_at', 'desc')->with(['sourceUser', 'createdByUser', 'updatedByUser'])
                         ->when($search, function ($query, $search) {
                             $query->where('title', 'like', '%' . $search . '%')
                                 ->orWhere('description', 'like', '%' . $search . '%');
@@ -146,9 +146,17 @@ class IncomeController extends Controller
             }
 
             $income = Income::findOrFail($id);
+
+            if ($income->status === 'pending') {
+                $taxRate = Kitat::first()->amount ?? 0;
+                $days = \Carbon\Carbon::parse($income->date)->diffInDays(now());
+                $debt = $taxRate * $days;
+            } else {
+                $debt = 0;
+            }
             $income->status = 'paid';
-            $income->amount = $income->amount + ($income->debt ?? 0);
-            $income->updated_By = Auth::id();
+            $income->amount += $debt;
+            $income->updated_by = Auth::id();
             $income->save();
 
             return redirect()->route('income.index')->with('success', 'Income approved successfully.');
