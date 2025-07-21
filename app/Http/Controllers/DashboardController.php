@@ -17,6 +17,8 @@ class DashboardController extends Controller
         // Fetch recent transactions
         $recentIncome = Income::orderBy('created_at', 'desc')->take(5)->get();
         $recentExpenses = Expense::orderBy('created_at', 'desc')->take(5)->get();
+        // $totalDebt = $incomes->sum('debt');
+
 
         return view('dashboard', [
             'totalIncome' => $totalIncome,

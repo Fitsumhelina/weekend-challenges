@@ -23,33 +23,27 @@ class IncomeController extends Controller
        $this->genericPolicy = $genericPolicy;
    }
 
-   public function index(): View
-   {
-       if (!$this->genericPolicy->view(Auth::user(), new Income())) {
-           abort(403, 'Unauthorized action.');
-       }
 
-       $search = request('search');
-       $perPage = request('per_page', 10); // Default to 10 if not specified
+    public function index(): View
+    {
+        if (!$this->genericPolicy->view(Auth::user(), new Income())) {
+            abort(403, 'Unauthorized action.');
+        }
 
-       $incomes = Income::with(['sourceUser', 'createdByUser', 'updatedByUser'])
-                       ->when($search, function ($query, $search) {
-                           $query->where('title', 'like', '%' . $search . '%')
-                                 ->orWhere('description', 'like', '%' . $search . '%');
-                       })
-                       ->paginate($perPage)
-                       ->appends(request()->query()); // Keep search/per_page in pagination links
+        $search = request('search');
+        $perPage = request('per_page', 10); // Default to 10 if not specified
 
-    
-       
+        $incomes = Income::with(['sourceUser', 'createdByUser', 'updatedByUser'])
+                        ->when($search, function ($query, $search) {
+                            $query->where('title', 'like', '%' . $search . '%')
+                                ->orWhere('description', 'like', '%' . $search . '%');
+                        })
+                        ->paginate($perPage)
+                        ->appends(request()->query()); // Keep search/per_page in pagination links
 
-       // 1. Get the daily tax rate from `kitat`
+        $users = User::all();
+
         $taxRate = kitat::first()->amount ?? 0;
-
-        // 2. Filter incomes with status = pending
-        $pendingIncomes = $incomes->filter(function ($income) {
-            return $income->status === 'pending';
-        });
 
         foreach ($incomes as $income) {
             if ($income->status === 'pending') {
@@ -57,15 +51,16 @@ class IncomeController extends Controller
                 $income->debt = $taxRate * $days;
             } else {
                 $income->debt = 0;
-          }
-         }
-
-         if (request()->ajax()) {
-           return view('income.result', compact('incomes'));
+            }
         }
 
-       return view('income.index', compact('incomes', 'users'));
-   }
+        if (request()->ajax()) {
+            return view('income.result', compact('incomes'));
+        }
+
+        return view('income.index', compact('incomes', 'users'));
+    }
+
 
 
     // This method will now return only the form partial for creation
@@ -143,6 +138,21 @@ class IncomeController extends Controller
         $income->update($data);
         return Redirect::route('income.index')->with('success', 'Income updated successfully.');
     }
+
+    public function approve($id): RedirectResponse
+        {
+            if (!$this->genericPolicy->update(Auth::user(), new Income())) {
+                abort(403, 'Unauthorized action.');
+            }
+
+            $income = Income::findOrFail($id);
+            $income->status = 'paid';
+            $income->updated_By = Auth::id();
+            $income->save();
+
+            return redirect()->route('income.index')->with('success', 'Income approved successfully.');
+        }
+
 
 
     public function destroy($id): RedirectResponse
