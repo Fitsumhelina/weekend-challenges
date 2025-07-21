@@ -16,6 +16,7 @@ class IncomeFactory extends Factory
             'title' => $this->faker->sentence(3),
             'source' => \App\Models\User::inRandomOrder()->first()->id,
             'description' => $this->faker->paragraph(),
+            'status' => $this->faker->randomElement(['paid', 'pending']),
             'amount' => $this->faker->randomFloat(2, 100, 5000),
             'created_by' => \App\Models\User::inRandomOrder()->first()->id,
             'updated_by' => \App\Models\User::inRandomOrder()->first()->id,
