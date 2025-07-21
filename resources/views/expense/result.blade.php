@@ -4,7 +4,7 @@
             <tr>
                 <th class="py-3 px-6 text-left">Title</th>
                 <th class="py-3 px-6 text-left">Amount</th>
-                <th class="py-3 px-6 text-left">Catagory</th>
+                <th class="py-3 px-6 text-left">Category</th>
                 <th class="py-3 px-6 text-left">Date</th>
                 <th class="py-3 px-6 text-left">Created By</th>
                 <th class="py-3 px-6 text-center">Actions</th>
@@ -34,7 +34,7 @@
                                 <form action="{{ route('expense.destroy', $expense->id) }}" method="POST" class="inline-block">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="button" class="delete-expense-btn w-8 h-8 rounded-full bg-red-100 text-red-600 hover:bg-red-200 flex items-center justify-center transition duration-300" title="Delete">
+                                    <button type="button" class="delete-expense-btn w-8 h-8 rounded-full bg-red-100 text-red-600 hover:bg-red-200 flex items-center justify-center transition duration-300" title="Delete" data-id="{{ $expense->id }}">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                     </button>
                                 </form>
@@ -44,7 +44,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="5" class="py-4 px-6 text-center text-gray-500">No expense$expense records found.</td>
+                    <td colspan="6" class="py-4 px-6 text-center text-gray-500">No expense records found.</td>
                 </tr>
             @endforelse
         </tbody>

@@ -12,7 +12,7 @@
             @endcan
         </div>
 
-        {{-- Success/Error Alert Messages --}}
+        {{-- Success/Error Alert Messages (Keep these as they are handled by Laravel sessions) --}}
         @if (session('success'))
             <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
                 <strong class="font-bold">Success!</strong>
@@ -34,13 +34,13 @@
         @endif
 
      {{-- Search Form and Items per page --}}
-        <form action="{{ route('income.index') }}" method="GET" class="mb-6" id="income-search-form">
+        <form action="{{ route('expense.index') }}" method="GET" class="mb-6" id="expense-search-form">
             <div class="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
-                <input type="text" name="search" placeholder="Search incomes..."
+                <input type="text" name="search" placeholder="Search expenses..."
                        value="{{ request('search') }}"
                        class="flex-grow w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 shadow-sm">
 
-                <select name="per_page" onchange="this.form.submit()"
+                <select name="per_page"
                         class="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 shadow-sm">
                     <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10 per page</option>
                     <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25 per page</option>
@@ -78,8 +78,8 @@
     <div id="viewExpenseModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
         <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-2/3 lg:w-1/2 shadow-lg rounded-md bg-white">
             <div class="flex justify-between items-center pb-3">
-                <h3 class="text-2xl leading-6 font-medium text-gray-900">expense Details</h3>
-                <button class="text-gray-400 hover:text-gray-600 close-modal">
+                <h3 class="text-2xl leading-6 font-medium text-gray-900">Expense Details</h3>
+                <button class="text-gray-400 hover:text-gray-600 close-modal" data-modal-id="viewExpenseModal">
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
@@ -117,6 +117,11 @@
         const AppData = {
             ExpenseIndexRoute: "{{ route('expense.index') }}",
             ExpenseCreateRoute: "{{ route('expense.create') }}",
+            ExpenseShowRoute: "{{ route('expense.show', ':id') }}", // Placeholder for ID
+            ExpenseEditRoute: "{{ route('expense.edit', ':id') }}", // Placeholder for ID
+            ExpenseStoreRoute: "{{ route('expense.store') }}",
+            ExpenseUpdateRoute: "{{ route('expense.update', ':id') }}", // Placeholder for ID
+            ExpenseDestroyRoute: "{{ route('expense.destroy', ':id') }}", // Placeholder for ID
             csrfToken: "{{ csrf_token() }}"
         };
 
@@ -135,8 +140,7 @@
             }
         };
 
-        // This function needs to be globally accessible for income.js
-        window.initSelect2ForSource = function(selectElement, placeholderText = "Select a source") {
+        window.initSelect2ForCategory = function(selectElement, placeholderText = "Select a category") {
             if (typeof jQuery !== 'undefined' && $.fn.select2) {
                 if (!$(selectElement).data('select2')) {
                     $(selectElement).select2({
@@ -149,6 +153,300 @@
                 console.warn("jQuery or Select2 not loaded. Cannot initialize Select2.");
             }
         };
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const expenseListContainer = document.getElementById('expense-list-container');
+            const expenseFormModal = document.getElementById('expenseFormModal');
+            const expenseFormModalContent = document.getElementById('expenseFormModalContent');
+            const expenseFormModalTitle = document.getElementById('expenseFormModalTitle');
+            const viewExpenseModal = document.getElementById('viewExpenseModal');
+            const viewExpenseContent = document.getElementById('viewExpenseContent');
+            const deleteConfirmationModal = document.getElementById('deleteConfirmationModal');
+            const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+            const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+
+            let expenseToDeleteId = null; // Variable to store the ID of the expense to be deleted
+
+            // Function to load expense list via AJAX
+            function loadExpenseList(url = AppData.ExpenseIndexRoute, append = false) {
+                fetch(url, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.text())
+                .then(html => {
+                    if (append) {
+                        expenseListContainer.insertAdjacentHTML('beforeend', html);
+                    } else {
+                        expenseListContainer.innerHTML = html;
+                    }
+                    attachEventListeners(); // Re-attach event listeners after content update
+                })
+                .catch(error => console.error('Error loading expense list:', error));
+            }
+
+            // Function to attach all dynamic event listeners
+            function attachEventListeners() {
+                // Search form submission
+                const searchForm = document.getElementById('expense-search-form');
+                if (searchForm) {
+                    searchForm.removeEventListener('submit', handleSearchSubmit); // Prevent duplicate listeners
+                    searchForm.addEventListener('submit', handleSearchSubmit);
+                    // Add listener for per_page select change
+                    const perPageSelect = searchForm.querySelector('select[name="per_page"]');
+                    if (perPageSelect) {
+                        perPageSelect.removeEventListener('change', handleSearchSubmit);
+                        perPageSelect.addEventListener('change', handleSearchSubmit);
+                    }
+                }
+
+                // Create Expense Button
+                const createExpenseBtn = document.getElementById('createExpenseBtn');
+                if (createExpenseBtn) {
+                    createExpenseBtn.removeEventListener('click', handleCreateExpense);
+                    createExpenseBtn.addEventListener('click', handleCreateExpense);
+                }
+
+                // View Expense Buttons
+                document.querySelectorAll('.view-expense-btn').forEach(button => {
+                    button.removeEventListener('click', handleViewExpense);
+                    button.addEventListener('click', handleViewExpense);
+                });
+
+                // Edit Expense Buttons
+                document.querySelectorAll('.edit-expense-btn').forEach(button => {
+                    button.removeEventListener('click', handleEditExpense);
+                    button.addEventListener('click', handleEditExpense);
+                });
+
+                // Delete Expense Buttons
+                document.querySelectorAll('.delete-expense-btn').forEach(button => {
+                    button.removeEventListener('click', handleDeleteExpensePrompt);
+                    button.addEventListener('click', handleDeleteExpensePrompt);
+                });
+
+                // Pagination Links (AJAX)
+                document.querySelectorAll('#expense-list-container .pagination a').forEach(link => {
+                    link.removeEventListener('click', handlePaginationClick);
+                    link.addEventListener('click', handlePaginationClick);
+                });
+
+                // Close modal buttons
+                document.querySelectorAll('.close-modal').forEach(button => {
+                    button.removeEventListener('click', handleCloseModal);
+                    button.addEventListener('click', handleCloseModal);
+                });
+            }
+
+            function handleSearchSubmit(event) {
+                event.preventDefault();
+                const form = event.target.tagName === 'SELECT' ? event.target.form : event.target;
+                const formData = new FormData(form);
+                const queryString = new URLSearchParams(formData).toString();
+                loadExpenseList(`${AppData.ExpenseIndexRoute}?${queryString}`);
+            }
+
+            function handleCreateExpense() {
+                expenseFormModalTitle.textContent = 'Create New Expense';
+                fetch(AppData.ExpenseCreateRoute, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.text())
+                .then(html => {
+                    expenseFormModalContent.innerHTML = html;
+                    window.openModal(expenseFormModal);
+                    // Initialize Select2 after content is loaded
+                    const categorySelect = expenseFormModalContent.querySelector('#category');
+                    if (categorySelect) {
+                        window.initSelect2ForCategory(categorySelect, "Select a category");
+                    }
+                    attachFormSubmissionListener();
+                })
+                .catch(error => console.error('Error loading create form:', error));
+            }
+
+            function handleViewExpense(event) {
+                const expenseId = event.currentTarget.dataset.id;
+                const url = AppData.ExpenseShowRoute.replace(':id', expenseId);
+                fetch(url, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.text())
+                .then(html => {
+                    viewExpenseContent.innerHTML = html;
+                    window.openModal(viewExpenseModal);
+                })
+                .catch(error => console.error('Error loading view details:', error));
+            }
+
+            function handleEditExpense(event) {
+                const expenseId = event.currentTarget.dataset.id;
+                expenseFormModalTitle.textContent = 'Edit Expense';
+                const url = AppData.ExpenseEditRoute.replace(':id', expenseId);
+                fetch(url, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.text())
+                .then(html => {
+                    expenseFormModalContent.innerHTML = html;
+                    window.openModal(expenseFormModal);
+                    // Initialize Select2 after content is loaded
+                    const categorySelect = expenseFormModalContent.querySelector('#category');
+                    if (categorySelect) {
+                        window.initSelect2ForCategory(categorySelect, "Select a category");
+                    }
+                    attachFormSubmissionListener();
+                })
+                .catch(error => console.error('Error loading edit form:', error));
+            }
+
+            function handleDeleteExpensePrompt(event) {
+                expenseToDeleteId = event.currentTarget.dataset.id;
+                window.openModal(deleteConfirmationModal);
+            }
+
+            function handlePaginationClick(event) {
+                event.preventDefault();
+                const url = event.currentTarget.href;
+                loadExpenseList(url);
+            }
+
+            function handleCloseModal(event) {
+                const modalId = event.currentTarget.dataset.modalId;
+                const modalElement = document.getElementById(modalId);
+                if (modalElement) {
+                    window.closeModal(modalElement);
+                    // Clear form content if it's the expenseFormModal
+                    if (modalId === 'expenseFormModal') {
+                        expenseFormModalContent.innerHTML = '';
+                    }
+                }
+            }
+
+            function attachFormSubmissionListener() {
+                const form = expenseFormModalContent.querySelector('form');
+                if (form) {
+                    form.removeEventListener('submit', handleFormSubmit); // Prevent multiple listeners
+                    form.addEventListener('submit', handleFormSubmit);
+                }
+            }
+
+            function handleFormSubmit(event) {
+                event.preventDefault();
+                const form = event.target;
+                const formData = new FormData(form);
+                const method = form.querySelector('input[name="_method"]') ? form.querySelector('input[name="_method"]').value : form.method;
+                let actionUrl = form.action;
+
+                // For update, replace :id with actual id
+                if (method === 'PUT') {
+                    const expenseId = form.querySelector('#expense_id').value;
+                    actionUrl = AppData.ExpenseUpdateRoute.replace(':id', expenseId);
+                }
+
+                // Clear previous errors
+                form.querySelectorAll('.text-red-500.text-xs.italic').forEach(errorSpan => {
+                    errorSpan.textContent = '';
+                });
+
+                fetch(actionUrl, {
+                    method: 'POST', // Always POST for Laravel with _method spoofing
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': AppData.csrfToken
+                    },
+                    body: formData
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json(); // Assuming JSON response for success/redirect
+                    }
+                    // Handle validation errors specifically
+                    if (response.status === 422) {
+                        return response.json().then(data => {
+                            throw { status: 422, errors: data.errors };
+                        });
+                    }
+                    throw new Error('Network response was not ok.');
+                })
+                .then(data => {
+                    // Assuming success or redirect behavior
+                    if (data.success) {
+                        window.closeModal(expenseFormModal);
+                        loadExpenseList(); // Refresh the list
+                        // Show success message (can be adapted to display in a dedicated alert area)
+                        alert(data.success);
+                    } else if (data.redirect) {
+                        window.location.href = data.redirect; // Or handle as needed
+                    }
+                })
+                .catch(error => {
+                    console.error('Form submission error:', error);
+                    if (error.status === 422 && error.errors) {
+                        // Display validation errors
+                        for (const field in error.errors) {
+                            const errorSpan = document.getElementById(`${field}-error`);
+                            if (errorSpan) {
+                                errorSpan.textContent = error.errors[field][0];
+                            }
+                        }
+                    } else {
+                        alert('An error occurred during submission. Please try again.');
+                    }
+                });
+            }
+
+            confirmDeleteBtn.addEventListener('click', function() {
+                if (expenseToDeleteId) {
+                    const url = AppData.ExpenseDestroyRoute.replace(':id', expenseToDeleteId);
+                    fetch(url, {
+                        method: 'POST', // Use POST for Laravel delete method spoofing
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRF-TOKEN': AppData.csrfToken,
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: '_method=DELETE' // Spoof DELETE method
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            return response.json(); // Assuming JSON response for success/redirect
+                        }
+                        throw new Error('Network response was not ok.');
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            window.closeModal(deleteConfirmationModal);
+                            loadExpenseList(); // Refresh the list
+                            alert(data.success);
+                            expenseToDeleteId = null; // Reset
+                        } else if (data.redirect) {
+                            window.location.href = data.redirect;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Delete error:', error);
+                        alert('Error deleting record. Please try again.');
+                    });
+                }
+            });
+
+            cancelDeleteBtn.addEventListener('click', function() {
+                window.closeModal(deleteConfirmationModal);
+                expenseToDeleteId = null; // Reset
+            });
+
+
+            // Initial load and attach listeners
+            attachEventListeners();
+        });
     </script>
 @endsection
 
