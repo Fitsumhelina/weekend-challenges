@@ -5,17 +5,16 @@ export default class ListHandler {
         this.csrfToken = options.csrfToken;
         this.entityName = options.entityName;
         this.routeName = options.routeName;
-        this.modalAddFormId = options.modalAddFormId; // e.g., 'incomeFormModal'
-        this.modalEditFormId = options.modalEditFormId; // e.g., 'incomeFormModal'
-        this.modalViewFormId = options.modalViewFormId; // e.g., 'viewIncomeModal'
-        this.modalFormContentId = options.modalFormContentId; // New: ID of the div inside the form modal where content is injected
-        this.modalFormTitleId = options.modalFormTitleId; // New: ID of the title element inside the form modal
+        this.modalAddFormId = options.modalAddFormId; 
+        this.modalEditFormId = options.modalEditFormId; 
+        this.modalViewFormId = options.modalViewFormId; 
+        this.modalFormContentId = options.modalFormContentId; 
+        this.modalFormTitleId = options.modalFormTitleId; 
         this.initialized = false;
-        this.currentDeleteForm = null; // To store the form reference for delete confirmation
+        this.currentDeleteForm = null; 
 
-        // Bind custom modal functions - ensure these are available globally or passed correctly
-        this.openModal = options.openModal || window.openModal; // Fallback to global if not provided
-        this.closeModal = options.closeModal || window.closeModal; // Fallback to global if not provided
+        this.openModal = options.openModal || window.openModal; 
+        this.closeModal = options.closeModal || window.closeModal; 
 
         this.initialize();
     }
@@ -77,6 +76,24 @@ export default class ListHandler {
                 }
             });
         }
+        if (listContainer) {
+            listContainer.addEventListener('click', (event) => {
+                const target = event.target.closest('button');
+                if (!target) return;
+                const id = target.dataset.id;
+                if (target.classList.contains('edit-permission-btn')) {
+                    this.loadForm(this.modalEditFormId, `/${this.routeName}/${id}/edit`, 'edit');
+                } else if (target.classList.contains('view-permission-btn')) {
+                    this.loadForm(this.modalViewFormId, `/${this.routeName}/${id}`, 'view');
+                } else if (target.classList.contains('delete-permission-btn')) {
+                    const form = target.closest('form');
+                    this.handleDelete(form);
+                }
+            });
+        }
+
+
+        
 
         // Search form and per_page select
         const searchForm = document.getElementById(`${this.entityName}-search-form`);
@@ -135,15 +152,13 @@ export default class ListHandler {
         }
     }
 
-    // New method to handle loading form content into a modal
-    loadForm(modalId, url, type) { // type can be 'create', 'edit', 'view'
+    loadForm(modalId, url, type) {
         const modalElement = document.getElementById(modalId);
-        const modalContentDiv = document.getElementById(this.modalFormContentId); // For create/edit
-        // For view modal: support both income and expense
+        const modalContentDiv = document.getElementById(this.modalFormContentId); 
         const modalViewContentDiv =
             document.getElementById('viewIncomeContent') ||
-            document.getElementById('viewExpenseContent');
-
+            document.getElementById('viewExpenseContent')||
+            document.getElementById('viewPermissionContent'); 
 
         if (!modalElement) {
             console.error(`Modal element with ID '${modalId}' not found.`);
