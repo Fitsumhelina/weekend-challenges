@@ -17,13 +17,11 @@
         <!-- Vite Assets (CSS and JS bundle) -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans antialiased">
+    <body class="font-sans antialiased w-full">
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
             @include('layouts.navigation')
 
             <div class="flex">
-                {{-- Sidebar --}}
-                @include('layouts.sidebar')
 
                 {{-- Main content wrapper --}}
                 <div class="flex-1 flex flex-col">
@@ -37,7 +35,7 @@
                     @endisset
 
                     {{-- Main Content --}}
-                    <main class="flex-1 p-4 sm:p-6 lg:p-8">
+                    <main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
                         @yield('content')
                     </main>
                 </div>

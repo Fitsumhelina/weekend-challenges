@@ -25,6 +25,23 @@
                     <x-nav-link :href="route('expense.index')" :active="request()->routeIs('expense.*')">
                         {{ __('Expenses') }}    
                     </x-nav-link>
+                    @can('view permission')
+                        <x-nav-link :href="route('permission.index')" :active="request()->routeIs('permissions.*')">
+                            {{ __('Permissions') }}
+                        </x-nav-link>
+                    @endcan
+
+                    @can('view role')
+                        <x-nav-link :href="route('roles.index')" :active="request()->routeIs('roles.*')">
+                            {{ __('Roles') }}
+                        </x-nav-link>
+                    @endcan
+
+                    @can('view user')
+                        <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                            {{ __('Users') }}
+                        </x-nav-link>
+                    @endcan
                 </div>
             </div>
 
@@ -85,7 +102,25 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('expense.index')" :active="request()->routeIs('expense.*')">
                 {{ __('Expenses') }}
-            </x-responsive-nav-link>  
+            </x-responsive-nav-link> 
+            @can('view permission')
+                <x-responsive-nav-link :href="route('permission.index')" :active="request()->routeIs('permissions.*')">
+                    {{ __('Permissions') }}
+                </x-responsive-nav-link>
+            @endcan
+
+            @can('view role')
+                <x-responsive-nav-link :href="route('roles.index')" :active="request()->routeIs('roles.*')">
+                    {{ __('Roles') }}
+                </x-responsive-nav-link>
+            @endcan
+
+            @can('view user')
+                <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                    {{ __('Users') }}
+                </x-responsive-nav-link>
+            @endcan
+            
         </div>
 
         <!-- Responsive Settings Options -->
