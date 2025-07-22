@@ -3,8 +3,11 @@
     @csrf
     @if(isset($permission))
         @method('PUT')
+        <input type="hidden" name="id" id="permission_id" value="{{ $permission->id }}">
     @else
         @method('POST')
+        <input type="hidden" name="id" id="permission_id" value="">
+
     @endif
 
     <div class="mb-4">

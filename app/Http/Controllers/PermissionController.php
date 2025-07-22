@@ -34,10 +34,17 @@ class PermissionController extends Controller
             ->paginate($perPage);
 
         if ($request->ajax()) {
-            return view('permissions.result', compact('permissions'))->render();
+            return view('permission.result', compact('permissions'))->render();
         }
 
-        return view('permissions.index', compact('permissions', 'perPage'));
+        return view('permission.index', compact('permissions', 'perPage'));
+    }
+    public function create()
+    {
+        if (!$this->genericPolicy->create(Auth::user(), new Permission())) {
+            abort(403, 'Unauthorized action.');
+        }
+        return view('permission.partials.form');
     }
 
     public function store(PermissionRequest $request)
@@ -58,7 +65,7 @@ class PermissionController extends Controller
             abort(403, 'Unauthorized action.');
         }
         $permission = Permission::findOrFail($id);
-        return view('permissions.partials.form', compact('permission'))->render();
+        return view('permission.partials.form', compact('permission'))->render();
     }
 
     public function update(PermissionRequest $request, Permission $permission)

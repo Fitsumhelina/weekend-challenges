@@ -19,7 +19,7 @@
                                 </button>
                             @endcan
                             @can('delete permission')
-                                <form action="{{ route('permissions.destroy', $permission->id) }}" method="POST" class="inline-block">
+                                <form action="{{ route('permission.destroy', $permission->id) }}" method="POST" class="inline-block">
                                     @csrf
                                     @method('DELETE')
                                     <button type="button" class="permission-delete-btn w-8 h-8 rounded-full bg-red-100 text-red-600 hover:bg-red-200 flex items-center justify-center transition duration-300" title="Delete">

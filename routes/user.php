@@ -13,10 +13,11 @@ Route::match(['PUT', 'PATCH'], '/roles/{role}', [RoleController::class, 'update'
 Route::delete('roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
 // Route::put('roles/{role}', [RoleController::class, 'update'])->name('roles.update');
 
-Route::resource('permissions', PermissionController::class)->except(['create', 'show']);
-Route::get('permissions/{id}/edit', [PermissionController::class, 'edit'])->name('permissions.edit');
-Route::match(['PUT', 'PATCH'], '/permissions/{permission}', [PermissionController::class, 'update'])->name('permissions.update');
-// Route::put('permissions/{permission}', [PermissionController::class, 'update'])->name('permissions.update');
+Route::resource('permission', PermissionController::class)->except(['show']);
+// Route::get('permissions/create', [PermissionController::class, 'create'])->name('permissions.create');
+// Route::post('permissions', [PermissionController::class, 'store'])->name('permissions.store');
+// Route::get('permissions/{id}/edit', [PermissionController::class, 'edit'])->name('permissions.edit');
+
 
 Route::get('users', [UserController::class, 'index'])->name('users.index');
 Route::get('users/{user}', [UserController::class, 'show'])->name('users.show');

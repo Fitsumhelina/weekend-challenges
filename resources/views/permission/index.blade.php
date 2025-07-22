@@ -33,7 +33,7 @@
             </div>
         @endif
         {{-- Search Form and Items per page --}}
-        <form action="{{ route('permissions.index') }}" method="GET" class="mb-6" id="permissions-search-form">
+        <form action="{{ route('permission.index') }}" method="GET" class="mb-6" id="permissions-search-form">
             <div class="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
                 <input type="text" name="search" placeholder="Search permissions..."
                        value="{{ request('search') }}"
@@ -55,37 +55,35 @@
 
         {{-- Permission List (result.blade.php) --}}
         <div id="permission-search-results">
-            @include('permissions.result', ['permissions' => $permissions])
+            @include('permission.result', ['permissions' => $permissions])
         </div>
     </div>
 
     {{-- Create/Edit Permission Modal --}}
-    <div id="createPermissionModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <div id="permissionFormModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
         <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-1/2 lg:w-1/3 shadow-lg rounded-md bg-white">
             <div class="flex justify-between items-center pb-3">
                 <h3 class="text-2xl leading-6 font-medium text-gray-900" id="permissionModalTitle"></h3>
-                <button class="text-gray-400 hover:text-gray-600 close-modal">
+                <button class="text-gray-400 hover:text-gray-600 close-modal" data-modal-id="permissionFormModal">
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
-            <div class="mt-2 px-7 py-3" id="permissionModalContent">
-                {{-- Form content will be loaded here via AJAX for edit, or directly for create --}}
-                @include('permissions.partials.form', ['permission' => null]) {{-- Pass null for create --}}
+            <div class="mt-2 px-7 py-3" id="permissionFormModalContent">
             </div>
         </div>
     </div>
 
-    {{-- Delete Confirmation Modal --}}
-    <div id="deleteConfirmationModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+   {{-- Delete Confirmation Modal --}}
+    <div class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full items-center justify-center z-50" id="deleteConfirmationModal">
         <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
             <div class="flex justify-between items-center pb-3">
                 <h3 class="text-xl leading-6 font-medium text-gray-900">Confirm Deletion</h3>
-                <button class="text-gray-400 hover:text-gray-600 close-modal">
+                <button class="text-gray-400 hover:text-gray-600 close-modal" data-modal-id="deleteConfirmationModal">
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
             <div class="mt-2 px-7 py-3">
-                <p class="text-gray-700">Are you sure you want to delete this permission?</p>
+                <p class="text-gray-700">Are you sure you want to delete this income record?</p>
             </div>
             <div class="items-center px-4 py-3 flex justify-end space-x-4">
                 <button id="cancelDeleteBtn" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 transition duration-300">Cancel</button>
@@ -100,8 +98,8 @@
 @section('scripts')
     <script>
         const AppData = {
-            PermissionsIndexRoute: "{{ route('permissions.index') }}",
-            PermissionsCreateRoute: "{{ route('permissions.create') }}",
+            PermissionIndexRoute: "{{ route('permission.index') }}",
+            PermissionCreateRoute: "{{ route('permission.create') }}",
             csrfToken: "{{ csrf_token() }}"
         };
 

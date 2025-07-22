@@ -1,6 +1,7 @@
 // resources/js/init.js
 import { IncomeListHandler } from './income/income';
 import { ExpenseListHandler } from './expense/expense';
+import { PermissionListHandler } from './permission/permission'; // Assuming you have a similar handler for permissions
 
 const openModal = (modalElement) => {
     modalElement.classList.remove('hidden');
@@ -22,6 +23,14 @@ if (document.getElementById('income-list-container')) {
 if (document.getElementById('expense-list-container')) {
     new ExpenseListHandler({
         indexRoute: AppData.ExpenseIndexRoute,
+        csrfToken: AppData.csrfToken,
+    });
+}
+
+if (document.getElementById('permission-list-container')) {
+    // Assuming you have a PermissionListHandler similar to IncomeListHandler
+    new PermissionListHandler({
+        indexRoute: AppData.PermissionIndexRoute,
         csrfToken: AppData.csrfToken,
     });
 }

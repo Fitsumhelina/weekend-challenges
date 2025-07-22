@@ -5,7 +5,7 @@
             {{-- Permissions Link --}}
             @can('view permission')
                 <li class="mb-2">
-                    <a href="{{ route('permissions.index') }}"
+                    <a href="{{ route('permission.index') }}"
                         class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-300 text-gray-700 {{ request()->routeIs('permissions.*') ? 'bg-gray-300' : '' }}">
                         Permissions
                     </a>
