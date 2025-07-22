@@ -77,16 +77,6 @@ export default class ListHandler {
                 }
             });
         }
-        if (listContainer) {
-            listContainer.addEventListener('click', (event) => {
-                const target = event.target.closest('button');
-                 if (!target) return;
-                 const id = target.dataset.id;
-                if (target.classList.contains('edit-expense-btn')) {
-                    this.loadForm(this.modalEditFormId, `/${this.routeName}/${id}/edit`, 'edit');
-                }
-            });
-        }
 
         // Search form and per_page select
         const searchForm = document.getElementById(`${this.entityName}-search-form`);
