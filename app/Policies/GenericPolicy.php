@@ -14,7 +14,6 @@ class GenericPolicy
     public function view(User $user, $model)
     {
         $permission = 'view ' . Str::kebab(class_basename($model));
-        Log::info("Checking permission: " . $permission);
         return $user->hasPermissionTo($permission);
     }
 
