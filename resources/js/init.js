@@ -1,7 +1,7 @@
 // resources/js/init.js
 import { IncomeListHandler } from './income/income';
 import { ExpenseListHandler } from './expense/expense';
-import { PermissionListHandler } from './permission/permission'; // Assuming you have a similar handler for permissions
+import { PermissionListHandler } from './permission/permission'; 
 
 const openModal = (modalElement) => {
     modalElement.classList.remove('hidden');

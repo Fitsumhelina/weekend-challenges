@@ -54,7 +54,7 @@
         </form>
 
         {{-- Permission List (result.blade.php) --}}
-        <div id="permission-search-results">
+        <div id="permission-list-container">
             @include('permission.result', ['permissions' => $permissions])
         </div>
     </div>

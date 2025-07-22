@@ -71,15 +71,12 @@ php artisan serve
 Visit [http://localhost:8000](http://localhost:8000) in your browser.
 
 # For testing 
-## -admin access 
-### email 
+## admin access 
+
 >admin1@gmail.com
-### password
 >12345678
 
-## -member access
-### email
+## member access
 >member1@gmail.com
-### password 
 >12345678
 
