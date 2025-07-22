@@ -32,18 +32,21 @@
                 </span>
             </div>
         @endif
-
-        {{-- Search Form --}}
-        <form id="permission-search-form" action="{{ route('permissions.index') }}" method="GET" class="mb-6">
+        {{-- Search Form and Items per page --}}
+        <form action="{{ route('permissions.index') }}" method="GET" class="mb-6" id="permissions-search-form">
             <div class="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
-                <input type="text" name="search" id="permission-search" placeholder="Search permissions..."
+                <input type="text" name="search" placeholder="Search permissions..."
                        value="{{ request('search') }}"
                        class="flex-grow w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 shadow-sm">
-                <select name="per_page" id="permission-per_page" class="px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 shadow-sm">
-                    <option value="10" @if(request('per_page', 10) == 10) selected @endif>10 per page</option>
-                    <option value="25" @if(request('per_page') == 25) selected @endif>25 per page</option>
-                    <option value="50" @if(request('per_page') == 50) selected @endif>50 per page</option>
+
+                <select name="per_page" onchange="this.form.submit()"
+                        class="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 shadow-sm">
+                    <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10 per page</option>
+                    <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25 per page</option>
+                    <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50 per page</option>
+                    <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100 per page</option>
                 </select>
+
                 <button type="submit" class="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out w-full sm:w-auto">
                     Search
                 </button>
@@ -94,156 +97,40 @@
 </div>
 @endsection
 
-@push('scripts')
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> {{-- For Swal.fire --}}
+@section('scripts')
+    <script>
+        const AppData = {
+            PermissionsIndexRoute: "{{ route('permissions.index') }}",
+            PermissionsCreateRoute: "{{ route('permissions.create') }}",
+            csrfToken: "{{ csrf_token() }}"
+        };
 
-{{-- Pass data to JS --}}
-<script>
-    const Data = {
-        PermissionIndexRoute: "{{ route('permissions.index') }}",
-        csrfToken: "{{ csrf_token() }}",
-    };
-</script>
-
-{{-- Import the ListHandler and PermissionListHandler --}}
-<script type="module">
-    import { PermissionListHandler } from "{{ asset('js/permission.js') }}"; // Adjust path as needed
-
-    $(document).ready(function() {
-        // Initialize the PermissionListHandler
-        const permissionListHandler = new PermissionListHandler({
-            indexRoute: Data.PermissionIndexRoute,
-            csrfToken: Data.csrfToken,
-            entityName: 'permission',
-            routeName: '/permissions', // Matches your web.php route prefix
-            modalAddFormId: 'createPermissionModal',
-            modalEditFormId: 'createPermissionModal', // Re-use for edit
-            modalViewFormId: 'viewPermissionModal' // Not used for permissions, but kept for ListHandler consistency
-        });
-
-        // Manual modal control for TailwindCSS
-        const permissionModal = document.getElementById('createPermissionModal');
-        const deleteConfirmationModal = document.getElementById('deleteConfirmationModal');
-        const createPermissionBtn = document.getElementById('createPermissionBtn');
-        const permissionModalTitle = document.getElementById('permissionModalTitle');
-        const permissionModalContent = document.getElementById('permissionModalContent');
-        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-        const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
-        let deleteForm = null;
-
-        function openModal(modal) {
-            modal.classList.remove('hidden');
-            modal.classList.add('flex', 'items-center', 'justify-center');
-        }
-
-        function closeModal(modal) {
-            modal.classList.add('hidden');
-            modal.classList.remove('flex', 'items-center', 'justify-center');
-            // Clear form content on close for the combined modal
-            if (modal.id === 'createPermissionModal') {
-                // Reset form to its initial create state
-                permissionModalContent.innerHTML = `@include('permissions.partials.form', ['permission' => null])`;
-            }
-        }
-
-        document.querySelectorAll('.close-modal').forEach(button => {
-            button.addEventListener('click', function() {
-                closeModal(permissionModal);
-                closeModal(deleteConfirmationModal);
-            });
-        });
-
-        permissionModal.addEventListener('click', function(event) {
-            if (event.target === permissionModal) {
-                closeModal(permissionModal);
-            }
-        });
-
-        deleteConfirmationModal.addEventListener('click', function(event) {
-            if (event.target === deleteConfirmationModal) {
-                closeModal(deleteConfirmationModal);
-            }
-        });
-
-        if (createPermissionBtn) {
-            createPermissionBtn.addEventListener('click', function () {
-                permissionModalTitle.textContent = 'Create New Permission';
-                // Ensure the form is reset to create state
-                permissionModalContent.innerHTML = `@include('permissions.partials.form', ['permission' => null])`;
-                openModal(permissionModal);
-            });
-        }
-
-        // Delegated event listeners for edit and delete buttons
-        document.getElementById('permission-search-results').addEventListener('click', function (event) {
-            // Edit button
-            if (event.target.closest('.permission-edit-btn')) {
-                const permissionId = event.target.closest('.permission-edit-btn').dataset.id;
-                permissionModalTitle.textContent = 'Edit Permission';
-
-                // Load the edit form partial via AJAX
-                fetch(`/permissions/${permissionId}/edit`)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.text(); // Expecting HTML partial
-                    })
-                    .then(html => {
-                        permissionModalContent.innerHTML = html;
-                        openModal(permissionModal);
-                    })
-                    .catch(error => {
-                        console.error('Error fetching permission for edit:', error);
-                        toastr.error('Failed to load permission for editing.');
-                    });
-            }
-
-            // Delete button
-            if (event.target.closest('.permission-delete-btn')) {
-                deleteForm = event.target.closest('form');
-                openModal(deleteConfirmationModal);
-            }
-        });
-
-        // Confirm Delete Action
-        confirmDeleteBtn.addEventListener('click', function () {
-            if (deleteForm) {
-                // Use the ListHandler's handleDelete for consistency
-                permissionListHandler.handleDelete({ currentTarget: deleteForm.querySelector('button[type="button"]') });
-            }
-            closeModal(deleteConfirmationModal);
-        });
-
-        // Cancel Delete Action
-        cancelDeleteBtn.addEventListener('click', 'click', function () {
-            closeModal(deleteConfirmationModal);
-        });
-
-        // Override ListHandler's success callback for form submissions to refresh the list
-        // This is a workaround since ListHandler expects a full page reload or a direct list update
-        // and we're using custom modal handling.
-        // For a more robust solution, you'd integrate ListHandler's modal logic directly
-        // or ensure its callbacks are flexible enough.
-        const originalHandleFormSubmit = permissionListHandler.handleFormSubmit;
-        permissionListHandler.handleFormSubmit = async function(e, options) {
-            try {
-                const response = await originalHandleFormSubmit.call(this, e, options);
-                closeModal(permissionModal); // Close the modal on success
-                // Manually trigger a list refresh after successful submission
-                await this.refreshList();
-                return response;
-            } catch (error) {
-                // Error handling is already in originalHandleFormSubmit
-                throw error;
+        window.openModal = function(modalElement) {
+            if (modalElement) {
+                modalElement.classList.remove('hidden');
+                modalElement.classList.add('flex');
             }
         };
 
-        // Initialize event listeners for search and pagination via ListHandler
-        permissionListHandler.setupEventListeners();
-    });
-</script>
-@endpush
+        window.closeModal = function(modalElement) {
+            if (modalElement) {
+                modalElement.classList.add('hidden');
+                modalElement.classList.remove('flex');
+            }
+        };
+
+        window.initSelect2ForSource = function(selectElement, placeholderText = "Select a source") {
+            if (typeof jQuery !== 'undefined' && $.fn.select2) {
+                if (!$(selectElement).data('select2')) {
+                    $(selectElement).select2({
+                        placeholder: placeholderText,
+                        allowClear: true,
+                        dropdownParent: $(selectElement).closest('.modal') // Important for z-index issues in modals
+                    });
+                }
+            } else {
+                console.warn("jQuery or Select2 not loaded. Cannot initialize Select2.");
+            }
+        };
+    </script>
+@endsection
