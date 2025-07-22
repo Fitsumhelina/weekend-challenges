@@ -62,6 +62,31 @@ export default class ListHandler {
                 }
             });
         }
+        if (listContainer) {
+            listContainer.addEventListener('click', (event) => {
+                const target = event.target.closest('button');
+                 if (!target) return;
+                 const id = target.dataset.id;
+                if (target.classList.contains('edit-expense-btn')) {
+                    this.loadForm(this.modalEditFormId, `/${this.routeName}/${id}/edit`, 'edit');
+                } else if (target.classList.contains('view-expense-btn')) {
+                    this.loadForm(this.modalViewFormId, `/${this.routeName}/${id}`, 'view');
+                } else if (target.classList.contains('delete-expense-btn')) {
+                    const form = target.closest('form');
+                    this.handleDelete(form);
+                }
+            });
+        }
+        if (listContainer) {
+            listContainer.addEventListener('click', (event) => {
+                const target = event.target.closest('button');
+                 if (!target) return;
+                 const id = target.dataset.id;
+                if (target.classList.contains('edit-expense-btn')) {
+                    this.loadForm(this.modalEditFormId, `/${this.routeName}/${id}/edit`, 'edit');
+                }
+            });
+        }
 
         // Search form and per_page select
         const searchForm = document.getElementById(`${this.entityName}-search-form`);
@@ -124,7 +149,11 @@ export default class ListHandler {
     loadForm(modalId, url, type) { // type can be 'create', 'edit', 'view'
         const modalElement = document.getElementById(modalId);
         const modalContentDiv = document.getElementById(this.modalFormContentId); // For create/edit
-        const modalViewContentDiv = document.getElementById('viewIncomeContent'); // For view modal
+        // For view modal: support both income and expense
+        const modalViewContentDiv =
+            document.getElementById('viewIncomeContent') ||
+            document.getElementById('viewExpenseContent');
+
 
         if (!modalElement) {
             console.error(`Modal element with ID '${modalId}' not found.`);
