@@ -1,5 +1,5 @@
 {{-- The form is designed to be used for both create and edit within the same modal --}}
-<form id="permissionForm" method="POST" action="{{ isset($permission) ? route('permissions.update', $permission->id) : route('permissions.store') }}">
+<form id="permissionForm" method="POST" action="{{ isset($permission) ? route('permission.update', $permission->id) : route('permission.store') }}">
     @csrf
     @if(isset($permission))
         @method('PUT')
