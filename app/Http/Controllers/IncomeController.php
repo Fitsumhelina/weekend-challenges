@@ -43,7 +43,7 @@ class IncomeController extends Controller
 
         $users = User::all();
 
-        $taxRate = Kitat::first()->amount ?? 0;
+        $taxRate = Kitat::first()->interest_rate ?? 0;
 
         foreach ($incomes as $income) {
             if ($income->status === 'pending') {

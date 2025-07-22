@@ -15,8 +15,7 @@ class KitatFactory extends Factory
         return [
             'description' => $this->faker->optional()->text(200),
             'amount' => $this->faker->optional()->randomFloat(2, 100, 10000),
-            // Ensure only one unique interest value exists at a time
-            'interest' => $this->faker->unique()->numberBetween(1, 20),
+            'interest_rate' => $this->faker->unique()->numberBetween(1, 20),
             'created_by' => \App\Models\User::inRandomOrder()->first()->id,
 
         ];

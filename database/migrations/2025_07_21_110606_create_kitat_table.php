@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->text('description')->nullable();
             $table->string('amount')->nullable();
-            $table->unsignedInteger('interest')->unique()->nullable();
+            $table->unsignedInteger('interest_rate')->unique()->nullable();
             $table->timestamps();
             $table->softDeletes();
             $table->unsignedBigInteger('created_by')->nullable();

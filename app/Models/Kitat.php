@@ -11,7 +11,7 @@ class Kitat extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['amount', 'description', 'interest', 'created_by'];
+    protected $fillable = ['amount', 'description', 'interest_rate', 'created_by'];
 
 
     public function createdByUser()
