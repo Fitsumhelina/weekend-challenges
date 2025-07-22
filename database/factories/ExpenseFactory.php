@@ -17,6 +17,7 @@ class ExpenseFactory extends Factory
             'amount' => $this->faker->randomFloat(2, 10, 1000),
             'category' => $this->faker->word(),
             'description' => $this->faker->paragraph(),
+            'date'=>$this->faker->dateTimeBetween('-1 year', 'now'),
             'created_by' => User::inRandomOrder()->first()->id,
             'updated_by' => User::inRandomOrder()->first()->id,
         ];
