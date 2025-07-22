@@ -64,7 +64,6 @@ class RoleController extends Controller
           if (!$this->genericPolicy->update(Auth::user(), new Role())) {
             abort(403, 'Unauthorized action.');
         }
-        Log::info($request->all());
         $role->update(['name' => $request->name]);
         $role->syncPermissions($request->permissions ?? []);
 

@@ -18,13 +18,11 @@ Route::get('permissions/{id}/edit', [PermissionController::class, 'edit'])->name
 Route::match(['PUT', 'PATCH'], '/permissions/{permission}', [PermissionController::class, 'update'])->name('roles.permissions');
 // Route::put('permissions/{permission}', [PermissionController::class, 'update'])->name('permissions.update');
 
-Route::get('users', [UserController::class, 'index']) ->name('users.index');
-Route::get('users/{id}', [UserController::class, 'show']) ->name('users.show');
-Route::get('users/create',[UserController::class,'create']) ->name('users.create');
+Route::get('users', [UserController::class, 'index'])->name('users.index');
+Route::get('users/{user}', [UserController::class, 'show'])->name('users.show');
+Route::get('users/create', [UserController::class, 'create'])->name('users.create');
 Route::post('users', [UserController::class, 'store'])->name('users.store');
-Route::get('users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
-Route::match(['PUT', 'PATCH'], '/users/{id}', [UserController::class, 'update'])->name('users.update');
-Route::delete('users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
-
-
+Route::get('users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+Route::match(['PUT', 'PATCH'], '/users/{user}', [UserController::class, 'update'])->name('users.update');
+Route::delete('users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 
