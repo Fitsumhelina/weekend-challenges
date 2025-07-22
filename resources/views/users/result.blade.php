@@ -1,6 +1,6 @@
 <div class="overflow-x-auto rounded-lg shadow-md">
     <table class="min-w-full bg-white">
-        <thead class="bg-gray-200 text-gray-700 uppercase text-sm leading-normal">
+        <thead class="bg-gray-200 text-gray-700 uppercase text-sm leading-normal hidden md:table-header-group">
             <tr>
                 <th class="py-3 px-6 text-left">ID</th>
                 <th class="py-3 px-6 text-left">Name</th>
@@ -11,11 +11,18 @@
         </thead>
         <tbody class="text-gray-600 text-sm font-light">
             @forelse ($users as $user)
-                <tr class="border-b border-gray-200 hover:bg-gray-100">
-                    <td class="py-3 px-6 text-left whitespace-nowrap">{{ $user->id }}</td>
-                    <td class="py-3 px-6 text-left whitespace-nowrap">{{ $user->name }}</td>
-                    <td class="py-3 px-6 text-left">{{ $user->email }}</td>
-                    <td class="py-3 px-6 text-left">
+                <tr class="border-b border-gray-200 hover:bg-gray-100 flex flex-col md:table-row md:flex-row md:w-auto w-full">
+                    <td class="py-3 px-6 text-left whitespace-nowrap md:table-cell block">
+                        <span class="md:hidden font-semibold">ID: </span>{{ $user->id }}
+                    </td>
+                    <td class="py-3 px-6 text-left whitespace-nowrap md:table-cell block">
+                        <span class="md:hidden font-semibold">Name: </span>{{ $user->name }}
+                    </td>
+                    <td class="py-3 px-6 text-left md:table-cell block">
+                        <span class="md:hidden font-semibold">Email: </span>{{ $user->email }}
+                    </td>
+                    <td class="py-3 px-6 text-left md:table-cell block">
+                        <span class="md:hidden font-semibold">Roles: </span>
                         <div class="flex flex-wrap gap-2">
                             @forelse ($user->roles as $role)
                                 <span class="px-3 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded-full">
@@ -26,7 +33,8 @@
                             @endforelse
                         </div>
                     </td>
-                    <td class="py-3 px-6 text-center">
+                    <td class="py-3 px-6 text-center md:table-cell block">
+                        <span class="md:hidden font-semibold">Actions: </span>
                         <div class="flex item-center justify-center space-x-2">
                             @can('view user')
                                 <button class="user-view-btn w-8 h-8 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 flex items-center justify-center transition duration-300" data-id="{{ $user->id }}" title="View">
