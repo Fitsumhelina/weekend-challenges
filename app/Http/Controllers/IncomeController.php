@@ -148,7 +148,7 @@ class IncomeController extends Controller
             $income = Income::findOrFail($id);
 
             if ($income->status === 'pending') {
-                $taxRate = Kitat::first()->amount ?? 0;
+                $taxRate = Kitat::first()->interest_rate ?? 0;
                 $days = \Carbon\Carbon::parse($income->date)->diffInDays(now());
                 $debt = $taxRate * $days;
             } else {
