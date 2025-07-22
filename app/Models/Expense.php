@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 
 class Expense extends Model
 {
@@ -21,12 +22,12 @@ class Expense extends Model
 
     public function createdByUser()
     {
-        return $this->belongsTo('App\Models\User', 'created_by');
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function updatedByUser()
     {
-        return $this->belongsTo('App\Models\User', 'updated_by');
+        return $this->belongsTo(User::class, 'updated_by');
     }
 
 }
