@@ -18,7 +18,16 @@
 
         <div class="mb-4">
             <label for="amount" class="block text-gray-700 text-sm font-bold mb-2">Amount:</label>
-            <input type="number" name="amount" id="amount" step="0.01" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="{{ old('amount', $income->amount ?? '') }}" required>
+            <input 
+                type="number" 
+                name="amount" 
+                id="amount" 
+                step="0.01" 
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-full sm:w-full md:w-3/4 lg:w-2/3" 
+                value="{{ old('amount', $income->amount ?? '') }}" 
+                required
+                style="max-width:100%; box-sizing:border-box;"
+            >
             <span class="text-red-500 text-xs italic" id="amount-error"></span>
         </div>
 
