@@ -1,6 +1,6 @@
 <div class="overflow-x-auto rounded-lg shadow-md">
     <table class="min-w-full bg-white">
-        <thead class="bg-gray-200 text-gray-700 uppercase text-sm leading-normal">
+        <thead class="bg-gray-200 text-gray-700 uppercase text-sm leading-normal hidden md:table-header-group">
             <tr>
                 <th class="py-3 px-6 text-left">Title</th>
                 <th class="py-3 px-6 text-left">Amount</th>
@@ -12,13 +12,29 @@
         </thead>
         <tbody class="text-gray-600 text-sm font-light">
             @forelse ($expenses as $expense)
-                <tr class="border-b border-gray-200 hover:bg-gray-100">
-                    <td class="py-3 px-6 text-left whitespace-nowrap">{{ $expense->title }}</td>
-                    <td class="py-3 px-6 text-left">{{ number_format($expense->amount, 2) }}</td>
-                    <td class="py-3 px-6 text-left">{{ $expense->category }}</td>
-                    <td class="py-3 px-6 text-left">{{ \Carbon\Carbon::parse($expense->date)->format('M d, Y') }}</td>
-                    <td class="py-3 px-6 text-left">{{ $expense->createdByUser->name ?? 'Unknown' }}</td>
-                    <td class="py-3 px-6 text-center">
+                <tr class="border-b border-gray-200 hover:bg-gray-100 flex flex-col md:table-row md:flex-row md:w-auto w-full">
+                    <td class="py-3 px-6 text-left whitespace-nowrap md:table-cell block">
+                        <span class="font-semibold md:hidden block">Title:</span>
+                        {{ $expense->title }}
+                    </td>
+                    <td class="py-3 px-6 text-left md:table-cell block">
+                        <span class="font-semibold md:hidden block">Amount:</span>
+                        {{ number_format($expense->amount, 2) }}
+                    </td>
+                    <td class="py-3 px-6 text-left md:table-cell block">
+                        <span class="font-semibold md:hidden block">Category:</span>
+                        {{ $expense->category }}
+                    </td>
+                    <td class="py-3 px-6 text-left md:table-cell block">
+                        <span class="font-semibold md:hidden block">Date:</span>
+                        {{ \Carbon\Carbon::parse($expense->date)->format('M d, Y') }}
+                    </td>
+                    <td class="py-3 px-6 text-left md:table-cell block">
+                        <span class="font-semibold md:hidden block">Created By:</span>
+                        {{ $expense->createdByUser->name ?? 'Unknown' }}
+                    </td>
+                    <td class="py-3 px-6 text-center md:table-cell block">
+                        <span class="font-semibold md:hidden block">Actions:</span>
                         <div class="flex item-center justify-center space-x-2">
                             @can('view expense')
                                 <button type="button"
