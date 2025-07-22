@@ -18,6 +18,7 @@ return new class extends Migration
         $table->text('description')->nullable();
         $table->enum('status', ['pending', 'paid'])->default('pending');
         $table->date('date')->nullable();
+        $table->unsignedBigInteger('debt')->nullable();
         $table->unsignedBigInteger('created_by')->nullable();
         $table->foreign('created_by')->references('id')->on('users')->nullOnDelete();
         $table->unsignedBigInteger('updated_by')->nullable();

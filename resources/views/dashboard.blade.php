@@ -2,7 +2,19 @@
 
 @section('content')
 <div class="container mx-auto px-4 py-8">
-
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+    @if($totalDebt>0)
+    <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center justify-center transform hover:scale-105 transition duration-300 ease-in-out">
+        <div class="text-red-600 mb-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+        </div>
+        <p class="text-xl font-semibold text-gray-600">Your Have Unpaid Debt</p>
+        <p class="text-4xl font-bold text-red-600 mt-2">{{ number_format($totalDebt, 2)}} ETB</p>
+    </div>
+    @endif
+</div>
     {{-- Summary Cards --}}
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
         <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center justify-center transform hover:scale-105 transition duration-300 ease-in-out">
@@ -13,7 +25,7 @@
                 </svg>
             </div>
             <p class="text-xl font-semibold text-gray-600">Total Income</p>
-            <p class="text-4xl font-bold text-green-600 mt-2">${{ number_format($totalIncome, 2) }}</p>
+            <p class="text-4xl font-bold text-green-600 mt-2">{{ number_format($totalIncome, 2)}} ETB</p>
         </div>
 
         <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center justify-center transform hover:scale-105 transition duration-300 ease-in-out">
@@ -23,7 +35,7 @@
                 </svg>
             </div>
             <p class="text-xl font-semibold text-gray-600">Total Expenses</p>
-            <p class="text-4xl font-bold text-red-600 mt-2">${{ number_format($totalExpenses, 2) }}</p>
+            <p class="text-4xl font-bold text-red-600 mt-2">{{ number_format($totalExpenses, 2)}} ETB</p>
         </div>
 
         <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center justify-center transform hover:scale-105 transition duration-300 ease-in-out">
@@ -33,7 +45,7 @@
                 </svg>
             </div>
             <p class="text-xl font-semibold text-gray-600">Net Balance</p>
-            <p class="text-4xl font-bold {{ $netBalance >= 0 ? 'text-green-600' : 'text-red-600' }} mt-2">${{ number_format($netBalance, 2) }}</p>
+            <p class="text-4xl font-bold {{ $netBalance >= 0 ? 'text-green-600' : 'text-red-600' }} mt-2">{{ number_format($netBalance, 2) }} ETB</p>
         </div>
     </div>
 
@@ -69,7 +81,7 @@
                     @forelse ($incomes as $income)
                         <tr class="border-b border-gray-200 hover:bg-gray-50">
                             <td class="py-3 px-6 text-left">{{ $income->title }}</td>
-                            <td class="py-3 px-6 text-left text-green-600">${{ number_format($income->amount, 2) }}</td>
+                            <td class="py-3 px-6 text-left text-green-600">{{ number_format($income->amount, 2) }} ETB</td>
                             {{-- Assuming income->source is the user's name or a string, if it's an ID, you'd need a relationship --}}
                             <td class="py-3 px-6 text-left">{{ $income->sourceUser->name }}</td>
                             <td class="py-3 px-6 text-left">{{ \Carbon\Carbon::parse($income->date)->format('M d, Y') }}</td>
@@ -99,7 +111,7 @@
                     @forelse ($expenses as $expense)
                         <tr class="border-b border-gray-200 hover:bg-gray-50">
                             <td class="py-3 px-6 text-left">{{ $expense->title }}</td>
-                            <td class="py-3 px-6 text-left text-red-600">${{ number_format($expense->amount, 2) }}</td>
+                            <td class="py-3 px-6 text-left text-red-600">{{ number_format($expense->amount, 2) }} ETB</td>
                             {{-- Assuming expense->category is a string name --}}
                             <td class="py-3 px-6 text-left">{{ $expense->category }}</td>
                             <td class="py-3 px-6 text-left">{{ \Carbon\Carbon::parse($expense->date)->format('M d, Y') }}</td>

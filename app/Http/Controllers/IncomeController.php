@@ -49,8 +49,9 @@ class IncomeController extends Controller
             if ($income->status === 'pending') {
                 $days = Carbon::parse($income->date)->diffInDays(now());
                 $income->debt = $taxRate * $days;
+                $income->save(); 
             } else {
-                $income->debt = 0;
+                $income->dept = 0;
             }
         }
 
@@ -146,16 +147,9 @@ class IncomeController extends Controller
             }
 
             $income = Income::findOrFail($id);
-
-            if ($income->status === 'pending') {
-                $taxRate = Kitat::first()?->interest_rate ?? 0;
-                $days = \Carbon\Carbon::parse($income->date)->diffInDays(now());
-                $debt = $taxRate * $days;
-            } else {
-                $debt = 0;
-            }
             $income->status = 'paid';
-            $income->amount += $debt;
+            $income->amount += $income->debt;
+            $income->debt=0;
             $income->updated_by = Auth::id();
             $income->save();
 

@@ -16,6 +16,7 @@ class Income extends Model
         'amount',
         'status',
         'date',
+        'debt',
         'created_by',
         'updated_by'
     ];
