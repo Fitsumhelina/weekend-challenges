@@ -68,14 +68,14 @@ class ExpenseController extends Controller
 
         $data = $request->validate([
             'title' => 'required|string|max:255',
-            'category' => 'required|string', // Ensure category is validated
+            'category' => 'required|string', 
             'amount' => 'required|numeric',
-            'date' => 'required|date', // Added date validation to align with form
-            'description' => 'nullable|string|max:255', // Changed to nullable
+            'date' => 'required|date', 
+            'description' => 'nullable|string|max:255', 
         ]);
 
-        $data['created_by'] = Auth::id(); // Automatically set created_by
-        $data['updated_by'] = Auth::id(); // Set updated_by on creation too
+        $data['created_by'] = Auth::id(); 
+        $data['updated_by'] = Auth::id(); 
 
         Expense::create($data);
         return Redirect::route('expense.index')->with('success', 'Expense created successfully.');
