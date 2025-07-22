@@ -10,9 +10,9 @@ Route::get('roles/create', [RoleController::class, 'create'])->name('roles.creat
 Route::post('roles', [RoleController::class, 'store'])->name('roles.store');
 Route::get('roles/{role}/edit', [RoleController::class, 'edit'])->name('roles.edit');
 Route::match(['PUT', 'PATCH'], '/roles/{role}', [RoleController::class, 'update'])->name('roles.update');
+Route::delete('roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
 // Route::put('roles/{role}', [RoleController::class, 'update'])->name('roles.update');
 
-Route::patch('roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
 Route::resource('permissions', PermissionController::class)->except(['create', 'show']);
 Route::get('permissions/{id}/edit', [PermissionController::class, 'edit'])->name('permissions.edit');
 Route::match(['PUT', 'PATCH'], '/permissions/{permission}', [PermissionController::class, 'update'])->name('roles.permissions');
