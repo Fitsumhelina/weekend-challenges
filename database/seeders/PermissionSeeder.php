@@ -11,42 +11,42 @@ class PermissionSeeder extends Seeder
     public function run(): void
     {
         // Define all permissions
-        $permissions = [
+              $permissions = [
             // income permissions
-            'create income',
-            'update income',
-            'delete income',
-            'view income',
+            'create-income',
+            'update-income',
+            'delete-income',
+            'view-income',
 
             // expenses management
-            'create expense',
-            'update expense',
-            'delete expense',
-            'view expense',
+            'create-expense',
+            'update-expense',
+            'delete-expense',
+            'view-expense',
 
             // Role management
-            'create role',
-            'view role',
-            'update role',
-            'delete role',
+            'create-role',
+            'view-role',
+            'update-role',
+            'delete-role',
 
             // Permission management
-            'create permission',
-            'view permission',
-            'update permission',
-            'delete permission',
+            'create-permission',
+            'view-permission',
+            'update-permission',
+            'delete-permission',
 
             // User management
-            'create user',
-            'view user',
-            'update user',
-            'delete user',
+            'create-user',
+            'view-user',
+            'update-user',
+            'delete-user',
 
             #other permissions
-            'view home',
-            'view report',
-            'view sidebar',
-            'view dashboard',
+            'view-home',
+            'view-report',
+            'view-sidebar',
+            'view-dashboard',
         ];
 
       

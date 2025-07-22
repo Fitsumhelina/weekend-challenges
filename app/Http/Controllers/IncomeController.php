@@ -43,7 +43,7 @@ class IncomeController extends Controller
 
         $users = User::all();
 
-        $taxRate = Kitat::first()->interest_rate ?? 0;
+        $taxRate = Kitat::first()?->interest_rate ?? 0;
 
         foreach ($incomes as $income) {
             if ($income->status === 'pending') {
@@ -148,7 +148,7 @@ class IncomeController extends Controller
             $income = Income::findOrFail($id);
 
             if ($income->status === 'pending') {
-                $taxRate = Kitat::first()->interest_rate ?? 0;
+                $taxRate = Kitat::first()?->interest_rate ?? 0;
                 $days = \Carbon\Carbon::parse($income->date)->diffInDays(now());
                 $debt = $taxRate * $days;
             } else {
