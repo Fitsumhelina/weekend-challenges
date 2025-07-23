@@ -129,6 +129,51 @@
             } else {
                 console.warn("jQuery or Select2 not loaded. Cannot initialize Select2.");
             }
-        };
+        }
+
+        // Edit Permission Button Handler
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.permission-edit-btn')) {
+                const btn = e.target.closest('.permission-edit-btn');
+                const permissionId = btn.getAttribute('data-id');
+                // Fetch edit form via AJAX
+                fetch(`/permission/${permissionId}/edit`, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': AppData.csrfToken
+                    }
+                })
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('permissionModalTitle').textContent = 'Edit Permission';
+                    document.getElementById('permissionFormModalContent').innerHTML = html;
+                    openModal(document.getElementById('permissionFormModal'));
+                });
+            }
+        });
+
+        // Delete Permission Button Handler
+        let deleteForm = null;
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.permission-delete-btn')) {
+                e.preventDefault();
+                deleteForm = e.target.closest('form');
+                openModal(document.getElementById('deleteConfirmationModal'));
+            }
+        });
+
+        // Confirm Delete
+        document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+            if (deleteForm) {
+                deleteForm.submit();
+                closeModal(document.getElementById('deleteConfirmationModal'));
+            }
+        });
+
+        // Cancel Delete
+        document.getElementById('cancelDeleteBtn').addEventListener('click', function() {
+            closeModal(document.getElementById('deleteConfirmationModal'));
+            deleteForm = null;
+        });
     </script>
 @endsection

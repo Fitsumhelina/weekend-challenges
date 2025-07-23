@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Auth;
 use App\Policies\GenericPolicy;
+use Illuminate\Support\Facades\Redirect;
 
 class PermissionController extends Controller
 {   protected $genericPolicy;
@@ -86,6 +87,7 @@ class PermissionController extends Controller
         }
         $permission->delete();
 
-        return response()->json(['success' => true, 'message' => 'Permission deleted successfully.']);
+        return Redirect::route('permission.index')->with('success', 'Permission deleted successfully.');
+
     }
 }
