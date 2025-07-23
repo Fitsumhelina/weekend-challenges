@@ -79,10 +79,7 @@
                     </ul>
                 </div>
                 <div class="bg-[#fff2f2] dark:bg-[#1D0002] relative lg:-ml-px -mb-px lg:mb-0 rounded-t-lg lg:rounded-t-none lg:rounded-r-lg aspect-[335/376] lg:aspect-auto w-full lg:w-[438px] shrink-0 overflow-hidden flex items-center justify-center">
-                    <svg class="w-32 h-32 mx-auto" viewBox="0 0 100 100" fill="none">
-                        <circle cx="50" cy="50" r="48" stroke="#F53003" stroke-width="4" fill="#fff"/>
-                        <text x="50%" y="54%" text-anchor="middle" fill="#F53003" font-size="18" font-family="sans-serif" dy=".3em">TK</text>
-                    </svg>
+                   <img src="https://avatars.githubusercontent.com/u/198333242?s=200&v=4" alt="Logo" class="h-24 w-auto">
                 </div>
             </main>
         </div>
