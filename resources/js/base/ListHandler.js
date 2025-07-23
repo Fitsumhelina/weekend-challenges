@@ -149,8 +149,8 @@ export default class ListHandler {
         const modalContentDiv = document.getElementById(this.modalFormContentId); 
         const modalViewContentDiv =
             document.getElementById('viewIncomeContent') ||
-            document.getElementById('viewExpenseContent')||
-            document.getElementById('viewPermissionContent'); 
+            document.getElementById('viewExpenseContent');
+           
 
         if (!modalElement) {
             console.error(`Modal element with ID '${modalId}' not found.`);
