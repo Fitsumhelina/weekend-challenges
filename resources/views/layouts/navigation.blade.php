@@ -6,10 +6,7 @@
                 <!-- Logo -->
                 <div class="flex items-center justify-center w-100 h-10 rounded-full bg-[#fff2f2] dark:bg-[#1D0002] overflow-hidden">
                     <a href="/">
-                    <svg class="w-2- h-20" viewBox="0 0 100 100" fill="none">
-                        <circle cx="50" cy="50" r="28" stroke="#F53003" stroke-width="4" fill="#fff"/>
-                        <text x="50%" y="54%" text-anchor="middle" fill="#F53003" font-size="18" font-family="sans-serif" dy=".3em">TK</text>
-                    </svg>
+                    <img src="https://avatars.githubusercontent.com/u/198333242?s=200&v=4" alt="Logo" class="h-8 w-auto">
                     </a>
 
                 </div>
