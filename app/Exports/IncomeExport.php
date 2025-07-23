@@ -9,7 +9,21 @@ class IncomeExport implements FromCollection, WithHeadings
 {
     public function collection()
     {
-         return Income::all();
+        return Income::with('sourceUser')
+            ->get()
+            ->map(function ($income) {
+                return [
+                    'Title' => $income->title,
+                    'Amount' => $income->amount,
+                    'Source' => optional($income->sourceUser)->name,
+                    'Date' => $income->date,
+                    'Status' => $income->status,
+                    'Created By' => optional($income->createdByUser)->name,
+                    'Updated By' => optional($income->updatedByUser)->name,
+                    'Created At' => $income->created_at,
+                    'Updated At' => $income->updated_at,
+                ];
+            });
     }
 
     public function headings(): array
@@ -26,5 +40,5 @@ class IncomeExport implements FromCollection, WithHeadings
             'Updated At',
         ];
     }
-
+    
 }
