@@ -3,27 +3,29 @@
 namespace App\Exports;
 
 use App\Models\Expense;
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithMapping;
 
-class ExpenseExport implements FromCollection, WithHeadings
+class ExpenseExport implements FromQuery, WithHeadings, WithMapping
 {
-    public function collection()
+    public function query()
     {
-        return Expense::with('createdByUser', 'updatedByUser')
-            ->get()
-            ->map(function ($expense) {
-                return [
-                    'Title'       => $expense->title,
-                    'Amount'      => $expense->amount,
-                    'Description' => $expense->description,
-                    'Date'        => $expense->date,
-                    'Created By'  => optional($expense->createdByUser)->name,
-                    'Updated By'  => optional($expense->updatedByUser)->name,
-                    'Created At'  => $expense->created_at,
-                    'Updated At'  => $expense->updated_at,
-                ];
-            });
+        return Expense::with('createdByUser', 'updatedByUser');
+    }
+
+    public function map($expense): array
+    {
+        return [
+            $expense->title,
+            $expense->amount,
+            $expense->description,
+            $expense->date,
+            optional($expense->createdByUser)->name,
+            optional($expense->updatedByUser)->name,
+            $expense->created_at,
+            $expense->updated_at,
+        ];
     }
 
     public function headings(): array
