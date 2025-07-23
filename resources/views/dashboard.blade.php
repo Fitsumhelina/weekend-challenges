@@ -82,7 +82,7 @@
                             <tr class="border-b border-gray-200 hover:bg-gray-50">
                                 <td class="py-2 sm:py-3 px-2 sm:px-6 text-left">{{ $income->title }}</td>
                                 <td class="py-2 sm:py-3 px-2 sm:px-6 text-left text-green-600">{{ number_format($income->amount, 2) }} ETB</td>
-                                <td class="py-2 sm:py-3 px-2 sm:px-6 text-left">{{ $income->sourceUser->name }}</td>
+                                <td class="py-2 sm:py-3 px-2 sm:px-6 text-left">{{ $income->sourceUser->name ?? 'Unknown'}}</td>
                                 <td class="py-2 sm:py-3 px-2 sm:px-6 text-left">{{ \Carbon\Carbon::parse($income->date)->format('M d, Y') }}</td>
                             </tr>
                         @empty
