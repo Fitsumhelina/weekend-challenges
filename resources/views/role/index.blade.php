@@ -91,67 +91,81 @@
 <script>
     const Data = {
         RoleIndexRoute: "{{ route('role.index') }}",
+        RoleCreateRoute: "{{ route('role.create') }}",
         csrfToken: "{{ csrf_token() }}",
     };
 
-    document.addEventListener('DOMContentLoaded', function () {
-        const roleModal = document.getElementById('createRoleModal');
-        const deleteConfirmationModal = document.getElementById('deleteConfirmationModal');
-        const roleModalTitle = document.getElementById('roleModalTitle');
-        const roleModalContent = document.getElementById('roleModalContent');
-        let deleteForm = null;
+    window.openModal = function(modalElement) {
+            if (modalElement) {
+                modalElement.classList.remove('hidden');
+                modalElement.classList.add('flex');
+            }
+        };
 
-        function openModal(modal) {
-            modal.classList.remove('hidden');
-            modal.classList.add('flex', 'items-center', 'justify-center');
-        }
-        function closeModal(modal) {
-            modal.classList.add('hidden');
-            modal.classList.remove('flex', 'items-center', 'justify-center');
+        window.closeModal = function(modalElement) {
+            if (modalElement) {
+                modalElement.classList.add('hidden');
+                modalElement.classList.remove('flex');
+            }
+        };
+
+        window.initSelect2ForSource = function(selectElement, placeholderText = "Select a source") {
+            if (typeof jQuery !== 'undefined' && $.fn.select2) {
+                if (!$(selectElement).data('select2')) {
+                    $(selectElement).select2({
+                        placeholder: placeholderText,
+                        allowClear: true,
+                        dropdownParent: $(selectElement).closest('.modal')
+                    });
+                }
+            } else {
+                console.warn("jQuery or Select2 not loaded. Cannot initialize Select2.");
+            }
         }
 
-        // Edit Role Button Handler
-        document.getElementById('role-list-container').addEventListener('click', function (event) {
-            if (event.target.closest('.role-edit-btn')) {
-                const roleId = event.target.closest('.role-edit-btn').dataset.id;
-                roleModalTitle.textContent = 'Edit Role';
+        // Edit role Button Handler
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.role-edit-btn')) {
+                const btn = e.target.closest('.role-edit-btn');
+                const roleId = btn.getAttribute('data-id');
+                // Fetch edit form via AJAX
                 fetch(`/role/${roleId}/edit`, {
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': AppData.csrfToken
+                    }
                 })
                 .then(response => response.text())
                 .then(html => {
-                    roleModalContent.innerHTML = html;
-                    openModal(roleModal);
-                })
-                .catch(() => alert('Failed to load role edit form.'));
+                    document.getElementById('roleModalTitle').textContent = 'Edit role';
+                    document.getElementById('roleFormModalContent').innerHTML = html;
+                    openModal(document.getElementById('roleFormModal'));
+                });
             }
-            if (event.target.closest('.role-delete-btn')) {
-                deleteForm = event.target.closest('form');
-                openModal(deleteConfirmationModal);
+        });
+
+        // Delete role Button Handler
+        let deleteForm = null;
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.role-delete-btn')) {
+                e.preventDefault();
+                deleteForm = e.target.closest('form');
+                openModal(document.getElementById('deleteConfirmationModal'));
             }
         });
 
         // Confirm Delete
-        document.getElementById('confirmDeleteBtn').addEventListener('click', function () {
+        document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
             if (deleteForm) {
                 deleteForm.submit();
+                closeModal(document.getElementById('deleteConfirmationModal'));
             }
-            closeModal(deleteConfirmationModal);
         });
 
         // Cancel Delete
-        document.getElementById('cancelDeleteBtn').addEventListener('click', function () {
-            closeModal(deleteConfirmationModal);
+        document.getElementById('cancelDeleteBtn').addEventListener('click', function() {
+            closeModal(document.getElementById('deleteConfirmationModal'));
             deleteForm = null;
         });
-
-        // Modal close buttons
-        document.querySelectorAll('.close-modal').forEach(button => {
-            button.addEventListener('click', function () {
-                closeModal(roleModal);
-                closeModal(deleteConfirmationModal);
-            });
-        });
-    });
 </script>
 @endpush
