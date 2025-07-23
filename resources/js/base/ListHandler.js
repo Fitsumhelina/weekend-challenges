@@ -46,11 +46,11 @@ export default class ListHandler {
         const listContainer = document.getElementById(`${this.entityName}-list-container`);
         if (listContainer) {
             listContainer.addEventListener('click', (event) => {
-                const target = event.target.closest('button'); // Get the closest button
+                const target = event.target.closest('button');
                 if (!target) return;
-
                 const id = target.dataset.id;
 
+                // Income buttons
                 if (target.classList.contains('edit-income-btn')) {
                     this.loadForm(this.modalEditFormId, `/${this.routeName}/${id}/edit`, 'edit');
                 } else if (target.classList.contains('view-income-btn')) {
@@ -59,14 +59,8 @@ export default class ListHandler {
                     const form = target.closest('form');
                     this.handleDelete(form);
                 }
-            });
-        }
-        if (listContainer) {
-            listContainer.addEventListener('click', (event) => {
-                const target = event.target.closest('button');
-                 if (!target) return;
-                 const id = target.dataset.id;
-                if (target.classList.contains('edit-expense-btn')) {
+                // Expense buttons
+                else if (target.classList.contains('edit-expense-btn')) {
                     this.loadForm(this.modalEditFormId, `/${this.routeName}/${id}/edit`, 'edit');
                 } else if (target.classList.contains('view-expense-btn')) {
                     this.loadForm(this.modalViewFormId, `/${this.routeName}/${id}`, 'view');
@@ -74,15 +68,8 @@ export default class ListHandler {
                     const form = target.closest('form');
                     this.handleDelete(form);
                 }
-            });
-        }
-        //permission
-        if (listContainer) {
-            listContainer.addEventListener('click', (event) => {
-                const target = event.target.closest('button');
-                if (!target) return;
-                const id = target.dataset.id;
-                if (target.classList.contains('edit-permission-btn')) {
+                // Permission buttons
+                else if (target.classList.contains('edit-permission-btn')) {
                     this.loadForm(this.modalEditFormId, `/${this.routeName}/${id}/edit`, 'edit');
                 } else if (target.classList.contains('view-permission-btn')) {
                     this.loadForm(this.modalViewFormId, `/${this.routeName}/${id}`, 'view');
@@ -90,15 +77,8 @@ export default class ListHandler {
                     const form = target.closest('form');
                     this.handleDelete(form);
                 }
-            });
-        }
-        //Role
-         if (listContainer) {
-            listContainer.addEventListener('click', (event) => {
-                const target = event.target.closest('button');
-                if (!target) return;
-                const id = target.dataset.id;
-                if (target.classList.contains('edit-role-btn')) {
+                // Role buttons
+                else if (target.classList.contains('edit-role-btn')) {
                     this.loadForm(this.modalEditFormId, `/${this.routeName}/${id}/edit`, 'edit');
                 } else if (target.classList.contains('view-role-btn')) {
                     this.loadForm(this.modalViewFormId, `/${this.routeName}/${id}`, 'view');
