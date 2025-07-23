@@ -47,10 +47,13 @@
                 </select>
                 <input type="date" name="date" value="{{ request('date') }}"
                     class="w-full sm:w-auto px-3 sm:px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 shadow-sm">
+                @can('export data')
                 <a href="{{ route('income.export') }}"
                 class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out w-full sm:w-auto">
                     Export
                 </a>
+                @endcan
+
 
 
                 <button type="submit" class="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out w-full sm:w-auto">
