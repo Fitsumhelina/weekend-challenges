@@ -137,6 +137,10 @@ class ExpenseController extends Controller
     }
     public function export()
     {
+         if (!$this->genericPolicy->view(Auth::user(), new Expense())) {
+            abort(403, 'Unauthorized action.');
+        }
+        
         return Excel::download(new ExpenseExport, 'expenses.xlsx');
     }
 }
