@@ -79,7 +79,7 @@ class RoleController extends Controller
           if (!$this->genericPolicy->delete(Auth::user(), new Role())) {
             abort(403, 'Unauthorized action.');
         }
-        $role = Role::findOrFail($role->id);
+        // $role = Role::findOrFail($role->id);
         $role->delete();
         return redirect()->route('role.index')->with('success', 'Role deleted successfully.');
     }
