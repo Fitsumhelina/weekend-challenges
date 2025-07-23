@@ -14,3 +14,4 @@ Route::put('/income/{id}', [IncomeController::class, 'update'])->name('income.up
 Route::patch('/income/{id}/approve', [IncomeController::class, 'approve'])->name('income.approve');
 Route::delete('/income/{id}', [IncomeController::class, 'destroy'])->name('income.destroy');
 
+

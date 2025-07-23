@@ -10,3 +10,4 @@ Route::get('/expense/{id}', [ExpenseController::class, 'show'])->name('expense.s
 Route::get('/expense/{id}/edit', [ExpenseController::class, 'edit'])->name('expense.edit');
 Route::put('/expense/{id}', [ExpenseController::class, 'update'])->name('expense.update');
 Route::delete('/expense/{id}', [ExpenseController::class, 'destroy'])->name('expense.destroy');
+
