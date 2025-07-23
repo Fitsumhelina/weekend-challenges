@@ -2,28 +2,30 @@
 namespace App\Exports;
 
 use App\Models\Income;
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithMapping;
 
-class IncomeExport implements FromCollection, WithHeadings
+class IncomeExport implements FromQuery, WithHeadings, WithMapping
 {
-    public function collection()
+    public function query()
     {
-        return Income::with('sourceUser')
-            ->get()
-            ->map(function ($income) {
-                return [
-                    'Title' => $income->title,
-                    'Amount' => $income->amount,
-                    'Source' => optional($income->sourceUser)->name,
-                    'Date' => $income->date,
-                    'Status' => $income->status,
-                    'Created By' => optional($income->createdByUser)->name,
-                    'Updated By' => optional($income->updatedByUser)->name,
-                    'Created At' => $income->created_at,
-                    'Updated At' => $income->updated_at,
-                ];
-            });
+        return Income::with(['sourceUser', 'createdByUser', 'updatedByUser']);
+    }
+
+    public function map($income): array
+    {
+        return [
+            $income->title,
+            $income->amount,
+            optional($income->sourceUser)->name,
+            $income->date,
+            $income->status,
+            optional($income->createdByUser)->name,
+            optional($income->updatedByUser)->name,
+            $income->created_at,
+            $income->updated_at,
+        ];
     }
 
     public function headings(): array
@@ -40,5 +42,4 @@ class IncomeExport implements FromCollection, WithHeadings
             'Updated At',
         ];
     }
-    
 }
