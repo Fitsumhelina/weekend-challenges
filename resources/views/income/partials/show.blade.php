@@ -21,14 +21,17 @@
       </div>
     </div>
 
-    {{-- Source --}}
+    {{-- Updated By --}}
     <div class="flex items-center gap-3 px-4 w-full sm:w-1/2 lg:w-1/3">
-      <i data-lucide="user" class="text-purple-600 w-6 h-6"></i>
+      <i data-lucide="user-check" class="text-indigo-600 w-6 h-6"></i>
       <div>
-        <p class="font-medium text-gray-600">Source</p>
-        <p class="text-lg font-semibold text-gray-900 break-words">{{ $income->sourceUser->name ?? 'N/A' }}</p>
+        <p class="font-medium text-gray-600">Last Updated By</p>
+        <p class="text-base text-gray-900 break-words">{{ $income->updatedByUser->name ?? 'N/A' }}</p>
+        <p class="text-xs text-gray-500">{{ $income->updated_at->format('M d, Y H:i:s') }}</p>
       </div>
     </div>
+
+    
 
     {{-- Date --}}
     <div class="flex items-center gap-3 px-4 w-full sm:w-1/2 lg:w-1/3">
@@ -68,21 +71,16 @@
         <p class="text-xs text-gray-500">{{ $income->created_at->format('M d, Y H:i:s') }}</p>
       </div>
     </div>
-
-    {{-- Updated By --}}
+    
+    {{-- Source --}}
     <div class="flex items-center gap-3 px-4 w-full sm:w-1/2 lg:w-1/3">
-      <i data-lucide="user-check" class="text-indigo-600 w-6 h-6"></i>
+      <i data-lucide="user" class="text-purple-600 w-6 h-6"></i>
       <div>
-        <p class="font-medium text-gray-600">Last Updated By</p>
-        <p class="text-base text-gray-900 break-words">{{ $income->updatedByUser->name ?? 'N/A' }}</p>
-        <p class="text-xs text-gray-500">{{ $income->updated_at->format('M d, Y H:i:s') }}</p>
-      </div><div class="mt-8 flex justify-end">
-    <a href="{{ route('income.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition">
-        <i data-lucide="x" class="w-5 h-5 mr-2"></i>
-        Close
-    </a>
-</div>
+        <p class="font-medium text-gray-600">Source</p>
+        <p class="text-lg font-semibold text-gray-900 break-words">{{ $income->sourceUser->name ?? 'N/A' }}</p>
+      </div>
     </div>
+
 
     {{-- Description (Full width for readability) --}}
     <div class="flex items-start gap-3 px-4 w-full">

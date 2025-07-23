@@ -179,7 +179,7 @@ export default class ListHandler {
         } else if (type === 'view') {
             targetContentDiv = modalViewContentDiv;
         }
-static
+
         if (!targetContentDiv) {
             console.error(`Target content div not found for modal type '${type}'.`);
             window.toastr.error('Modal content area not found.');
