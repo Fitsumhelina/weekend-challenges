@@ -29,16 +29,21 @@ class ExpenseController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $search = request('search');
+       $search = request('search');
         $perPage = request('per_page', 10); // Default to 10 if not specified
+        $date = request('date'); // Get the date from the request
 
         $expenses = Expense::orderBy('created_at', 'desc')->with(['createdByUser', 'updatedByUser'])
-                        ->when($search, function ($query, $search) {
-                            $query->where('title', 'like', '%' . $search . '%')
-                                ->orWhere('description', 'like', '%' . $search . '%');
-                        })
-                        ->paginate($perPage)
-                        ->appends(request()->query()); // Keep search/per_page in pagination links
+            ->when($search, function ($query, $search) {
+                $query->where('title', 'like', '%' . $search . '%')
+                    ->orWhere('category', 'like', '%' . $search . '%')
+                    ->orWhereRaw("DATE_FORMAT(date, '%Y-%m-%d') LIKE ?", ['%' . $search . '%']);
+            })
+            ->when($date, function ($query, $date) {
+                $query->whereDate('date', $date);
+            })
+            ->paginate($perPage)
+            ->appends(request()->query()); // Keep search/per_page/date in pagination links
 
         $users = User::all(); // Assuming users might be needed for some future dropdown or display
 

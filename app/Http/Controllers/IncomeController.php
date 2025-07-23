@@ -40,7 +40,6 @@ class IncomeController extends Controller
                     ->orWhereHas('sourceUser', function ($q) use ($search) {
                         $q->where('name', 'like', '%' . $search . '%');
                     })
-                    ->orWhere('description', 'like', '%' . $search . '%')
                     ->orWhereRaw("DATE_FORMAT(date, '%Y-%m-%d') LIKE ?", ['%' . $search . '%']);
             })
             ->when($date, function ($query, $date) {

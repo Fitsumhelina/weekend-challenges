@@ -47,6 +47,9 @@
                     <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50 per page</option>
                     <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100 per page</option>
                 </select>
+                 <input type="date" name="date" value="{{ request('date') }}"
+                    class="w-full sm:w-auto px-3 sm:px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 shadow-sm">
+
 
                 <button type="submit" class="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out w-full sm:w-auto">
                     Search
