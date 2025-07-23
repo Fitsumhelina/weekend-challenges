@@ -22,19 +22,13 @@
             <span class="text-lg font-medium">{{ $expense->description }}</span>
         </div>
         <div class="flex flex-col">
-            <span class="text-sm font-semibold text-gray-500">Created At:</span>
-            <span class="text-lg font-medium">{{ $expense->created_at->format('M d, Y H:i A') }}</span>
-        </div>
-        <div class="flex flex-col">
-            <span class="text-sm font-semibold text-gray-500">Updated At:</span>
-            <span class="text-lg font-medium">{{ $expense->updated_at->format('M d, Y H:i A') }}</span>
-        </div>
-        <div class="flex flex-col">
             <span class="text-sm font-semibold text-gray-500">Created By:</span>
             <span class="text-lg font-medium">{{ $expense->createdByUser->name ?? 'N/A' }}</span>
+            <span class="text-lg font-medium">{{ $expense->created_at->format('M d, Y H:i A') }}</span>
         </div>
         <div class="flex flex-col">
             <span class="text-sm font-semibold text-gray-500">Updated By:</span>
             <span class="text-lg font-medium">{{ $expense->updatedByUser->name ?? 'N/A' }}</span>
+            <span class="text-lg font-medium">{{ $expense->updated_at->format('M d, Y H:i A') }}</span>
         </div>
 </div>

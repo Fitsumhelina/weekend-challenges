@@ -6,7 +6,6 @@
                 <th class="py-3 px-6 text-left">Amount</th>
                 <th class="py-3 px-6 text-left">Category</th>
                 <th class="py-3 px-6 text-left">Date</th>
-                <th class="py-3 px-6 text-left">Created By</th>
                 <th class="py-3 px-6 text-center">Actions</th>
             </tr>
         </thead>
@@ -28,10 +27,6 @@
                     <td class="py-3 px-6 text-left md:table-cell block">
                         <span class="font-semibold md:hidden block">Date:</span>
                         {{ \Carbon\Carbon::parse($expense->date)->format('M d, Y') }}
-                    </td>
-                    <td class="py-3 px-6 text-left md:table-cell block">
-                        <span class="font-semibold md:hidden block">Created By:</span>
-                        {{ $expense->createdByUser->name ?? 'Unknown' }}
                     </td>
                     <td class="py-3 px-6 text-center md:table-cell block">
                         <span class="font-semibold md:hidden block">Actions:</span>
