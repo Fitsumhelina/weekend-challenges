@@ -57,7 +57,8 @@
                     Search
                 </button>
             </div>
-        </form>
+        </form>use Maatwebsite\Excel\Facades\Excel;
+
 
         <div id="income-list-container" class="overflow-x-auto">
             @include('income.result', ['incomes' => $incomes])

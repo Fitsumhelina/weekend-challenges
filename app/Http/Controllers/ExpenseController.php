@@ -10,7 +10,9 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use App\Policies\GenericPolicy;
 use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon; // Ensure Carbon is imported if you're using it in the controller for date formatting
+use Carbon\Carbon; 
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\ExpenseExport;
 
 class ExpenseController extends Controller
 {
@@ -137,5 +139,9 @@ class ExpenseController extends Controller
         $expense = Expense::findOrFail($id);
         $expense->delete();
         return Redirect::route('expense.index')->with('success', 'Expense deleted successfully.');
+    }
+    public function export()
+    {
+        return Excel::download(new ExpenseExport, 'expenses.xlsx');
     }
 }

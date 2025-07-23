@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Exports\IncomeExport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Controllers\IncomeController;
+use App\Http\Controllers\ExpenseController;
 
 
 
@@ -26,6 +27,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/income/export', [IncomeController::class, 'export'])->name('income.export');
+Route::get('/expense/export', [ExpenseController::class, 'export'])->name('expense.export');
 
 
 
