@@ -76,7 +76,7 @@ class RoleController extends Controller
 
     public function destroy(Role $role)
     {
-          if (!$this->genericPolicy->delete(Auth::user(), new Role())) {
+          if (!$this->genericPolicy->delete(Auth::user(), $role)) {
             abort(403, 'Unauthorized action.');
         }
         // $role = Role::findOrFail($role->id);
