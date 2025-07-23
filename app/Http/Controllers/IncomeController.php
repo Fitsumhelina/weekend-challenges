@@ -34,22 +34,24 @@ class IncomeController extends Controller
         }
 
         $search = request('search');
-        $perPage = request('per_page', 10); // Default to 10 if not specified
-        $date = request('date'); // Get the date from the request
+        $perPage = request('per_page', 10); 
+        $date = request('date');
 
         $incomes = Income::orderBy('created_at', 'desc')->with(['sourceUser', 'createdByUser', 'updatedByUser'])
             ->when($search, function ($query, $search) {
-                $query->where('title', 'like', '%' . $search . '%')
-                    ->orWhereHas('sourceUser', function ($q) use ($search) {
-                        $q->where('name', 'like', '%' . $search . '%');
-                    })
-                    ->orWhereRaw("DATE_FORMAT(date, '%Y-%m-%d') LIKE ?", ['%' . $search . '%']);
+                $query->where(function ($q) use ($search) {
+                    $q->where('title', 'like', '%' . $search . '%')
+                      ->orWhereHas('sourceUser', function ($q2) use ($search) {
+                          $q2->where('name', 'like', '%' . $search . '%');
+                      })
+                      ->orWhereRaw("DATE_FORMAT(date, '%Y-%m-%d') LIKE ?", ['%' . $search . '%']);
+                });
             })
             ->when($date, function ($query, $date) {
                 $query->whereDate('date', $date);
             })
             ->paginate($perPage)
-            ->appends(request()->query()); // Keep search/per_page/date in pagination links
+            ->appends(request()->query());
 
         $users = User::all();
 
