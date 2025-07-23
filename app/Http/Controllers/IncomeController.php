@@ -32,18 +32,22 @@ class IncomeController extends Controller
 
         $search = request('search');
         $perPage = request('per_page', 10); // Default to 10 if not specified
+        $date = request('date'); // Get the date from the request
 
         $incomes = Income::orderBy('created_at', 'desc')->with(['sourceUser', 'createdByUser', 'updatedByUser'])
-                ->when($search, function ($query, $search) {
-                    $query->where('title', 'like', '%' . $search . '%')
+            ->when($search, function ($query, $search) {
+                $query->where('title', 'like', '%' . $search . '%')
                     ->orWhereHas('sourceUser', function ($q) use ($search) {
                         $q->where('name', 'like', '%' . $search . '%');
                     })
                     ->orWhere('description', 'like', '%' . $search . '%')
                     ->orWhereRaw("DATE_FORMAT(date, '%Y-%m-%d') LIKE ?", ['%' . $search . '%']);
-                })
-                        ->paginate($perPage)
-                        ->appends(request()->query()); // Keep search/per_page in pagination links
+            })
+            ->when($date, function ($query, $date) {
+                $query->whereDate('date', $date);
+            })
+            ->paginate($perPage)
+            ->appends(request()->query()); // Keep search/per_page/date in pagination links
 
         $users = User::all();
 
