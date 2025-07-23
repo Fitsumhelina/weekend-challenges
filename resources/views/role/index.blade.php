@@ -34,9 +34,9 @@
         @endif
 
         {{-- Search Form --}}
-        <form id="role-search-form" action="{{ route('roles.index') }}" method="GET" class="mb-4 sm:mb-6">
+        <form id="role-search-form" action="{{ route('role.index') }}" method="GET" class="mb-4 sm:mb-6">
             <div class="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
-                <input type="text" name="search" id="role-search" placeholder="Search roles..."
+                <input type="text" name="search" id="role-search" placeholder="Search role..."
                        value="{{ request('search') }}"
                        class="flex-grow w-full sm:w-auto px-3 sm:px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 shadow-sm text-sm sm:text-base">
                 
@@ -47,8 +47,8 @@
         </form>
 
         {{-- Role List (result.blade.php) --}}
-        <div id="role-search-results" class="overflow-x-auto">
-            @include('roles.result', ['roles' => $roles])
+        <div id="role-list-container" class="overflow-x-auto">
+            @include('role.result', ['roles' => $roles])
         </div>
     </div>
 
@@ -62,7 +62,6 @@
                 </button>
             </div>
             <div class="mt-2 px-2 sm:px-7 py-2 sm:py-3" id="roleModalContent">
-                @include('roles.partials.form', ['role' => null, 'allPermissions' => $allPermissions])
             </div>
         </div>
     </div>
@@ -89,36 +88,17 @@
 @endsection
 
 @push('scripts')
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     const Data = {
-        RoleIndexRoute: "{{ route('roles.index') }}",
+        RoleIndexRoute: "{{ route('role.index') }}",
         csrfToken: "{{ csrf_token() }}",
     };
-</script>
-<script type="module">
-    import { RoleListHandler } from "{{ asset('js/permission.js') }}";
-    $(document).ready(function() {
-        const roleListHandler = new RoleListHandler({
-            indexRoute: Data.RoleIndexRoute,
-            csrfToken: Data.csrfToken,
-            entityName: 'role',
-            routeName: '/roles',
-            modalAddFormId: 'createRoleModal',
-            modalEditFormId: 'createRoleModal',
-            modalViewFormId: 'viewRoleModal'
-        });
 
+    document.addEventListener('DOMContentLoaded', function () {
         const roleModal = document.getElementById('createRoleModal');
         const deleteConfirmationModal = document.getElementById('deleteConfirmationModal');
-        const createRoleBtn = document.getElementById('createRoleBtn');
         const roleModalTitle = document.getElementById('roleModalTitle');
         const roleModalContent = document.getElementById('roleModalContent');
-        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-        const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
         let deleteForm = null;
 
         function openModal(modal) {
@@ -128,87 +108,50 @@
         function closeModal(modal) {
             modal.classList.add('hidden');
             modal.classList.remove('flex', 'items-center', 'justify-center');
-            if (modal.id === 'createRoleModal') {
-                roleModalContent.innerHTML = `{!! str_replace(["\r", "\n", "'"], ["", "", "\\'"], view('roles.partials.form', ['role' => null, 'allPermissions' => $allPermissions])->render()) !!}`;
-            }
         }
-        document.querySelectorAll('.close-modal').forEach(button => {
-            button.addEventListener('click', function() {
-                closeModal(roleModal);
-                closeModal(deleteConfirmationModal);
-            });
-        });
-        roleModal.addEventListener('click', function(event) {
-            if (event.target === roleModal) {
-                closeModal(roleModal);
-            }
-        });
-        deleteConfirmationModal.addEventListener('click', function(event) {
-            if (event.target === deleteConfirmationModal) {
-                closeModal(deleteConfirmationModal);
-            }
-        });
-        if (createRoleBtn) {
-            createRoleBtn.addEventListener('click', function () {
-                roleModalTitle.textContent = 'Create New Role';
-                fetch('/roles/create')
-                    .then(response => response.text())
-                    .then(html => {
-                        roleModalContent.innerHTML = html;
-                    })
-                    .catch(error => {
-                        console.error('Error loading create form:', error);
-                        toastr.error('Failed to load create role form.');
-                    });
-                openModal(roleModal);
-            });
-        }
-        document.getElementById('role-search-results').addEventListener('click', function (event) {
+
+        // Edit Role Button Handler
+        document.getElementById('role-list-container').addEventListener('click', function (event) {
             if (event.target.closest('.role-edit-btn')) {
                 const roleId = event.target.closest('.role-edit-btn').dataset.id;
                 roleModalTitle.textContent = 'Edit Role';
-                fetch(`/roles/${roleId}/edit`)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.text();
-                    })
-                    .then(html => {
-                        roleModalContent.innerHTML = html;
-                        openModal(roleModal);
-                    })
-                    .catch(error => {
-                        console.error('Error fetching role for edit:', error);
-                        toastr.error('Failed to load role for editing.');
-                    });
+                fetch(`/role/${roleId}/edit`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(response => response.text())
+                .then(html => {
+                    roleModalContent.innerHTML = html;
+                    openModal(roleModal);
+                })
+                .catch(() => alert('Failed to load role edit form.'));
             }
             if (event.target.closest('.role-delete-btn')) {
                 deleteForm = event.target.closest('form');
                 openModal(deleteConfirmationModal);
             }
         });
-        confirmDeleteBtn.addEventListener('click', function () {
+
+        // Confirm Delete
+        document.getElementById('confirmDeleteBtn').addEventListener('click', function () {
             if (deleteForm) {
-                roleListHandler.handleDelete({ currentTarget: deleteForm.querySelector('button[type="button"]') });
+                deleteForm.submit();
             }
             closeModal(deleteConfirmationModal);
         });
-        cancelDeleteBtn.addEventListener('click', function () {
+
+        // Cancel Delete
+        document.getElementById('cancelDeleteBtn').addEventListener('click', function () {
             closeModal(deleteConfirmationModal);
+            deleteForm = null;
         });
-        const originalHandleFormSubmit = roleListHandler.handleFormSubmit;
-        roleListHandler.handleFormSubmit = async function(e, options) {
-            try {
-                const response = await originalHandleFormSubmit.call(this, e, options);
+
+        // Modal close buttons
+        document.querySelectorAll('.close-modal').forEach(button => {
+            button.addEventListener('click', function () {
                 closeModal(roleModal);
-                await this.refreshList();
-                return response;
-            } catch (error) {
-                throw error;
-            }
-        };
-        roleListHandler.setupEventListeners();
+                closeModal(deleteConfirmationModal);
+            });
+        });
     });
 </script>
 @endpush

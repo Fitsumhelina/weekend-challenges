@@ -95,7 +95,7 @@
 </div>
 @endsection
 
-@section('scripts')
+@section('scripts') 
     <script>
         const AppData = {
             PermissionIndexRoute: "{{ route('permission.index') }}",

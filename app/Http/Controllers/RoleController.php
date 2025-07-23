@@ -20,23 +20,27 @@ class RoleController extends Controller
     }
 
    public function index()
-{
-    $roles = Role::with('permissions')->paginate(10); // eager load permissions
-    $allPermissions = Permission::all(); // fetch all permissions for checkboxes
+
+{    if (!$this->genericPolicy->view(Auth::user(), new Role())) {
+            abort(403, 'Unauthorized action.');
+        }
+
+    $roles = Role::with('permissions')->paginate(10); 
+    $allPermissions = Permission::all(); 
 
     if (request()->ajax()) {
         return view('user.roles.result', compact('roles'))->render();
     }
 
-    return view('roles.index', compact('roles', 'allPermissions'));
+    return view('role.index', compact('roles', 'allPermissions'));
 }
     public function create()
     {
-        if (!$this->genericPolicy->view(Auth::user(), new Role())) {
+        if (!$this->genericPolicy->create(Auth::user(), new Role())) {
             abort(403, 'Unauthorized action.');
         }
         $permissions = Permission::all();
-        return view('roles.create', compact('permissions'));
+        return view('role.partials.form', compact('permissions'));
     }
 
     public function store(RoleRequest $request)
@@ -47,7 +51,7 @@ class RoleController extends Controller
         $role = Role::create(['name' => $request->name]);
         $role->syncPermissions($request->permissions ?? []);
 
-        return redirect()->route('roles.index')->with('success', 'Role created successfully.');
+        return redirect()->route('role.index')->with('success', 'Role created successfully.');
     }
 
     public function edit(Role $role)
@@ -56,7 +60,7 @@ class RoleController extends Controller
             abort(403, 'Unauthorized action.');
         }
         $allPermissions = Permission::all();
-        return view('roles.partials.form', compact('role', 'allPermissions'));
+        return view('role.partials.form', compact('role', 'allPermissions'));
     }
 
     public function update(RoleRequest $request, Role $role)
@@ -67,7 +71,7 @@ class RoleController extends Controller
         $role->update(['name' => $request->name]);
         $role->syncPermissions($request->permissions ?? []);
 
-        return redirect()->route('roles.index')->with('success', 'Role updated successfully.');
+        return redirect()->route('role.index')->with('success', 'Role updated successfully.');
     }
 
     public function destroy(Role $role)
@@ -77,6 +81,6 @@ class RoleController extends Controller
         }
         $role = Role::findOrFail($role->id);
         $role->delete();
-        return redirect()->route('roles.index')->with('success', 'Role deleted successfully.');
+        return redirect()->route('role.index')->with('success', 'Role deleted successfully.');
     }
 }
