@@ -52,6 +52,7 @@
         <div class="min-w-0 flex-1">
             <p class="font-medium text-gray-600">Created By</p>
             <p class="text-base text-gray-900 break-words">{{ $income->createdByUser->name ?? 'N/A' }}</p>
+            <p class="text-base text-gray-900 break-words">{{ $income->created_at->format('M d, Y H:i:s') }}</p>
         </div>
     </div>
 
@@ -59,28 +60,13 @@
     <div class="flex items-start gap-3 flex-wrap">
         <i data-lucide="user-check" class="text-indigo-600 w-5 h-5 mt-1"></i>
         <div class="min-w-0 flex-1">
-            <p class="font-medium text-gray-600">Last Updated By</p>
+            <p class="font-medium text-black-600">Last Updated By</p>
             <p class="text-base text-gray-900 break-words">{{ $income->updatedByUser->name ?? 'N/A' }}</p>
-        </div>
-    </div>
-
-    {{-- Created At --}}
-    <div class="flex items-start gap-3 flex-wrap">
-        <i data-lucide="clock" class="text-amber-600 w-5 h-5 mt-1"></i>
-        <div class="min-w-0 flex-1">
-            <p class="font-medium text-gray-600">Created At</p>
-            <p class="text-base text-gray-900 break-words">{{ $income->created_at->format('M d, Y H:i:s') }}</p>
-        </div>
-    </div>
-
-    {{-- Updated At --}}
-    <div class="flex items-start gap-3 flex-wrap">
-        <i data-lucide="refresh-ccw" class="text-blue-600 w-5 h-5 mt-1"></i>
-        <div class="min-w-0 flex-1">
-            <p class="font-medium text-gray-600">Last Updated At</p>
             <p class="text-base text-gray-900 break-words">{{ $income->updated_at->format('M d, Y H:i:s') }}</p>
+
         </div>
     </div>
+
 
     {{-- Status --}}
     <div class="flex items-start gap-3 flex-wrap">

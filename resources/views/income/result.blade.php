@@ -8,7 +8,6 @@
                 <th class="py-3 px-6 text-left">Date</th>
                 <th class="py-3 px-6 text-left">Status</th>
                 <th class="py-3 px-6 text-left">Dept</th>
-                <th class="py-3 px-6 text-left">Created By</th>
                 <th class="py-3 px-6 text-center">Actions</th>
             </tr>
         </thead>
@@ -33,7 +32,6 @@
                             <span class="text-gray-400">—</span>
                         @endif
                     </td>
-                    <td class="py-3 px-6 text-left">{{ $income->createdByUser->name ?? 'Unknown' }}</td>
                     <td class="py-3 px-6 text-center">
                         <div class="flex items-center justify-center space-x-2">
                             @can('update income')
