@@ -32,22 +32,24 @@ class ExpenseController extends Controller
         }
 
        $search = request('search');
-        $perPage = request('per_page', 10); // Default to 10 if not specified
-        $date = request('date'); // Get the date from the request
+        $perPage = request('per_page', 10);
+        $date = request('date');
 
         $expenses = Expense::orderBy('created_at', 'desc')->with(['createdByUser', 'updatedByUser'])
             ->when($search, function ($query, $search) {
-                $query->where('title', 'like', '%' . $search . '%')
-                    ->orWhere('category', 'like', '%' . $search . '%')
-                    ->orWhereRaw("DATE_FORMAT(date, '%Y-%m-%d') LIKE ?", ['%' . $search . '%']);
+                $query->where(function ($q) use ($search) {
+                    $q->where('title', 'like', '%' . $search . '%')
+                        ->orWhere('category', 'like', '%' . $search . '%')
+                        ->orWhereRaw("DATE_FORMAT(date, '%Y-%m-%d') LIKE ?", ['%' . $search . '%']);
+                });
             })
             ->when($date, function ($query, $date) {
                 $query->whereDate('date', $date);
             })
             ->paginate($perPage)
-            ->appends(request()->query()); // Keep search/per_page/date in pagination links
+            ->appends(request()->query()); 
 
-        $users = User::all(); // Assuming users might be needed for some future dropdown or display
+        $users = User::all();
 
         if (request()->ajax()) {
             return view('expense.result', compact('expenses'));
@@ -56,14 +58,11 @@ class ExpenseController extends Controller
         return view('expense.index', compact('expenses', 'users'));
     }
 
-    // This method will now return only the form partial for creation in a modal
     public function create(): View
     {
-        // Policy check for 'create' action when displaying the form
         if (!$this->genericPolicy->create(Auth::user(), new Expense())) {
            abort(403, 'Unauthorized action.');
         }
-        // Users are not explicitly needed for the current form, but can be passed if a dynamic dropdown is added
         return view('expense.partials.form');
     }
 
@@ -88,7 +87,6 @@ class ExpenseController extends Controller
         return Redirect::route('expense.index')->with('success', 'Expense created successfully.');
     }
 
-    // This method will now return only the view details partial for a modal
     public function show($id): View
     {
         if (!$this->genericPolicy->view(Auth::user(), new Expense())) {
@@ -98,15 +96,12 @@ class ExpenseController extends Controller
         return view('expense.partials.show', compact('expense'));
     }
 
-    // This method will now return only the form partial for editing in a modal
     public function edit($id): View
     {
-        // Policy check for 'update' action when displaying the form for editing
         if (!$this->genericPolicy->update(Auth::user(), new Expense())) {
            abort(403, 'Unauthorized action.');
         }
         $expense = Expense::findOrFail($id);
-        // Users are not explicitly needed for the current form, but can be passed if a dynamic dropdown is added
         return view('expense.partials.form', compact('expense'));
     }
 
@@ -119,13 +114,13 @@ class ExpenseController extends Controller
 
         $data = $request->validate([
             'title' => 'required|string|max:255',
-            'category' => 'required|string', // Ensure category is validated
+            'category' => 'required|string',
             'amount' => 'required|numeric',
-            'date' => 'required|date', // Added date validation to align with form
-            'description' => 'nullable|string|max:255', // Changed to nullable
+            'date' => 'required|date', 
+            'description' => 'nullable|string|max:255', 
         ]);
 
-        $data['updated_by'] = Auth::id(); // Automatically set updated_by to the current authenticated user's ID
+        $data['updated_by'] = Auth::id(); 
 
         $expense->update($data);
         return Redirect::route('expense.index')->with('success', 'Expense updated successfully.');
