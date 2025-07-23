@@ -2,7 +2,9 @@
 
 @section('content')
 <div class="container mx-auto px-2 sm:px-4 py-6 sm:py-8 w-full">
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-10">
+
+    {{-- Summary Cards --}}
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-10">
         @if($totalDebt>0)
         <div class="bg-white rounded-xl shadow-lg p-4 sm:p-6 flex flex-col items-center justify-center transform hover:scale-105 transition duration-300 ease-in-out w-full">
             <div class="text-red-600 mb-2 sm:mb-3">
@@ -14,9 +16,6 @@
             <p class="text-2xl sm:text-4xl font-bold text-red-600 mt-1 sm:mt-2 text-center">{{ number_format($totalDebt, 2)}} ETB</p>
         </div>
         @endif
-    </div>
-    {{-- Summary Cards --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-10">
         <div class="bg-white rounded-xl shadow-lg p-4 sm:p-6 flex flex-col items-center justify-center transform hover:scale-105 transition duration-300 ease-in-out w-full">
             <div class="text-blue-600 mb-2 sm:mb-3">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 sm:h-12 sm:w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
