@@ -101,13 +101,13 @@
                 {{ __('Expenses') }}
             </x-responsive-nav-link> 
             @can('view permission')
-                <x-responsive-nav-link :href="route('permission.index')" :active="request()->routeIs('permissions.*')">
+                <x-responsive-nav-link :href="route('permission.index')" :active="request()->routeIs('permission.*')">
                     {{ __('Permissions') }}
                 </x-responsive-nav-link>
             @endcan
 
             @can('view role')
-                <x-responsive-nav-link :href="route('role.index')" :active="request()->routeIs('roles.*')">
+                <x-responsive-nav-link :href="route('role.index')" :active="request()->routeIs('role.*')">
                     {{ __('Roles') }}
                 </x-responsive-nav-link>
             @endcan
