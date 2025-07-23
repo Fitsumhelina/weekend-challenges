@@ -76,6 +76,7 @@ export default class ListHandler {
                 }
             });
         }
+        //permission
         if (listContainer) {
             listContainer.addEventListener('click', (event) => {
                 const target = event.target.closest('button');
@@ -86,6 +87,22 @@ export default class ListHandler {
                 } else if (target.classList.contains('view-permission-btn')) {
                     this.loadForm(this.modalViewFormId, `/${this.routeName}/${id}`, 'view');
                 } else if (target.classList.contains('delete-permission-btn')) {
+                    const form = target.closest('form');
+                    this.handleDelete(form);
+                }
+            });
+        }
+        //Role
+         if (listContainer) {
+            listContainer.addEventListener('click', (event) => {
+                const target = event.target.closest('button');
+                if (!target) return;
+                const id = target.dataset.id;
+                if (target.classList.contains('edit-role-btn')) {
+                    this.loadForm(this.modalEditFormId, `/${this.routeName}/${id}/edit`, 'edit');
+                } else if (target.classList.contains('view-role-btn')) {
+                    this.loadForm(this.modalViewFormId, `/${this.routeName}/${id}`, 'view');
+                } else if (target.classList.contains('delete-role-btn')) {
                     const form = target.closest('form');
                     this.handleDelete(form);
                 }
@@ -105,13 +122,10 @@ export default class ListHandler {
             }
         }
 
-        // Event delegation for form submission within the form modal
-        // We listen on the content container, not the modal itself, for dynamic forms
         const formModalContentDiv = document.getElementById(this.modalFormContentId);
         if (formModalContentDiv) {
             formModalContentDiv.addEventListener('submit', (event) => {
                 const form = event.target.closest('form');
-                // Ensure it's the form we want to handle (e.g., check its ID if needed)
                 if (form) {
                     event.preventDefault(); // Prevent default form submission
                     this.handleFormSubmission(form);
@@ -119,8 +133,6 @@ export default class ListHandler {
             });
         }
 
-        // Modal close buttons (using event delegation for dynamically loaded content)
-        // Listen on the document for clicks on any element with 'close-modal' class
         document.addEventListener('click', (event) => {
             const closeButton = event.target.closest('.close-modal');
             if (closeButton) {
