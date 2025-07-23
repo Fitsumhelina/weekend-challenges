@@ -12,6 +12,9 @@ use Illuminate\View\View;
 use Illuminate\Support\Facades\Auth;
 use App\Policies\GenericPolicy;
 use Carbon\Carbon;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\IncomeExport;
+
 class IncomeController extends Controller
 {
    use \Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -175,4 +178,14 @@ class IncomeController extends Controller
         $income->delete();
         return Redirect::route('income.index')->with('success', 'Income deleted successfully.');
     }
+
+    public function export()
+{
+    if (!$this->genericPolicy->view(Auth::user(), new Income())) {
+        abort(403, 'Unauthorized action.');
+    }
+
+     return Excel::download(new IncomeExport, 'incomes.xlsx');
+}
+
 }
