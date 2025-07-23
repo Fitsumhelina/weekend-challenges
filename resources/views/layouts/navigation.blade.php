@@ -23,13 +23,13 @@
                         {{ __('Expenses') }}    
                     </x-nav-link>
                     @can('view permission')
-                        <x-nav-link :href="route('permission.index')" :active="request()->routeIs('permissions.*')">
+                        <x-nav-link :href="route('permission.index')" :active="request()->routeIs('permission.*')">
                             {{ __('Permissions') }}
                         </x-nav-link>
                     @endcan
 
                     @can('view role')
-                        <x-nav-link :href="route('role.index')" :active="request()->routeIs('roles.*')">
+                        <x-nav-link :href="route('role.index')" :active="request()->routeIs('role.*')">
                             {{ __('Roles') }}
                         </x-nav-link>
                     @endcan
