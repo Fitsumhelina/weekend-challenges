@@ -43,10 +43,11 @@ class PermissionSeeder extends Seeder
             'delete user',
 
             #other permissions
-            'view home',
             'view report',
             'view sidebar',
             'view dashboard',
+            'export data',
+            'view settings',
         ];
 
       
