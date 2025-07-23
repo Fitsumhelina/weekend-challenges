@@ -31,10 +31,8 @@ class PermissionSeeder extends Seeder
             'delete role',
 
             // Permission management
-            'create permission',
             'view permission',
-            'update permission',
-            'delete permission',
+           
 
             // User management
             'create user',

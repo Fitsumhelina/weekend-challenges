@@ -1,7 +1,6 @@
 // resources/js/init.js
 import { IncomeListHandler } from './income/income';
 import { ExpenseListHandler } from './expense/expense';
-import { PermissionListHandler } from './permission/permission'; 
 import { RoleListHandler } from './role/role'; 
 
 const openModal = (modalElement) => {
@@ -28,13 +27,6 @@ if (document.getElementById('expense-list-container')) {
     });
 }
 
-if (document.getElementById('permission-list-container')) {
-    // Assuming you have a PermissionListHandler similar to IncomeListHandler
-    new PermissionListHandler({
-        indexRoute: AppData.PermissionIndexRoute,
-        csrfToken: AppData.csrfToken,
-    });
-}
 if (document.getElementById('role-list-container')) {
     new RoleListHandler({
         indexRoute: AppData.RoleIndexRoute,

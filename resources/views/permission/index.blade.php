@@ -4,12 +4,7 @@
 <div class="container mx-auto px-4 py-8">
     <div class="bg-white shadow-lg rounded-lg p-6 mb-8">
         <div class="flex justify-between items-center mb-6">
-            <h1 class="text-3xl font-bold text-gray-800">Permission Management</h1>
-            @can('create permission')
-                <button id="createPermissionBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out">
-                    Add New Permission
-                </button>
-            @endcan
+            <h1 class="text-3xl font-bold text-gray-800">Permission List</h1>
         </div>
 
         {{-- Success/Error Alert Messages --}}
@@ -58,122 +53,6 @@
             @include('permission.result', ['permissions' => $permissions])
         </div>
     </div>
-
-    {{-- Create/Edit Permission Modal --}}
-    <div id="permissionFormModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
-        <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-1/2 lg:w-1/3 shadow-lg rounded-md bg-white">
-            <div class="flex justify-between items-center pb-3">
-                <h3 class="text-2xl leading-6 font-medium text-gray-900" id="permissionModalTitle"></h3>
-                <button class="text-gray-400 hover:text-gray-600 close-modal" data-modal-id="permissionFormModal">
-                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-            </div>
-            <div class="mt-2 px-7 py-3" id="permissionFormModalContent">
-            </div>
-        </div>
-    </div>
-
-   {{-- Delete Confirmation Modal --}}
-    <div class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full items-center justify-center z-50" id="deleteConfirmationModal">
-        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-            <div class="flex justify-between items-center pb-3">
-                <h3 class="text-xl leading-6 font-medium text-gray-900">Confirm Deletion</h3>
-                <button class="text-gray-400 hover:text-gray-600 close-modal" data-modal-id="deleteConfirmationModal">
-                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-            </div>
-            <div class="mt-2 px-7 py-3">
-                <p class="text-gray-700">Are you sure you want to delete this income record?</p>
-            </div>
-            <div class="items-center px-4 py-3 flex justify-end space-x-4">
-                <button id="cancelDeleteBtn" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 transition duration-300">Cancel</button>
-                <button id="confirmDeleteBtn" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition duration-300">Delete</button>
-            </div>
-        </div>
-    </div>
-
 </div>
 @endsection
 
-@section('scripts') 
-    <script>
-        const AppData = {
-            PermissionIndexRoute: "{{ route('permission.index') }}",
-            PermissionCreateRoute: "{{ route('permission.create') }}",
-            csrfToken: "{{ csrf_token() }}"
-        };
-
-        window.openModal = function(modalElement) {
-            if (modalElement) {
-                modalElement.classList.remove('hidden');
-                modalElement.classList.add('flex');
-            }
-        };
-
-        window.closeModal = function(modalElement) {
-            if (modalElement) {
-                modalElement.classList.add('hidden');
-                modalElement.classList.remove('flex');
-            }
-        };
-
-        window.initSelect2ForSource = function(selectElement, placeholderText = "Select a source") {
-            if (typeof jQuery !== 'undefined' && $.fn.select2) {
-                if (!$(selectElement).data('select2')) {
-                    $(selectElement).select2({
-                        placeholder: placeholderText,
-                        allowClear: true,
-                        dropdownParent: $(selectElement).closest('.modal') // Important for z-index issues in modals
-                    });
-                }
-            } else {
-                console.warn("jQuery or Select2 not loaded. Cannot initialize Select2.");
-            }
-        }
-
-        // Edit Permission Button Handler
-        document.addEventListener('click', function(e) {
-            if (e.target.closest('.permission-edit-btn')) {
-                const btn = e.target.closest('.permission-edit-btn');
-                const permissionId = btn.getAttribute('data-id');
-                // Fetch edit form via AJAX
-                fetch(`/permission/${permissionId}/edit`, {
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRF-TOKEN': AppData.csrfToken
-                    }
-                })
-                .then(response => response.text())
-                .then(html => {
-                    document.getElementById('permissionModalTitle').textContent = 'Edit Permission';
-                    document.getElementById('permissionFormModalContent').innerHTML = html;
-                    openModal(document.getElementById('permissionFormModal'));
-                });
-            }
-        });
-
-        // Delete Permission Button Handler
-        let deleteForm = null;
-        document.addEventListener('click', function(e) {
-            if (e.target.closest('.permission-delete-btn')) {
-                e.preventDefault();
-                deleteForm = e.target.closest('form');
-                openModal(document.getElementById('deleteConfirmationModal'));
-            }
-        });
-
-        // Confirm Delete
-        document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
-            if (deleteForm) {
-                deleteForm.submit();
-                closeModal(document.getElementById('deleteConfirmationModal'));
-            }
-        });
-
-        // Cancel Delete
-        document.getElementById('cancelDeleteBtn').addEventListener('click', function() {
-            closeModal(document.getElementById('deleteConfirmationModal'));
-            deleteForm = null;
-        });
-    </script>
-@endsection
