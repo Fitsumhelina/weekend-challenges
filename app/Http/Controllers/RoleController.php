@@ -86,12 +86,7 @@ class RoleController extends Controller
             'name' => $request->input('name')
         ]);
 
-        $permissions = $request->input('permissions', []);
-        if (!empty($permissions)) {
-            $role->syncPermissions($permissions);
-        } else {
-            $role->syncPermissions([]);
-        }
+        $role->syncPermissions($request->input('permissions', []));
 
         return redirect()->route('role.index')->with('success', 'Role updated successfully.');
     }
