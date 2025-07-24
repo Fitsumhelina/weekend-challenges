@@ -105,7 +105,6 @@
 </div>
 
 
-
     {{-- Close Button --}}
     <div class="mt-6 text-right">
         <button class="close-modal bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-md shadow transition duration-300">

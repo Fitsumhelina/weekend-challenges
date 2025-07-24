@@ -86,9 +86,9 @@
         </div>
     </div>
 
-    {{-- Delete Confirmation Modal --}}
-    <div id="deleteConfirmationModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
-        <div class="relative top-10 sm:top-20 mx-auto p-2 sm:p-5 border w-11/12 sm:w-96 shadow-lg rounded-md bg-white">
+    
+    <div class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50" id="deleteConfirmationModal">
+        <div class="relative mx-auto top-10 sm:top-20 p-2 sm:p-5 border w-11/12 sm:w-96 shadow-lg rounded-md bg-white">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-2 sm:pb-3">
                 <h3 class="text-lg sm:text-xl leading-6 font-medium text-gray-900">Confirm Deletion</h3>
                 <button class="text-gray-400 hover:text-gray-600 close-modal mt-2 sm:mt-0" data-modal-id="deleteConfirmationModal">
@@ -96,7 +96,7 @@
                 </button>
             </div>
             <div class="mt-2 px-2 sm:px-7 py-2 sm:py-3">
-                <p class="text-gray-700">Are you sure you want to delete this user?</p>
+                <p class="text-gray-700">Are you sure you want to delete this income record?</p>
             </div>
             <div class="items-center px-2 sm:px-4 py-2 sm:py-3 flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-4">
                 <button id="cancelDeleteBtn" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 transition duration-300 w-full sm:w-auto">Cancel</button>
