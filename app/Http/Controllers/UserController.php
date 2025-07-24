@@ -67,7 +67,7 @@ class UserController extends Controller
             abort(403, 'Unauthorized action.');
         }
         $user = User::with('roles')->findOrFail($id);
-        $income =Income::where('source', $id)
+        $income = Income::where('source', $id)
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
