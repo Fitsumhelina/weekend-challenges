@@ -2,16 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Policies\GenericPolicy;
 use App\Models\User;
+use App\Models\Income;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use App\Policies\GenericPolicy;
 use Illuminate\Support\Facades\Auth;
-use Spatie\Permission\Models\Role; // Import the Role model
-use Illuminate\Support\Facades\Hash; // Import Hash facade
-use Illuminate\View\View; // Explicitly import View
+use Spatie\Permission\Models\Role; 
+use Illuminate\Support\Facades\Hash;
+use Illuminate\View\View; 
 
 class UserController extends Controller
 {
+    use \Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+
     protected $genericPolicy;
 
     public function __construct(GenericPolicy $genericPolicy)
@@ -25,17 +29,39 @@ class UserController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        // Eager load roles for each user to display them in the table
-        $users = User::with('roles')->paginate(10);
-        $roles = Role::all(); // Fetch all roles to pass to the create modal
-        
-       
-        // If AJAX request, return only the result partial
+        $search = request('search');
+        $searchCategory = request('category', 'name'); // Default to 'name' if not provided
+        $perPage = request('per_page', 10);
+        $date = request('date');
+
+        $users = User::orderBy('created_at', 'desc')
+            ->with(['roles'])
+            ->when($search, function ($query, $search) use ($searchCategory) {
+                $query->where(function ($q) use ($search, $searchCategory) {
+                    if ($searchCategory === 'name') {
+                        $q->where('name', 'like', '%' . $search . '%');
+                    } elseif ($searchCategory === 'email') {
+                        $q->where('email', 'like', '%' . $search . '%');
+                    } elseif ($searchCategory === 'role') {
+                        $q->whereHas('roles', function ($roleQuery) use ($search) {
+                            $roleQuery->where('name', 'like', '%' . $search . '%');
+                        });
+                    } else {
+                        // Default to searching by name if unknown category
+                        $q->where('name', 'like', '%' . $search . '%');
+                    }
+                });
+            })
+            ->paginate($perPage)
+            ->appends(request()->query());
+
+        $roles = Role::all();
+
         if (request()->ajax()) {
-            return view('users.result', compact('users'));
+            return view('user.result', compact('users'));
         }
 
-        return view('users.index', compact('users', 'roles'));
+        return view('user.index', compact('users', 'roles'));
     }
 
     public function show($id): View // Changed type hint to match route model binding expectation for ID
@@ -45,7 +71,7 @@ class UserController extends Controller
         }
         // Eager load roles for the specific user
         $user = User::with('roles')->findOrFail($id);
-        return view('users.partials.show', compact('user'));
+        return view('user.partials.show', compact('user'));
     }
 
     public function create(): View
@@ -54,7 +80,7 @@ class UserController extends Controller
             abort(403, 'Unauthorized action.');
         }
         $roles = Role::all(); // Fetch all roles to populate the form
-        return view('users.create', compact('roles')); // This view is not directly used by the modal, but kept for completeness
+        return view('user.create', compact('roles')); // This view is not directly used by the modal, but kept for completeness
     }
 
     public function store(Request $request): \Illuminate\Http\RedirectResponse
@@ -82,7 +108,7 @@ class UserController extends Controller
             $user->syncRoles($data['roles']);
         }
 
-        return redirect()->route('users.index')->with('success', 'User created successfully.');
+        return redirect()->route('user.index')->with('success', 'User created successfully.');
     }
 
     public function edit(User $user): View // Changed return type to View as it renders a partial
@@ -92,7 +118,7 @@ class UserController extends Controller
         }
         $roles = Role::all(); // Fetch all roles to populate the form
         // Pass the user and all roles to the form partial
-        return view('users.partials.form', compact('user', 'roles'));
+        return view('user.partials.form', compact('user', 'roles'));
     }
 
     public function update(Request $request, User $user): \Illuminate\Http\RedirectResponse
@@ -122,7 +148,7 @@ class UserController extends Controller
         // Sync roles for the user
         $user->syncRoles($data['roles'] ?? []); // Use null coalescing to handle empty roles array
 
-        return redirect()->route('users.index')->with('success', 'User updated successfully.');
+        return redirect()->route('user.index')->with('success', 'User updated successfully.');
     }
 
     public function destroy(User $user): \Illuminate\Http\RedirectResponse
@@ -132,6 +158,6 @@ class UserController extends Controller
         }
 
         $user->delete();
-        return redirect()->route('users.index')->with('success', 'User deleted successfully.');
+        return redirect()->route('user.index')->with('success', 'User deleted successfully.');
     }
 }

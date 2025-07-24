@@ -2,6 +2,7 @@
 import { IncomeListHandler } from './income/income';
 import { ExpenseListHandler } from './expense/expense';
 import { RoleListHandler } from './role/role'; 
+import { UserListHandler } from './user/user';
 
 const openModal = (modalElement) => {
     modalElement.classList.remove('hidden');
@@ -30,6 +31,12 @@ if (document.getElementById('expense-list-container')) {
 if (document.getElementById('role-list-container')) {
     new RoleListHandler({
         indexRoute: AppData.RoleIndexRoute,
+        csrfToken: AppData.csrfToken,
+    });
+}
+if (document.getElementById('user-list-container')) {
+    new UserListHandler({
+        indexRoute: AppData.UserIndexRoute,
         csrfToken: AppData.csrfToken,
     });
 }

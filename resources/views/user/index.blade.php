@@ -52,7 +52,7 @@
 
         {{-- User List (result.blade.php) --}}
         <div id="user-search-results" class="overflow-x-auto">
-            @include('users.result', ['users' => $users])
+            @include('user.result', ['users' => $users])
         </div>
     </div>
 
@@ -66,7 +66,7 @@
                 </button>
             </div>
             <div class="mt-2 px-2 sm:px-7 py-2 sm:py-3" id="userModalContent">
-                @include('users.partials.form', ['user' => null, 'roles' => $roles])
+                @include('user.partials.form', ['user' => null, 'roles' => $roles])
             </div>
         </div>
     </div>
@@ -107,159 +107,3 @@
 
 </div>
 @endsection
-
-@push('scripts')
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<script>
-    const Data = {
-        UserIndexRoute: "{{ route('users.index') }}",
-        csrfToken: "{{ csrf_token() }}",
-    };
-</script>
-
-<script type="module">
-    import UserListHandler from "{{ asset('js/user.js') }}";
-
-    $(document).ready(function() {
-        const userListHandler = new UserListHandler({
-            indexRoute: Data.UserIndexRoute,
-            csrfToken: Data.csrfToken,
-            entityName: 'user',
-            routeName: '/users',
-            modalAddFormId: 'createUserModal',
-            modalEditFormId: 'createUserModal',
-            modalViewFormId: 'viewUserModal'
-        });
-
-        const userModal = document.getElementById('createUserModal');
-        const viewUserModal = document.getElementById('viewUserModal');
-        const deleteConfirmationModal = document.getElementById('deleteConfirmationModal');
-        const createUserBtn = document.getElementById('createUserBtn');
-        const userModalTitle = document.getElementById('userModalTitle');
-        const userModalContent = document.getElementById('userModalContent');
-        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-        const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
-        let deleteForm = null;
-
-        function openModal(modal) {
-            modal.classList.remove('hidden');
-            modal.classList.add('flex', 'items-center', 'justify-center');
-        }
-
-        function closeModal(modal) {
-            modal.classList.add('hidden');
-            modal.classList.remove('flex', 'items-center', 'justify-center');
-            if (modal.id === 'createUserModal') {
-                userModalContent.innerHTML = `{!! addslashes(view('users.partials.form', ['user' => null, 'roles' => $roles])->render()) !!}`;
-            }
-        }
-
-        document.querySelectorAll('.close-modal').forEach(button => {
-            button.addEventListener('click', function() {
-                closeModal(userModal);
-                closeModal(viewUserModal);
-                closeModal(deleteConfirmationModal);
-            });
-        });
-
-        userModal.addEventListener('click', function(event) {
-            if (event.target === userModal) {
-                closeModal(userModal);
-            }
-        });
-
-        viewUserModal.addEventListener('click', function(event) {
-            if (event.target === viewUserModal) {
-                closeModal(viewUserModal);
-            }
-        });
-
-        deleteConfirmationModal.addEventListener('click', function(event) {
-            if (event.target === deleteConfirmationModal) {
-                closeModal(deleteConfirmationModal);
-            }
-        });
-
-        if (createUserBtn) {
-            createUserBtn.addEventListener('click', function () {
-                userModalTitle.textContent = 'Create New User';
-                userModalContent.innerHTML = `{!! addslashes(view('users.partials.form', ['user' => null, 'roles' => $roles])->render()) !!}`;
-                openModal(userModal);
-            });
-        }
-
-        document.getElementById('user-search-results').addEventListener('click', function (event) {
-            if (event.target.closest('.user-edit-btn')) {
-                const userId = event.target.closest('.user-edit-btn').dataset.id;
-                userModalTitle.textContent = 'Edit User';
-
-                fetch(`/users/${userId}/edit`)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.text();
-                    })
-                    .then(html => {
-                        userModalContent.innerHTML = html;
-                        openModal(userModal);
-                    })
-                    .catch(error => {
-                        console.error('Error fetching user for edit:', error);
-                        toastr.error('Failed to load user for editing.');
-                    });
-            }
-
-            if (event.target.closest('.user-view-btn')) {
-                const userId = event.target.closest('.user-view-btn').dataset.id;
-                fetch(`/users/${userId}`)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.text();
-                    })
-                    .then(html => {
-                        document.getElementById('viewUserContent').innerHTML = html;
-                        openModal(viewUserModal);
-                    })
-                    .catch(error => console.error('Error fetching user for view:', error));
-            }
-
-            if (event.target.closest('.user-delete-btn')) {
-                deleteForm = event.target.closest('form');
-                openModal(deleteConfirmationModal);
-            }
-        });
-
-        confirmDeleteBtn.addEventListener('click', function () {
-            if (deleteForm) {
-                userListHandler.handleDelete({ currentTarget: deleteForm.querySelector('button[type="button"]') });
-            }
-            closeModal(deleteConfirmationModal);
-        });
-
-        cancelDeleteBtn.addEventListener('click', function () {
-            closeModal(deleteConfirmationModal);
-        });
-
-        const originalHandleFormSubmit = userListHandler.handleFormSubmit;
-        userListHandler.handleFormSubmit = async function(e, options) {
-            try {
-                const response = await originalHandleFormSubmit.call(this, e, options);
-                closeModal(userModal);
-                await this.refreshList();
-                return response;
-            } catch (error) {
-                throw error;
-            }
-        };
-
-        userListHandler.setupEventListeners();
-    });
-</script>
-@endpush
