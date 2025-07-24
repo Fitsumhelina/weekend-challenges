@@ -1,4 +1,3 @@
-{{-- The form is designed to be used for both create and edit within the same modal --}}
 <form id="roleForm" method="POST" action="{{ isset($role) ? route('role.update', $role->id) : route('role.store') }}">
     @csrf
     @if(isset($role))
