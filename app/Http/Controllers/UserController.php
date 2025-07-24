@@ -71,8 +71,12 @@ class UserController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        $totalDebt = Income::where('source', $id)->sum('debt');
-        $totalIncome =Income::where('source', $id)->sum('amount');
+        $totals = Income::where('source', $id)
+            ->selectRaw('SUM(debt) as total_debt, SUM(amount) as total_income')
+            ->first();
+
+        $totalDebt = $totals->total_debt ?? 0;
+        $totalIncome = $totals->total_income ?? 0;
 
         return view('user.partials.show', compact('user', 'income','totalDebt','totalIncome')); 
     }
