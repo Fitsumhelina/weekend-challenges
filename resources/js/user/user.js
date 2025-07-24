@@ -1,5 +1,4 @@
 import ListHandler from "../base/ListHandler";
-import $ from 'jquery'; 
 
 
 
@@ -11,8 +10,8 @@ export class UserListHandler extends ListHandler {
             ...options,
             entityName: 'user',
             routeName: 'user',
-            modalAddFormId: 'createUserModal',
-            modalEditFormId: 'editUserModal',
+            modalAddFormId: 'userFormModal',
+            modalEditFormId: 'userFormModal',
             modalViewFormId: 'viewUserModal',
             modalFormContentId: 'userFormModalContent',
             modalFormTitleId: 'userFormModalTitle',

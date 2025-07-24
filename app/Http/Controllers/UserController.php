@@ -76,10 +76,11 @@ class UserController extends Controller
 
     public function create(): View
     {
-        if (!$this->genericPolicy->view(Auth::user(), new User())) {
+        if (!$this->genericPolicy->create(Auth::user(), new User())) {
             abort(403, 'Unauthorized action.');
         }
-        $roles = Role::all(); // Fetch all roles to populate the form
+
+        $roles = Role::all();
         return view('user.partials.form', compact('roles')); // This view is not directly used by the modal, but kept for completeness
     }
 

@@ -53,7 +53,7 @@
         </form>
 
         {{-- User List (result.blade.php) --}}
-        <div id="user-search-results" class="overflow-x-auto">
+        <div id="user-list-container" class="overflow-x-auto">
             @include('user.result', ['users' => $users])
         </div>
     </div>
@@ -131,18 +131,5 @@
             }
         };
 
-        window.initSelect2ForSource = function(selectElement, placeholderText = "Select a source") {
-            if (typeof jQuery !== 'undefined' && $.fn.select2) {
-                if (!$(selectElement).data('select2')) {
-                    $(selectElement).select2({
-                        placeholder: placeholderText,
-                        allowClear: true,
-                        dropdownParent: $(selectElement).closest('.modal')
-                    });
-                }
-            } else {
-                console.warn("jQuery or Select2 not loaded. Cannot initialize Select2.");
-            }
-        };
     </script>
 @endsection
