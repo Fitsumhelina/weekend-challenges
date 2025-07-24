@@ -1,4 +1,7 @@
 import ListHandler from "../base/ListHandler";
+import $ from 'jquery'; 
+
+
 
 
 
@@ -6,15 +9,22 @@ export class UserListHandler extends ListHandler {
     constructor(options) {
         super({
             ...options,
-            indexRoute: Data.UserIndexRoute,
-            csrfToken: Data.csrfToken,
             entityName: 'user',
-            routeName: '/user',
+            routeName: 'user',
             modalAddFormId: 'createUserModal',
             modalEditFormId: 'editUserModal',
-            modalViewFormId: 'viewUserModal'
+            modalViewFormId: 'viewUserModal',
+            modalFormContentId: 'userFormModalContent',
+            modalFormTitleId: 'userFormModalTitle',
         });
     }
-}
 
-export default UserListHandler;
+    postFormRender() {
+
+    }
+    setupEventListeners() {
+        super.setupEventListeners();
+    }
+
+
+}

@@ -1,5 +1,5 @@
 import ListHandler from "../base/ListHandler";
-import $ from 'jquery'; // Ensure jQuery is imported if you're using it directly here
+import $ from 'jquery'; 
 
 export class IncomeListHandler extends ListHandler {
     constructor(options) {
