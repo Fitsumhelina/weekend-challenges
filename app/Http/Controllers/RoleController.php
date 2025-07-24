@@ -21,25 +21,25 @@ class RoleController extends Controller
 
    public function index()
 
-{    if (!$this->genericPolicy->view(Auth::user(), new Role())) {
-            abort(403, 'Unauthorized action.');
+    {    if (!$this->genericPolicy->view(Auth::user(), new Role())) {
+                abort(403, 'Unauthorized action.');
+            }
+    
+        $query = Role::with('permissions');
+
+        if ($search = request('search')) {
+            $query->where('name', 'like', '%' . $search . '%');
         }
-   
-    $query = Role::with('permissions');
 
-    if ($search = request('search')) {
-        $query->where('name', 'like', '%' . $search . '%');
+        $roles = $query->get();
+        $allPermissions = Permission::all(); 
+
+        if (request()->ajax()) {
+            return view('user.roles.result', compact('roles'))->render();
+        }
+
+        return view('role.index', compact('roles', 'allPermissions'));
     }
-
-    $roles = $query->get();
-    $allPermissions = Permission::all(); 
-
-    if (request()->ajax()) {
-        return view('user.roles.result', compact('roles'))->render();
-    }
-
-    return view('role.index', compact('roles', 'allPermissions'));
-}
     public function create()
     {
         if (!$this->genericPolicy->create(Auth::user(), new Role())) {
@@ -54,8 +54,15 @@ class RoleController extends Controller
         if (!$this->genericPolicy->create(Auth::user(), new Role())) {
             abort(403, 'Unauthorized action.');
         }
-        $role = Role::create(['name' => $request->name]);
-        $role->syncPermissions($request->permissions ?? []);
+
+        $role = Role::create([
+            'name' => $request->input('name')
+        ]);
+
+        $permissions = $request->input('permissions', []);
+        if (!empty($permissions)) {
+            $role->syncPermissions($permissions);
+        }
 
         return redirect()->route('role.index')->with('success', 'Role created successfully.');
     }
@@ -71,11 +78,20 @@ class RoleController extends Controller
 
     public function update(RoleRequest $request, Role $role)
     {
-          if (!$this->genericPolicy->update(Auth::user(), new Role())) {
+        if (!$this->genericPolicy->update(Auth::user(), new Role())) {
             abort(403, 'Unauthorized action.');
         }
-        $role->update(['name' => $request->name]);
-        $role->syncPermissions($request->permissions ?? []);
+
+        $role->update([
+            'name' => $request->input('name')
+        ]);
+
+        $permissions = $request->input('permissions', []);
+        if (!empty($permissions)) {
+            $role->syncPermissions($permissions);
+        } else {
+            $role->syncPermissions([]);
+        }
 
         return redirect()->route('role.index')->with('success', 'Role updated successfully.');
     }
@@ -85,7 +101,7 @@ class RoleController extends Controller
           if (!$this->genericPolicy->delete(Auth::user(), $role)) {
             abort(403, 'Unauthorized action.');
         }
-        // $role = Role::findOrFail($role->id);
+        $role = Role::findOrFail($role->id);
         $role->delete();
         return redirect()->route('role.index')->with('success', 'Role deleted successfully.');
     }

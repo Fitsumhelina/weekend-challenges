@@ -84,7 +84,7 @@ class UserController extends Controller
         return view('user.partials.form', compact('roles')); // This view is not directly used by the modal, but kept for completeness
     }
 
-    public function store(Request $request): \Illuminate\Http\RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
         if (!$this->genericPolicy->create(Auth::user(), new User())) {
             abort(403, 'Unauthorized action.');
