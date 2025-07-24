@@ -56,17 +56,16 @@
         </div>
     </div>
 
-    {{-- Create/Edit User Modal --}}
-    <div id="createUserModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
-        <div class="relative top-10 sm:top-20 mx-auto p-2 sm:p-5 border w-11/12 sm:w-2/3 lg:w-1/2 shadow-lg rounded-md bg-white">
+      {{-- Create/Edit user Modal --}}
+    <div id="userFormModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50 flex items-center justify-center">
+        <div class="relative mx-auto p-3 sm:p-5 border w-11/12 sm:w-2/3 lg:w-1/2 shadow-lg rounded-md bg-white">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-2 sm:pb-3">
-                <h3 class="text-xl sm:text-2xl leading-6 font-medium text-gray-900" id="userModalTitle"></h3>
-                <button class="text-gray-400 hover:text-gray-600 close-modal mt-2 sm:mt-0">
+                <h3 class="text-xl sm:text-2xl leading-6 font-medium text-gray-900" id="userFormModalTitle"></h3>
+                <button class="text-gray-400 hover:text-gray-600 close-modal mt-2 sm:mt-0" data-modal-id="userFormModal">
                     <svg class="h-5 w-5 sm:h-6 sm:w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
-            <div class="mt-2 px-2 sm:px-7 py-2 sm:py-3" id="userModalContent">
-                @include('user.partials.form', ['user' => null, 'roles' => $roles])
+            <div class="mt-2 px-2 sm:px-7 py-2 sm:py-3" id="userFormModalContent">
             </div>
         </div>
     </div>
