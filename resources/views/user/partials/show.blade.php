@@ -1,8 +1,9 @@
 <div class="bg-white rounded-2xl shadow-lg p-6 sm:p-8 w-full max-w-4xl mx-auto">
     <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-6">User Profile</h2>
-
-    {{-- Info Section --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+{{-- Info Section --}}
+<div class="flex flex-col sm:flex-row gap-6">
+    {{-- Left Column --}}
+    <div class="flex flex-col gap-4 w-full sm:w-1/2">
         <div>
             <span class="text-gray-500 font-medium text-sm">Name</span>
             <p class="text-base sm:text-lg font-semibold text-gray-800">{{ $user->name ?? '-' }}</p>
@@ -13,17 +14,14 @@
             <p class="text-base sm:text-lg font-medium text-gray-800">{{ $user->email ?? '-' }}</p>
         </div>
 
-        <div class="sm:col-span-2">
-            <span class="text-gray-500 font-medium text-sm">Roles</span>
-            <div class="mt-2 flex flex-wrap gap-2">
-                @forelse ($user->roles as $role)
-                    <span class="bg-indigo-100 text-indigo-800 text-xs font-semibold px-3 py-1 rounded-full">{{ $role->name }}</span>
-                @empty
-                    <span class="text-sm text-gray-400 italic">No roles assigned</span>
-                @endforelse
-            </div>
+        <div>
+            <span class="text-gray-500 font-medium text-sm">Paid</span>
+            <p class="text-lg font-bold text-green-700">{{ number_format($totalIncome, 2) }} ETB</p>
         </div>
+    </div>
 
+    {{-- Right Column --}}
+    <div class="flex flex-col gap-4 w-full sm:w-1/2">
         <div>
             <span class="text-gray-500 font-medium text-sm">Created At</span>
             <p class="text-base font-medium text-gray-700">
@@ -35,7 +33,20 @@
             <span class="text-gray-500 font-medium text-sm">Debt</span>
             <p class="text-lg font-bold text-red-700">{{ number_format($totalDebt, 2) }} ETB</p>
         </div>
+
+        <div>
+            <span class="text-gray-500 font-medium text-sm">Roles</span>
+            <div class="mt-2 flex flex-wrap gap-2">
+                @forelse ($user->roles as $role)
+                    <span class="bg-indigo-100 text-indigo-800 text-xs font-semibold px-3 py-1 rounded-full">{{ $role->name }}</span>
+                @empty
+                    <span class="text-sm text-gray-400 italic">No roles assigned</span>
+                @endforelse
+            </div>
+        </div>
     </div>
+</div>
+
 
  {{-- Income History Table --}}
 <div class="mt-8">
@@ -103,6 +114,7 @@
         </table>
     </div>
 </div>
+
 
 
     {{-- Close Button --}}

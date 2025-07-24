@@ -72,8 +72,9 @@ class UserController extends Controller
             ->paginate(10);
 
         $totalDebt = Income::where('source', $id)->sum('debt');
+        $totalIncome =Income::where('source', $id)->sum('amount');
 
-        return view('user.partials.show', compact('user', 'income','totalDebt')); 
+        return view('user.partials.show', compact('user', 'income','totalDebt','totalIncome')); 
     }
 
     public function create(): View
