@@ -61,6 +61,8 @@
 </div>
 
 {{-- Pagination Links --}}
+@if(method_exists($roles, 'links'))
 <div class="mt-6">
     {{ $roles->links() }}
 </div>
+@endif
