@@ -32,7 +32,6 @@ class UserController extends Controller
         $search = request('search');
         $searchCategory = request('category', 'name'); // Default to 'name' if not provided
         $perPage = request('per_page', 10);
-        $date = request('date');
 
         $users = User::orderBy('created_at', 'desc')
             ->with(['roles'])
