@@ -37,6 +37,8 @@
             </p>
         </div>
 
+
+
         {{-- Password Display --}}
         <div x-data="{ show: false }" class="sm:col-span-2">
             <label class="block text-sm font-medium text-gray-500">Password</label>
@@ -67,36 +69,33 @@
         </div>
     </div>
 
-    {{-- Income Section --}}
-  <table class="w-full table-auto border-t text-sm text-left">
-  <thead class="bg-gray-50 text-xs font-semibold text-gray-600 uppercase">
-    <tr>
-      <th class="px-4 py-2">Source</th>
-      <th class="px-4 py-2">Amount</th>
-      <th class="px-4 py-2">Date</th>
-      <th class="px-4 py-2">Description</th>
-    </tr>
-  </thead>
-  <tbody class="divide-y">
-    @foreach($user->incomes as $income)
-    <tr>
-      <td class="px-4 py-2 text-gray-800">{{ $income->source->name ?? 'N/A' }}</td>
-      <td class="px-4 py-2">
-        <span class="text-green-600 font-semibold">{{ number_format($income->amount, 2) }}</span>
-        <span class="text-xs text-gray-500">ETB</span>
-      </td>
-      <td class="px-4 py-2">
-        <div class="font-medium text-gray-700">{{ $income->created_at->format('M d, Y') }}</div>
-        <div class="text-xs text-gray-500">{{ $income->created_at->format('h:i A') }}</div>
-      </td>
-      <td class="px-4 py-2 text-gray-700 max-w-xs truncate" title="{{ $income->description }}">
-        {{ Str::limit($income->description, 80) }}
-      </td>
-    </tr>
-    @endforeach
-  </tbody>
-</table>
-
+ {{-- Income Table Container --}}
+<div class="rounded-lg shadow-sm border max-h-[300px] overflow-y-auto">
+    <table class="min-w-full text-sm text-left divide-y divide-gray-200">
+        <thead class="sticky top-0 bg-gray-50 z-10 text-xs text-gray-500 uppercase tracking-wide">
+            <tr>
+                <th class="px-4 py-2">Source</th>
+                <th class="px-4 py-2">Amount</th>
+                <th class="px-4 py-2">Date</th>
+                <th class="px-4 py-2">Description</th>
+            </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-100">
+            @foreach ($income as $entry)
+                <tr>
+                    <td class="px-4 py-2 whitespace-nowrap">{{ $entry->source }}</td>
+                    <td class="px-4 py-2 text-green-700 font-semibold whitespace-nowrap">
+                        {{ number_format($entry->amount, 2) }} ETB
+                    </td>
+                    <td class="px-4 py-2 text-gray-600 whitespace-nowrap">
+                        {{ \Carbon\Carbon::parse($entry->created_at)->format('M d, Y H:i A') }}
+                    </td>
+                    <td class="px-4 py-2 text-gray-800">{{ $entry->description ?? '-' }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+</div>
 
     {{-- Action --}}
     <div class="text-right mt-8">
