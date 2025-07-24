@@ -96,7 +96,7 @@
                 </button>
             </div>
             <div class="mt-2 px-2 sm:px-7 py-2 sm:py-3">
-                <p class="text-gray-700">Are you sure you want to delete this income record?</p>
+                <p class="text-gray-700">Are you sure you want to delete this user record?</p>
             </div>
             <div class="items-center px-2 sm:px-4 py-2 sm:py-3 flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-4">
                 <button id="cancelDeleteBtn" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 transition duration-300 w-full sm:w-auto">Cancel</button>
