@@ -82,7 +82,6 @@
                 </button>
             </div>
             <div class="mt-2 px-2 sm:px-7 py-2 sm:py-3" id="viewUserContent">
-                {{-- Content will be loaded here via AJAX --}}
             </div>
         </div>
     </div>

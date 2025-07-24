@@ -1,57 +1,83 @@
-<form id="userForm" method="POST" action="{{ isset($user) ? route('user.update', $user->id) : route('user.store') }}">
+<form id="userForm" method="POST" action="{{ isset($user) ? route('user.update', $user) : route('user.store') }}">
     @csrf
     @if(isset($user))
         @method('PUT')
-        <input type="hidden" name="id" id="user_id" value="{{ $user->id }}">
-
-    @else
-        @method('POST')
-        <input type="hidden" name="id" id="user_id" value="">
-
     @endif
 
-    <div class="mb-4">
-        <label for="name" class="block text-gray-700 text-sm font-bold mb-2">Name:</label>
-        <input type="text" name="name" id="name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('name') border-red-500 @enderror" value="{{ old('name', $user->name ?? '') }}" required>
-        <span class="text-red-500 text-xs italic" id="name-error"></span>
-    </div>
-    
-    <div class="mb-4">
-        <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email:</label>
-        <input type="email" name="email" id="email" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('email') border-red-500 @enderror" value="{{ old('email', $user->email ?? '') }}" required>
-        <span class="text-red-500 text-xs italic" id="email-error"></span>
-    </div>
+    <div class="space-y-6">
 
-    <div class="mb-4">
-        <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Password:</label>
-        <input type="password" name="password" id="password" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('password') border-red-500 @enderror" {{ isset($user) ? '' : 'required' }}> {{-- Password is required for create, optional for edit --}}
-        <span class="text-red-500 text-xs italic" id="password-error"></span>
-
-        @if(isset($user))
-            <p class="text-gray-500 text-xs mt-1">Leave blank to keep current password.</p>
-        @endif
-    </div>
-
-    <div class="mb-6">
-        <label class="block text-gray-700 text-sm font-bold mb-2">Roles:</label>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 max-h-60 overflow-y-auto border p-4 rounded-md bg-gray-50">
-            @forelse ($roles as $role)
-                <div class="flex items-center">
-                    <input type="checkbox" name="roles[]" id="role_{{ $role->id }}" value="{{ $role->name }}"  class="form-checkbox h-4 w-4 text-blue-600 rounded focus:ring-blue-500" @if(isset($user) && $user->hasRole($role->name)) checked @endif>
-                    <label for="role_{{ $role->id }}" class="ml-2 text-gray-700 text-sm">{{ $role->name }}</label>
-                </div>
-            @empty
-                <p class="text-gray-500 text-sm col-span-full">No roles available. Please create some roles first.</p>
-            @endforelse
+        {{-- Name --}}
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Name</label>
+            <input type="text" name="name" value="{{ old('name', $user->name ?? '') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            <span class="text-red-500 text-xs italic" id="name-error"></span>
+            
         </div>
-            <span class="text-red-500 text-xs italic" id="role-error"></span>
-      
-    </div>
+        
+        {{-- Email --}}
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Email</label>
+            <input type="email" name="email" value="{{ old('email', $user->email ?? '') }}"  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            <span class="text-red-500 text-xs italic" id="email-error"></span>
+        </div>
 
-    <div class="flex items-center justify-end space-x-4">
-        <button type="button" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 transition duration-300 close-modal" data-modal-id="userFormModal">Close</button>
-        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md focus:outline-none focus:shadow-outline transition duration-300 ease-in-out">
-            {{ isset($user) ? 'Save Changes' : 'Create User' }}
-        </button>
+        {{-- Password --}}
+        <div x-data="{ show: false }">
+            <label class="block text-sm font-medium text-gray-700">Password</label>
+            <div class="relative">
+                <input :type="show ? 'text' : 'password'" name="password"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    placeholder="{{ isset($user) ? 'Leave blank to keep current password' : 'Enter password' }}">
+                <button type="button" x-on:click="show = !show"
+                    class="absolute inset-y-0 right-0 px-3 flex items-center text-sm text-gray-600">
+                    <svg x-show="!show" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-.174.57-.399 1.118-.669 1.639M15.5 19.04A9.953 9.953 0 0112 21c-4.477 0-8.268-2.943-9.542-7a9.953 9.953 0 011.356-2.618" />
+                    </svg>
+                    <svg x-show="show" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7a10.05 10.05 0 011.663-3.043M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 3l18 18" />
+                    </svg>
+                </button>
+            </div>
+             <span class="text-red-500 text-xs italic" id="password-error"></span>
+
+        </div>
+
+        {{-- Confirm Password --}}
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Confirm Password</label>
+            <input type="password" name="password_confirmation" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+        </div>
+
+        {{-- Roles --}}
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Select Role</label>
+            <div class="space-y-2">
+                @foreach($roles as $role)
+                    <label class="flex items-center space-x-3">
+                        <input type="radio" name="roles[0]" value="{{ $role->name }}"
+                            class="form-radio text-indigo-600"
+                            {{ isset($user) && $user->roles->pluck('name')->contains($role->name) ? 'checked' : '' }}>
+                        <span class="text-sm text-gray-700">{{ $role->name }}</span>
+                    </label>
+                @endforeach
+            </div>
+            <span class="text-red-500 text-xs italic" id="role-error"></span>
+        </div>
+
+        {{-- Submit Button --}}
+        <div class="text-right">
+            <button type="submit"
+                class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-6 rounded-md shadow-md transition-all duration-300">
+                {{ isset($user) ? 'Update User' : 'Create User' }}
+            </button>
+        </div>
     </div>
 </form>

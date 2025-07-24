@@ -1,6 +1,5 @@
 <div class="bg-white rounded-2xl shadow-md p-6 text-gray-800 text-sm sm:p-8">
 
-  {{-- Container with responsive flex wrap for fields --}}
   <div class="flex flex-wrap -mx-4 gap-y-6">
 
     {{-- Title --}}

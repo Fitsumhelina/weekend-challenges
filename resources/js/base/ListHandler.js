@@ -1,21 +1,20 @@
+// resources/js/base/ListHandler.js (Modified)
 export default class ListHandler {
     constructor(options) {
         this.indexRoute = options.indexRoute;
         this.csrfToken = options.csrfToken;
         this.entityName = options.entityName;
         this.routeName = options.routeName;
-
-        this.modalAddFormId = options.modalAddFormId;
-        this.modalEditFormId = options.modalEditFormId;
-        this.modalViewFormId = options.modalViewFormId;
-        this.modalFormContentId = options.modalFormContentId;
-        this.modalFormTitleId = options.modalFormTitleId;
-
-        this.openModal = options.openModal || window.openModal;
-        this.closeModal = options.closeModal || window.closeModal;
-
-        this.currentDeleteForm = null;
+        this.modalAddFormId = options.modalAddFormId; 
+        this.modalEditFormId = options.modalEditFormId; 
+        this.modalViewFormId = options.modalViewFormId; 
+        this.modalFormContentId = options.modalFormContentId; 
+        this.modalFormTitleId = options.modalFormTitleId; 
         this.initialized = false;
+        this.currentDeleteForm = null; 
+
+        this.openModal = options.openModal || window.openModal; 
+        this.closeModal = options.closeModal || window.closeModal; 
 
         this.initialize();
     }
@@ -37,35 +36,65 @@ export default class ListHandler {
     }
 
     setupEventListeners() {
-        const createButton = document.getElementById(`create${this.ucFirst(this.entityName)}Btn`);
+        // Listener for the "Add New" button
+        const createButton = document.getElementById(`create${this.entityName.charAt(0).toUpperCase() + this.entityName.slice(1)}Btn`);
         if (createButton) {
-            createButton.addEventListener('click', () => this.handleCreate());
+            createButton.addEventListener('click', this.handleCreate.bind(this));
         }
 
+        // Event delegation for edit, view, delete buttons within the list container
         const listContainer = document.getElementById(`${this.entityName}-list-container`);
         if (listContainer) {
             listContainer.addEventListener('click', (event) => {
-                const button = event.target.closest('button[data-action]');
-                if (!button) return;
+                const target = event.target.closest('button');
+                if (!target) return;
+                const id = target.dataset.id;
 
-                const action = button.dataset.action;
-                const id = button.dataset.id;
-                const form = button.closest('form');
+                // Income buttons
+                if (target.classList.contains('edit-income-btn')) {
+                    this.loadForm(this.modalEditFormId, `/${this.routeName}/${id}/edit`, 'edit');
+                } else if (target.classList.contains('view-income-btn')) {
+                    this.loadForm(this.modalViewFormId, `/${this.routeName}/${id}`, 'view');
+                } else if (target.classList.contains('delete-income-btn')) {
+                    const form = target.closest('form');
+                    this.handleDelete(form);
+                }
+                // Expense buttons
+                else if (target.classList.contains('edit-expense-btn')) {
+                    this.loadForm(this.modalEditFormId, `/${this.routeName}/${id}/edit`, 'edit');
+                } else if (target.classList.contains('view-expense-btn')) {
+                    this.loadForm(this.modalViewFormId, `/${this.routeName}/${id}`, 'view');
+                } else if (target.classList.contains('delete-expense-btn')) {
+                    const form = target.closest('form');
+                    this.handleDelete(form);
+                }
+               
+                // Role buttons
+                else if (target.classList.contains('edit-role-btn')) {
+                    this.loadForm(this.modalEditFormId, `/${this.routeName}/${id}/edit`, 'edit');
+                } else if (target.classList.contains('view-role-btn')) {
+                    this.loadForm(this.modalViewFormId, `/${this.routeName}/${id}`, 'view');
+                } else if (target.classList.contains('delete-role-btn')) {
+                    const form = target.closest('form');
+                    this.handleDelete(form);
+                }
 
-                switch (action) {
-                    case 'edit':
-                        this.loadForm(this.modalEditFormId, `/${this.routeName}/${id}/edit`, 'edit');
-                        break;
-                    case 'view':
-                        this.loadForm(this.modalViewFormId, `/${this.routeName}/${id}`, 'view');
-                        break;
-                    case 'delete':
-                        this.handleDelete(form);
-                        break;
+                //user button
+                else if (target.classList.contains('edit-user-btn')) {
+                    this.loadForm(this.modalEditFormId, `/${this.routeName}/${id}/edit`, 'edit');
+                } else if (target.classList.contains('view-user-btn')) {
+                    this.loadForm(this.modalViewFormId, `/${this.routeName}/${id}`, 'view');
+                } else if (target.classList.contains('delete-user-btn')) {
+                    const form = target.closest('form');
+                    this.handleDelete(form);
                 }
             });
         }
 
+
+        
+
+        // Search form and per_page select
         const searchForm = document.getElementById(`${this.entityName}-search-form`);
         if (searchForm) {
             searchForm.addEventListener('submit', this.handleSearch.bind(this));
@@ -80,7 +109,7 @@ export default class ListHandler {
             formModalContentDiv.addEventListener('submit', (event) => {
                 const form = event.target.closest('form');
                 if (form) {
-                    event.preventDefault();
+                    event.preventDefault(); // Prevent default form submission
                     this.handleFormSubmission(form);
                 }
             });
@@ -89,23 +118,27 @@ export default class ListHandler {
         document.addEventListener('click', (event) => {
             const closeButton = event.target.closest('.close-modal');
             if (closeButton) {
-                const modalId = closeButton.dataset.modalId || closeButton.closest('.fixed.inset-0')?.id;
-                if (modalId) {
-                    this.closeModal(document.getElementById(modalId));
+                const modalIdToClose = closeButton.dataset.modalId || closeButton.closest('.fixed.inset-0')?.id;
+                if (modalIdToClose) {
+                    const modalElement = document.getElementById(modalIdToClose);
+                    if (modalElement) {
+                        this.closeModal(modalElement);
+                    }
                 }
             }
         });
 
+        // Delete confirmation buttons
         const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
         const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
-
         if (confirmDeleteBtn) {
             confirmDeleteBtn.addEventListener('click', () => {
-                if (this.currentDeleteForm) this.currentDeleteForm.submit();
+                if (this.currentDeleteForm) {
+                    this.currentDeleteForm.submit();
+                }
                 this.closeModal(document.getElementById('deleteConfirmationModal'));
             });
         }
-
         if (cancelDeleteBtn) {
             cancelDeleteBtn.addEventListener('click', () => {
                 this.closeModal(document.getElementById('deleteConfirmationModal'));
@@ -113,54 +146,90 @@ export default class ListHandler {
         }
     }
 
-    ucFirst(str) {
-        return str.charAt(0).toUpperCase() + str.slice(1);
-    }
-
-    handleCreate() {
-        this.loadForm(this.modalAddFormId, `/${this.routeName}/create`, 'create');
-    }
-
     loadForm(modalId, url, type) {
         const modalElement = document.getElementById(modalId);
-        const contentDiv = document.getElementById(this.modalFormContentId);
-        const viewDiv = document.getElementById('viewIncomeContent') || document.getElementById('viewExpenseContent');
+        const modalContentDiv = document.getElementById(this.modalFormContentId); 
+        const modalViewContentDiv =
+            document.getElementById('viewIncomeContent') ||
+            document.getElementById('viewExpenseContent') ||
+            document.getElementById('viewUserContent');
 
-        const targetDiv = (type === 'view') ? viewDiv : contentDiv;
-        const modalTitle = document.getElementById(this.modalFormTitleId);
-
-        if (!modalElement || !targetDiv) {
-            window.toastr.error('Modal container or content not found.');
+        if (!modalElement) {
+            console.error(`Modal element with ID '${modalId}' not found.`);
+            window.toastr.error('Modal container not found.');
             return;
         }
 
-        if (modalTitle && type !== 'view') {
-            modalTitle.textContent = `${this.ucFirst(type)} ${this.ucFirst(this.entityName)}`;
+        // Determine where to inject content and set title
+        let targetContentDiv;
+        let modalTitleElement;
+
+        if (type === 'create' || type === 'edit') {
+            targetContentDiv = modalContentDiv;
+            modalTitleElement = document.getElementById(this.modalFormTitleId);
+            if (modalTitleElement) {
+                modalTitleElement.textContent = type === 'create' ? `Add New ${this.entityName.charAt(0).toUpperCase() + this.entityName.slice(1)}` : `Edit ${this.entityName.charAt(0).toUpperCase() + this.entityName.slice(1)}`;
+            }
+        } else if (type === 'view') {
+            targetContentDiv = modalViewContentDiv;
         }
 
-        targetDiv.innerHTML = this.loadingOverlay;
-        this.openModal(modalElement);
+        if (!targetContentDiv) {
+            console.error(`Target content div not found for modal type '${type}'.`);
+            window.toastr.error('Modal content area not found.');
+            return;
+        }
+
+        // Show loading overlay
+        targetContentDiv.innerHTML = this.loadingOverlay;
+        this.openModal(modalElement); // Open the modal container
 
         fetch(url, {
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest' // Important for Laravel to detect AJAX request
+            }
         })
-            .then(res => res.ok ? res.text() : res.text().then(txt => Promise.reject(txt)))
-            .then(html => {
-                targetDiv.innerHTML = html;
-                if ((type === 'create' || type === 'edit') && typeof this.postFormRender === 'function') {
-                    this.postFormRender();
+        .then(response => {
+            if (!response.ok) {
+                // If the response is not OK, try to parse JSON for errors, otherwise throw generic error
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.indexOf("application/json") !== -1) {
+                    return response.json().then(errorData => {
+                        throw new Error(errorData.message || 'Server error occurred.');
+                    });
+                } else {
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
-            })
-            .catch(error => {
-                console.error('Modal load error:', error);
-                window.toastr.error(`Failed to load ${type} form`);
-                this.closeModal(modalElement);
-            });
+            }
+            return response.text();
+        })
+        .then(html => {
+            targetContentDiv.innerHTML = html; // Inject the fetched HTML
+            // Call postFormRender if it's a create/edit form, allowing child classes to init components
+            if ((type === 'create' || type === 'edit') && typeof this.postFormRender === 'function') {
+                this.postFormRender();
+            }
+        })
+        .catch(error => {
+            console.error(`Error fetching ${type} form:`, error);
+            window.toastr.error(`Failed to load ${type} form: ${error.message || 'An unknown error occurred.'}`);
+            this.closeModal(modalElement); // Close modal on error
+        });
     }
+
+    handleCreate() {
+        // Call the generic loadForm method for create
+        this.loadForm(this.modalAddFormId, `/${this.routeName}/create`, 'create');
+    }
+
+    // loadEditForm and loadViewForm are now handled by the generic loadForm
+    // but the event listeners in setupEventListeners will call loadForm directly.
+    // So these specific methods are not strictly needed anymore if setupEventListeners is updated.
 
     handleDelete(form) {
         this.currentDeleteForm = form;
-        this.openModal(document.getElementById('deleteConfirmationModal'));
+        const deleteConfirmationModal = document.getElementById('deleteConfirmationModal');
+        this.openModal(deleteConfirmationModal);
     }
 
     handleFormSubmission(form) {
@@ -168,82 +237,127 @@ export default class ListHandler {
         const method = form.querySelector('input[name="_method"]')?.value || form.method;
         const url = form.action;
 
-        this.clearFormErrors(form);
+        this.clearFormErrors(form); // Clear previous errors
 
         fetch(url, {
-            method: 'POST',
+            method: 'POST', // Always POST for _method spoofing
             headers: {
                 'X-CSRF-TOKEN': this.csrfToken,
-                'X-Requested-With': 'XMLHttpRequest'
+                'X-Requested-With': 'XMLHttpRequest' // Important for Laravel AJAX detection
             },
             body: formData
         })
-            .then(res => res.json().then(data => {
-                if (!res.ok) {
-                    this.handleFormErrors(form, data);
-                    throw new Error(data.message || 'Form failed');
+        .then(response => {
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                return response.json().then(data => {
+                    if (!response.ok) {
+                        this.handleFormErrors(form, data);
+                        throw new Error(data.message || 'Form submission failed.');
+                    }
+                    return data;
+                });
+            } else {
+                if (!response.ok) {
+                    window.toastr.error('An unexpected error occurred. Please try again.');
+                    throw new Error('Non-JSON error response');
                 }
-                return data;
-            }))
-            .then(data => {
-                window.toastr.success(data.message || `${this.ucFirst(this.entityName)} saved!`);
-                this.refreshList();
-                this.closeModal(document.getElementById(this.modalAddFormId));
-            })
-            .catch(error => {
-                console.error('Submit error:', error);
-                window.toastr.error(error.message || 'Network error.');
-            });
+                return response.text();
+            }
+        })
+        .then(data => {
+            // Check if the response is an HTML partial (e.g., updated list)
+            if (typeof data === 'string' && data.includes(`${this.entityName}-list-container`)) {
+                document.getElementById(`${this.entityName}-list-container`).innerHTML = data;
+                window.toastr.success(`${this.entityName.charAt(0).toUpperCase() + this.entityName.slice(1)} saved successfully!`);
+            } else if (data && data.message) {
+                window.toastr.success(data.message);
+            } else {
+                window.toastr.success(`${this.entityName.charAt(0).toUpperCase() + this.entityName.slice(1)} saved successfully!`);
+            }
+            this.refreshList(); // Ensure list is refreshed
+            this.closeModal(document.getElementById(this.modalAddFormId)); // Close the unified form modal
+        })
+        .catch(error => {
+            console.error('Form Submission Error:', error);
+            if (!error.responseJSON && !error.message) {
+                 window.toastr.error('Network error or server unreachable.');
+            }
+        });
     }
 
     handleSearch(event) {
         event.preventDefault();
         const form = event.target.closest('form');
-        const params = new URLSearchParams(new FormData(form));
+        const formData = new FormData(form);
+        const params = new URLSearchParams(formData);
 
-        window.history.pushState({}, '', `${this.indexRoute}?${params}`);
-        fetch(`${this.indexRoute}?${params}`, {
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        window.history.pushState({}, '', `${this.indexRoute}?${params.toString()}`);
+
+        fetch(`${this.indexRoute}?${params.toString()}`, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
         })
-            .then(res => res.text())
-            .then(html => {
-                document.getElementById(`${this.entityName}-list-container`).innerHTML = html;
-            })
-            .catch(err => {
-                console.error('Search failed:', err);
-                window.toastr.error('Search error.');
-            });
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById(`${this.entityName}-list-container`).innerHTML = html;
+        })
+        .catch(error => {
+            console.error('Search error:', error);
+            window.toastr.error('Failed to perform search.');
+        });
     }
 
     refreshList() {
         const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set('per_page', currentUrl.searchParams.get('per_page') || '10');
+        currentUrl.searchParams.set('search', currentUrl.searchParams.get('search') || '');
 
-        fetch(currentUrl, {
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        fetch(currentUrl.toString(), {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
         })
-            .then(res => res.text())
-            .then(html => {
-                document.getElementById(`${this.entityName}-list-container`).innerHTML = html;
-            })
-            .catch(err => {
-                console.error('List refresh failed:', err);
-                window.toastr.error('Could not refresh list.');
-            });
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById(`${this.entityName}-list-container`).innerHTML = html;
+        })
+        .catch(error => {
+            console.error('Error refreshing list:', error);
+            window.toastr.error('Failed to refresh list.');
+        });
     }
 
     clearFormErrors(form) {
-        form.querySelectorAll('.text-red-500.text-xs.italic').forEach(span => span.textContent = '');
+        if (!form) return;
+        form.querySelectorAll('.text-red-500.text-xs.italic').forEach(span => {
+            span.textContent = '';
+        });
     }
 
     handleFormErrors(form, errors) {
+        console.error('Form Errors:', errors);
         this.clearFormErrors(form);
-        if (errors?.errors) {
-            Object.entries(errors.errors).forEach(([field, messages]) => {
-                const errorEl = form.querySelector(`#${field}-error`);
-                if (errorEl) errorEl.textContent = messages[0];
-            });
+
+        if (errors && errors.errors) {
+            let hasFieldErrors = false;
+            for (const field in errors.errors) {
+                const errorMessages = errors.errors[field];
+                const errorElement = form.querySelector(`#${field}-error`);
+                if (errorElement) {
+                    errorElement.textContent = errorMessages[0];
+                    hasFieldErrors = true;
+                }
+            }
+
+            if (!hasFieldErrors && errors.message) {
+                window.toastr.error(errors.message);
+            }
+        } else if (errors.message) {
+            window.toastr.error(errors.message);
         } else {
-            window.toastr.error(errors.message || 'Form validation error');
+            window.toastr.error('An unknown error occurred during form submission.');
         }
     }
 }
