@@ -39,7 +39,6 @@ export default class ListHandler {
         // Listener for the "Add New" button
         const createButton = document.getElementById(`create${this.entityName.charAt(0).toUpperCase() + this.entityName.slice(1)}Btn`);
          if (createButton) {
-            console.log(`[${this.entityName}] Found button. Attaching click handler.`);
             createButton.addEventListener("click", () => this.handleCreate());
         } else {
             console.warn(`[${this.entityName}] Create button not found in DOM.`);
