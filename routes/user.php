@@ -6,5 +6,5 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\UserController;
 
 Route::resource('role', RoleController::class)->except(['show']);
-Route::resource('permission', PermissionController::class)->except(['show']);
+Route::resource('permission', PermissionController::class)->only(['index']);
 Route::resource('user', UserController::class);

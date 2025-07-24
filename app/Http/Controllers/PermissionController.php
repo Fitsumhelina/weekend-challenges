@@ -40,54 +40,5 @@ class PermissionController extends Controller
 
         return view('permission.index', compact('permissions', 'perPage'));
     }
-    public function create()
-    {
-        if (!$this->genericPolicy->create(Auth::user(), new Permission())) {
-            abort(403, 'Unauthorized action.');
-        }
-        return view('permission.partials.form');
-    }
 
-    public function store(PermissionRequest $request)
-    {
-        if (!$this->genericPolicy->create(Auth::user(), new Permission())) {
-            abort(403, 'Unauthorized action.');
-        }
-        Permission::create(['name' => $request->name]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Permission created successfully.'
-        ]);
-    }
-
-    public function edit($id)
-    {if (!$this->genericPolicy->update(Auth::user(), new Permission())) {
-            abort(403, 'Unauthorized action.');
-        }
-        $permission = Permission::findOrFail($id);
-        return view('permission.partials.form', compact('permission'))->render();
-    }
-
-    public function update(PermissionRequest $request, Permission $permission)
-    {if (!$this->genericPolicy->create(Auth::user(), new Permission())) {
-            abort(403, 'Unauthorized action.');
-        }
-        $permission->update(['name' => $request->name]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Permission updated successfully.'
-        ]);
-    }
-
-    public function destroy(Permission $permission)
-    {if (!$this->genericPolicy->delete(Auth::user(), new Permission())) {
-            abort(403, 'Unauthorized action.');
-        }
-        $permission->delete();
-
-        return Redirect::route('permission.index')->with('success', 'Permission deleted successfully.');
-
-    }
 }
