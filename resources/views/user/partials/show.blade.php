@@ -65,7 +65,7 @@
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200 bg-white">
-                @foreach ($income->take(5) as $entry)
+                @forelse ($income->take(5) as $entry)
                     <tr class="hover:bg-gray-50 transition">
                         <td class="px-5 py-3 truncate max-w-[160px]" title="{{ $entry->title }}">
                             {{ $entry->title }}
@@ -101,15 +101,11 @@
                             {{ $entry->description ?? '-' }}
                         </td>
                     </tr>
-                @endforeach
-
-                @if($income->count() < 5)
-                    @for($i = $income->count(); $i < 5; $i++)
-                        <tr>
-                            <td colspan="6" class="px-5 py-3 text-center text-gray-400 italic">No data</td>
-                        </tr>
-                    @endfor
-                @endif
+                @empty
+                    <tr>
+                        <td colspan="6" class="px-5 py-3 text-center text-gray-400 italic">No data</td>
+                    </tr>
+                @endforelse
             </tbody>
         </table>
     </div>
