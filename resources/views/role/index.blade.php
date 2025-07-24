@@ -96,17 +96,19 @@
     };
 
     window.openModal = function(modalElement) {
-            if (modalElement) {
-                modalElement.classList.remove('hidden');
-                modalElement.classList.add('flex');
-            }
-        };
+        if (modalElement) {
+            modalElement.classList.remove('hidden');
+            modalElement.classList.add('flex');
+            modalElement.style.display = 'flex'; // Ensure visible
+        }
+    };
+    window.closeModal = function(modalElement) {
+        if (modalElement) {
+            modalElement.classList.add('hidden');
+            modalElement.classList.remove('flex');
+            modalElement.style.display = 'none'; // Ensure hidden
+        }
+    };
 
-        window.closeModal = function(modalElement) {
-            if (modalElement) {
-                modalElement.classList.add('hidden');
-                modalElement.classList.remove('flex');
-            }
-        };
 </script>
 @endsection

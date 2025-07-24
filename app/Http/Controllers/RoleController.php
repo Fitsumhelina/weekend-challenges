@@ -35,7 +35,7 @@ class RoleController extends Controller
         $allPermissions = Permission::all(); 
 
         if (request()->ajax()) {
-            return view('user.roles.result', compact('roles'))->render();
+            return view('role.result', compact('roles'))->render();
         }
 
         return view('role.index', compact('roles', 'allPermissions'));

@@ -35,63 +35,76 @@
             <span class="text-gray-500 font-medium text-sm">Debt</span>
             <p class="text-lg font-bold text-red-700">{{ number_format($totalDebt, 2) }} ETB</p>
         </div>
-
-        {{-- Password Placeholder --}}
-        <div class="sm:col-span-2" x-data="{ show: false }">
-            <span class="text-gray-500 font-medium text-sm">Password</span>
-            <div class="relative mt-1">
-                <input :type="show ? 'text' : 'password'" value="********" readonly
-                       class="w-full px-4 py-2 bg-gray-100 text-gray-700 border rounded-md focus:outline-none focus:ring focus:ring-indigo-300 pr-10">
-                <button type="button" @click="show = !show"
-                        class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700">
-                    <svg x-show="!show" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                         viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7" />
-                    </svg>
-                    <svg x-show="show" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                         viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7M3 3l18 18" />
-                    </svg>
-                </button>
-            </div>
-            <p class="text-xs text-gray-400 mt-1">Password is hidden for security.</p>
-        </div>
     </div>
 
-    {{-- Income History Table --}}
-    <div class="mt-8">
-        <h3 class="text-lg font-semibold text-gray-700 mb-2">Recent Income Entries</h3>
-        <div class="overflow-x-auto border rounded-lg shadow-sm max-h-60">
-            <table class="min-w-[800px] w-full text-sm text-left text-gray-700 divide-y divide-gray-200">
-                <thead class="bg-gray-100 text-xs text-gray-500 uppercase tracking-wide sticky top-0 z-10">
-                    <tr>
-                        <th class="px-3 py-2 whitespace-nowrap">Title</th>
-                        <th class="px-3 py-2 whitespace-nowrap">Amount</th>
-                        <th class="px-3 py-2 whitespace-nowrap">Date</th>
-                        <th class="px-3 py-2 whitespace-nowrap">Status</th>
-                        <th class="px-3 py-2 whitespace-nowrap">Debt</th>
-                        <th class="px-3 py-2 min-w-[250px]">Description</th>
+ {{-- Income History Table --}}
+<div class="mt-8">
+    <h3 class="text-lg font-semibold text-gray-700 mb-4">Recent Income Entries</h3>
+
+    <div class="overflow-x-auto border rounded-xl shadow max-h-[20rem]">
+        <table class="min-w-full text-sm text-left text-gray-700">
+            <thead class="bg-gray-100 text-xs text-gray-600 uppercase sticky top-0 z-10">
+                <tr>
+                    <th class="px-5 py-3 whitespace-nowrap">Title</th>
+                    <th class="px-5 py-3 text-right whitespace-nowrap">Amount</th>
+                    <th class="px-5 py-3 whitespace-nowrap">Date</th>
+                    <th class="px-5 py-3 whitespace-nowrap">Status</th>
+                    <th class="px-5 py-3 text-right whitespace-nowrap">Debt</th>
+                    <th class="px-5 py-3 min-w-[240px]">Description</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 bg-white">
+                @foreach ($income->take(5) as $entry)
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-5 py-3 truncate max-w-[160px]" title="{{ $entry->title }}">
+                            {{ $entry->title }}
+                        </td>
+                        <td class="px-5 py-3 text-right text-green-700 font-semibold">
+                            {{ number_format($entry->amount, 2) }} ETB
+                        </td>
+                        <td class="px-5 py-3 whitespace-nowrap">
+                            {{ \Carbon\Carbon::parse($entry->created_at)->format('M d, Y h:i A') }}
+                        </td>
+                        <td class="px-5 py-3">
+                            <div class="flex items-center gap-2">
+                                @if(strtolower($entry->status) === 'paid')
+                                    <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                @elseif(strtolower($entry->status) === 'pending')
+                                    <svg class="w-4 h-4 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3"/>
+                                    </svg>
+                                @else
+                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                                    </svg>
+                                @endif
+                                <span class="capitalize">{{ $entry->status }}</span>
+                            </div>
+                        </td>
+                        <td class="px-5 py-3 text-right text-red-600 font-semibold">
+                            {{ number_format($entry->debt, 2) }}
+                        </td>
+                        <td class="px-5 py-3 truncate max-w-[260px]" title="{{ $entry->description ?? '-' }}">
+                            {{ $entry->description ?? '-' }}
+                        </td>
                     </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-100">
-                    @foreach ($income->take(4) as $entry)
-                        <tr class="hover:bg-gray-50 transition">
-                            <td class="px-3 py-2 font-medium">{{ $entry->title }}</td>
-                            <td class="px-3 py-2 text-green-700 font-semibold">{{ number_format($entry->amount, 2) }} ETB</td>
-                            <td class="px-3 py-2">{{ \Carbon\Carbon::parse($entry->created_at)->format('M d, Y H:i A') }}</td>
-                            <td class="px-3 py-2">{{ $entry->status }}</td>
-                            <td class="px-3 py-2 text-red-700">{{ $entry->debt }}</td>
-                            <td class="px-3 py-2 break-words text-gray-800">{{ $entry->description ?? '-' }}</td>
+                @endforeach
+
+                @if($income->count() < 5)
+                    @for($i = $income->count(); $i < 5; $i++)
+                        <tr>
+                            <td colspan="6" class="px-5 py-3 text-center text-gray-400 italic">No data</td>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+                    @endfor
+                @endif
+            </tbody>
+        </table>
     </div>
+</div>
+
+
 
     {{-- Close Button --}}
     <div class="mt-6 text-right">

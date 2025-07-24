@@ -74,7 +74,7 @@
 
     {{-- View User Modal --}}
     <div id="viewUserModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
-        <div class="relative top-10 sm:top-20 mx-auto p-2 sm:p-5 border w-11/12 sm:w-2/3 lg:w-1/2 shadow-lg rounded-md bg-white">
+        <div class="relative top-10 sm:top-20 mx-auto p-2 sm:p-5 border w-11/10 sm:w-2/3 lg:w-1/2 shadow-lg rounded-md bg-white">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-2 sm:pb-3">
                 <h3 class="text-xl sm:text-2xl leading-6 font-medium text-gray-900">User Details</h3>
                 <button class="text-gray-400 hover:text-gray-600 close-modal mt-2 sm:mt-0" data-modal-id="viewUserModal">
