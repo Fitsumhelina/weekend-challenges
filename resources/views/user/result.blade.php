@@ -47,7 +47,7 @@
                                 </button>
                             @endcan
                             @can('delete user')
-                                <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="inline-block">
+                                <form action="{{ route('user.destroy', $user->id) }}" method="POST" class="inline-block">
                                     @csrf
                                     @method('DELETE')
                                     <button type="button" class="user-delete-btn w-8 h-8 rounded-full bg-red-100 text-red-600 hover:bg-red-200 flex items-center justify-center transition duration-300" title="Delete">

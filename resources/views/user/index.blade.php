@@ -34,15 +34,17 @@
         @endif
 
         {{-- Search Form --}}
-        <form id="user-search-form" action="{{ route('users.index') }}" method="GET" class="mb-4 sm:mb-6">
+        <form id="user-search-form" action="{{ route('user.index') }}" method="GET" class="mb-4 sm:mb-6">
             <div class="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
                 <input type="text" name="search" id="user-search" placeholder="Search users..."
                        value="{{ request('search') }}"
                        class="flex-grow w-full sm:w-auto px-3 sm:px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 shadow-sm">
-                <select name="per_page" id="user-per_page" class="px-3 sm:px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 shadow-sm w-full sm:w-auto">
-                    <option value="10" @if(request('per_page', 10) == 10) selected @endif>10 per page</option>
-                    <option value="25" @if(request('per_page') == 25) selected @endif>25 per page</option>
-                    <option value="50" @if(request('per_page') == 50) selected @endif>50 per page</option>
+                <select name="per_page"
+                        class="w-full sm:w-auto px-3 sm:px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 shadow-sm">
+                    <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10 per page</option>
+                    <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25 per page</option>
+                    <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50 per page</option>
+                    <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100 per page</option>
                 </select>
                 <button type="submit" class="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out w-full sm:w-auto">
                     Search

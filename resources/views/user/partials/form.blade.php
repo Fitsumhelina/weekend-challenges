@@ -1,5 +1,4 @@
-{{-- The form is designed to be used for both create and edit within the same modal --}}
-<form id="userForm" method="POST" action="{{ isset($user) ? route('users.update', $user->id) : route('users.store') }}">
+<form id="userForm" method="POST" action="{{ isset($user) ? route('user.update', $user->id) : route('user.store') }}">
     @csrf
     @if(isset($user))
         @method('PUT')

@@ -80,7 +80,7 @@ class UserController extends Controller
             abort(403, 'Unauthorized action.');
         }
         $roles = Role::all(); // Fetch all roles to populate the form
-        return view('user.create', compact('roles')); // This view is not directly used by the modal, but kept for completeness
+        return view('user.partials.form', compact('roles')); // This view is not directly used by the modal, but kept for completeness
     }
 
     public function store(Request $request): \Illuminate\Http\RedirectResponse
