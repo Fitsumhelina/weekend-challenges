@@ -71,7 +71,9 @@ class UserController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        return view('user.partials.show', compact('user', 'income')); 
+        $totalDebt = Income::where('source', $id)->sum('debt');
+
+        return view('user.partials.show', compact('user', 'income','totalDebt')); 
     }
 
     public function create(): View
@@ -117,8 +119,7 @@ class UserController extends Controller
         if (!$this->genericPolicy->view(Auth::user(), $user)) {
             abort(403, 'Unauthorized action.');
         }
-        $roles = Role::all(); // Fetch all roles to populate the form
-        // Pass the user and all roles to the form partial
+        $roles = Role::all(); 
         return view('user.partials.form', compact('user', 'roles'));
     }
 

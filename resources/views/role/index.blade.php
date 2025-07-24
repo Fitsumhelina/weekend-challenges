@@ -87,7 +87,7 @@
 </div>
 @endsection
 
-@push('scripts')
+@section('scripts')
 <script>
     const Data = {
         RoleIndexRoute: "{{ route('role.index') }}",
@@ -109,4 +109,4 @@
             }
         };
 </script>
-@endpush
+@endsection

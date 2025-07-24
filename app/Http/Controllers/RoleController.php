@@ -45,6 +45,8 @@ class RoleController extends Controller
         if (!$this->genericPolicy->create(Auth::user(), new Role())) {
             abort(403, 'Unauthorized action.');
         }
+
+        
         $permissions = Permission::all();
         return view('role.partials.form', compact('permissions'));
     }

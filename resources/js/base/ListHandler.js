@@ -38,11 +38,13 @@ export default class ListHandler {
     setupEventListeners() {
         // Listener for the "Add New" button
         const createButton = document.getElementById(`create${this.entityName.charAt(0).toUpperCase() + this.entityName.slice(1)}Btn`);
-        if (createButton) {
-            createButton.addEventListener('click', this.handleCreate.bind(this));
+         if (createButton) {
+            console.log(`[${this.entityName}] Found button. Attaching click handler.`);
+            createButton.addEventListener("click", () => this.handleCreate());
+        } else {
+            console.warn(`[${this.entityName}] Create button not found in DOM.`);
         }
-
-        // Event delegation for edit, view, delete buttons within the list container
+        
         const listContainer = document.getElementById(`${this.entityName}-list-container`);
         if (listContainer) {
             listContainer.addEventListener('click', (event) => {
@@ -72,8 +74,7 @@ export default class ListHandler {
                 // Role buttons
                 else if (target.classList.contains('edit-role-btn')) {
                     this.loadForm(this.modalEditFormId, `/${this.routeName}/${id}/edit`, 'edit');
-                } else if (target.classList.contains('view-role-btn')) {
-                    this.loadForm(this.modalViewFormId, `/${this.routeName}/${id}`, 'view');
+             
                 } else if (target.classList.contains('delete-role-btn')) {
                     const form = target.closest('form');
                     this.handleDelete(form);
@@ -204,8 +205,7 @@ export default class ListHandler {
             return response.text();
         })
         .then(html => {
-            targetContentDiv.innerHTML = html; // Inject the fetched HTML
-            // Call postFormRender if it's a create/edit form, allowing child classes to init components
+            targetContentDiv.innerHTML = html; 
             if ((type === 'create' || type === 'edit') && typeof this.postFormRender === 'function') {
                 this.postFormRender();
             }
@@ -222,8 +222,6 @@ export default class ListHandler {
         this.loadForm(this.modalAddFormId, `/${this.routeName}/create`, 'create');
     }
 
-    // loadEditForm and loadViewForm are now handled by the generic loadForm
-    // but the event listeners in setupEventListeners will call loadForm directly.
     // So these specific methods are not strictly needed anymore if setupEventListeners is updated.
 
     handleDelete(form) {

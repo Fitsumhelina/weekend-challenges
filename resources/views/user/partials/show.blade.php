@@ -36,8 +36,12 @@
                 {{ \Carbon\Carbon::parse($user->created_at)->format('M d, Y H:i A') }}
             </p>
         </div>
-
-
+         {{-- Dept --}}
+        <div>
+            <label class="block text-sm font-medium text-gray-500">Dept</label>
+            <p class="font-bold text-base text-red-900">{{ number_format($totalDebt, 2)}} ETB</p>
+        </div>
+        
 
         {{-- Password Display --}}
         <div x-data="{ show: false }" class="sm:col-span-2">
@@ -69,33 +73,39 @@
         </div>
     </div>
 
- {{-- Income Table Container --}}
-<div class="rounded-lg shadow-sm border max-h-[300px] overflow-y-auto">
-    <table class="min-w-full text-sm text-left divide-y divide-gray-200">
+{{-- Income Table Container --}}
+<div class="rounded-lg shadow-sm border overflow-x-auto max-h-[220px] sm:max-h-[240px]">
+    <table class="min-w-[900px] w-full text-sm text-left divide-y divide-gray-200">
         <thead class="sticky top-0 bg-gray-50 z-10 text-xs text-gray-500 uppercase tracking-wide">
             <tr>
-                <th class="px-4 py-2">Source</th>
-                <th class="px-4 py-2">Amount</th>
-                <th class="px-4 py-2">Date</th>
-                <th class="px-4 py-2">Description</th>
+                <th class="w-24 px-2 py-1.5">Title</th>
+                <th class="w-20 px-2 py-1.5">Amount</th>
+                <th class="w-36 px-2 py-1.5">Date</th>
+                <th class="w-20 px-2 py-1.5">Status</th>
+                <th class="w-20 px-2 py-1.5">Debt</th>
+                <th class="min-w-[300px] px-3 py-1.5">Description</th>
             </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-100">
-            @foreach ($income as $entry)
-                <tr>
-                    <td class="px-4 py-2 whitespace-nowrap">{{ $entry->source }}</td>
-                    <td class="px-4 py-2 text-green-700 font-semibold whitespace-nowrap">
+            @foreach ($income->take(4) as $entry)
+                <tr class="hover:bg-gray-50 transition">
+                    <td class="px-2 py-1 whitespace-nowrap">{{ $entry->title }}</td>
+                    <td class="px-2 py-1 text-green-700 font-semibold whitespace-nowrap">
                         {{ number_format($entry->amount, 2) }} ETB
                     </td>
-                    <td class="px-4 py-2 text-gray-600 whitespace-nowrap">
+                    <td class="px-2 py-1 text-gray-600 whitespace-nowrap">
                         {{ \Carbon\Carbon::parse($entry->created_at)->format('M d, Y H:i A') }}
                     </td>
-                    <td class="px-4 py-2 text-gray-800">{{ $entry->description ?? '-' }}</td>
+                    <td class="px-2 py-1 whitespace-nowrap">{{ $entry->status }}</td>
+                    <td class="px-2 py-1 whitespace-nowrap">{{ $entry->debt }}</td>
+                    <td class="px-3 py-1 text-gray-800 break-words">{{ $entry->description ?? '-' }}</td>
                 </tr>
             @endforeach
         </tbody>
     </table>
 </div>
+
+
 
     {{-- Action --}}
     <div class="text-right mt-8">
