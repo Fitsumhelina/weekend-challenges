@@ -69,9 +69,12 @@ class UserController extends Controller
         if (!$this->genericPolicy->view(Auth::user(), new User())) { // Policy check on a new User instance if $id is not a model
             abort(403, 'Unauthorized action.');
         }
-        // Eager load roles for the specific user
         $user = User::with('roles')->findOrFail($id);
-        return view('user.partials.show', compact('user'));
+        $income =Income::where('source', $id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        return view('user.partials.show', compact('user', 'income')); 
     }
 
     public function create(): View
