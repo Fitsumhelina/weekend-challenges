@@ -75,7 +75,7 @@
         <div class="relative top-10 sm:top-20 mx-auto p-2 sm:p-5 border w-11/12 sm:w-2/3 lg:w-1/2 shadow-lg rounded-md bg-white">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-2 sm:pb-3">
                 <h3 class="text-xl sm:text-2xl leading-6 font-medium text-gray-900">User Details</h3>
-                <button class="text-gray-400 hover:text-gray-600 close-modal mt-2 sm:mt-0">
+                <button class="text-gray-400 hover:text-gray-600 close-modal mt-2 sm:mt-0" data-modal-id="viewUserModal">
                     <svg class="h-5 w-5 sm:h-6 sm:w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
@@ -90,7 +90,7 @@
         <div class="relative top-10 sm:top-20 mx-auto p-2 sm:p-5 border w-11/12 sm:w-96 shadow-lg rounded-md bg-white">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-2 sm:pb-3">
                 <h3 class="text-lg sm:text-xl leading-6 font-medium text-gray-900">Confirm Deletion</h3>
-                <button class="text-gray-400 hover:text-gray-600 close-modal mt-2 sm:mt-0">
+                <button class="text-gray-400 hover:text-gray-600 close-modal mt-2 sm:mt-0" data-modal-id="deleteConfirmationModal">
                     <svg class="h-5 w-5 sm:h-6 sm:w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
@@ -105,4 +105,42 @@
     </div>
 
 </div>
+@endsection
+
+@section('scripts')
+   <script>
+        const AppData = {
+            UserIndexRoute: "{{ route('user.index') }}",
+            UserCreateRoute: "{{ route('user.create') }}",
+            csrfToken: "{{ csrf_token() }}"
+        };
+
+        window.openModal = function(modalElement) {
+            if (modalElement) {
+                modalElement.classList.remove('hidden');
+                modalElement.classList.add('flex');
+            }
+        };
+
+        window.closeModal = function(modalElement) {
+            if (modalElement) {
+                modalElement.classList.add('hidden');
+                modalElement.classList.remove('flex');
+            }
+        };
+
+        window.initSelect2ForSource = function(selectElement, placeholderText = "Select a source") {
+            if (typeof jQuery !== 'undefined' && $.fn.select2) {
+                if (!$(selectElement).data('select2')) {
+                    $(selectElement).select2({
+                        placeholder: placeholderText,
+                        allowClear: true,
+                        dropdownParent: $(selectElement).closest('.modal')
+                    });
+                }
+            } else {
+                console.warn("jQuery or Select2 not loaded. Cannot initialize Select2.");
+            }
+        };
+    </script>
 @endsection
