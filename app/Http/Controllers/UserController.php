@@ -38,9 +38,7 @@ class UserController extends Controller
             ->with(['roles'])
             ->when($search, function ($query, $search) use ($searchCategory) {
                 $query->where(function ($q) use ($search, $searchCategory) {
-                    if ($searchCategory === 'name') {
-                        $q->where('name', 'like', '%' . $search . '%');
-                    } elseif ($searchCategory === 'role') {
+                    if ($searchCategory === 'role') {
                         $q->whereHas('roles', function ($roleQuery) use ($search) {
                             $roleQuery->where('name', 'like', '%' . $search . '%');
                         });
