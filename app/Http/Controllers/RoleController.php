@@ -31,7 +31,7 @@ class RoleController extends Controller
             $query->where('name', 'like', '%' . $search . '%');
         }
 
-        $roles = $query->get();
+        $roles = $query->paginate(10);
         $allPermissions = Permission::all(); 
 
         if (request()->ajax()) {
