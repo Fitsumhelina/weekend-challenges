@@ -40,14 +40,11 @@ class UserController extends Controller
                 $query->where(function ($q) use ($search, $searchCategory) {
                     if ($searchCategory === 'name') {
                         $q->where('name', 'like', '%' . $search . '%');
-                    } elseif ($searchCategory === 'email') {
-                        $q->where('email', 'like', '%' . $search . '%');
                     } elseif ($searchCategory === 'role') {
                         $q->whereHas('roles', function ($roleQuery) use ($search) {
                             $roleQuery->where('name', 'like', '%' . $search . '%');
                         });
                     } else {
-                        // Default to searching by name if unknown category
                         $q->where('name', 'like', '%' . $search . '%');
                     }
                 });

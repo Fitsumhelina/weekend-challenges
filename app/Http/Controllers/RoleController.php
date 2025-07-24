@@ -24,8 +24,14 @@ class RoleController extends Controller
 {    if (!$this->genericPolicy->view(Auth::user(), new Role())) {
             abort(403, 'Unauthorized action.');
         }
+   
+    $query = Role::with('permissions');
 
-    $roles = Role::with('permissions')->paginate(10); 
+    if ($search = request('search')) {
+        $query->where('name', 'like', '%' . $search . '%');
+    }
+
+    $roles = $query->get();
     $allPermissions = Permission::all(); 
 
     if (request()->ajax()) {
