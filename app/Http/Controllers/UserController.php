@@ -98,7 +98,7 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8', // Added min length for password
-            'roles' => 'nullable|array', // Validate roles as an array
+            'roles' => 'nullable',
             'roles.*' => 'exists:roles,name', // Validate each role name exists in the roles table
         ]);
 
