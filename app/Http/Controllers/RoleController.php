@@ -78,7 +78,7 @@ class RoleController extends Controller
 
     public function update(RoleRequest $request, Role $role)
     {
-        if (!$this->genericPolicy->update(Auth::user(), new Role())) {
+        if (!$this->genericPolicy->update(Auth::user(), $role)) {
             abort(403, 'Unauthorized action.');
         }
 
