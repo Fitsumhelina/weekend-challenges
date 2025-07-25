@@ -20,7 +20,7 @@ class User extends Authenticatable
 
  
     public function income(){
-            return $kthis->hasMany(Income::class);
+            return $this->hasMany(Income::class);
     }
 
     public function expenses(){

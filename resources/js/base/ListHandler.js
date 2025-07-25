@@ -37,6 +37,7 @@ export default class ListHandler {
 
     setupEventListeners() {
         // Listener for the "Add New" button
+        
         const createButton = document.getElementById(`create${this.entityName.charAt(0).toUpperCase() + this.entityName.slice(1)}Btn`);
          if (createButton) {
             createButton.addEventListener("click", () => this.handleCreate());

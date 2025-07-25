@@ -63,13 +63,17 @@ class UserController extends Controller
         if (!$this->genericPolicy->view(Auth::user(), new User())) { // Policy check on a new User instance if $id is not a model
             abort(403, 'Unauthorized action.');
         }
-        $user = User::with('roles')
-        ->withSum('income as total_income', 'amount')
-        ->withSum('income as total_debt', 'debt')
-        ->findOrFail($id);
+        $user = User::with('roles')->findOrFail($id);
+        $income = Income::where('source', $id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
 
-        $totalIncome = $user->total_income ?? 0;
-        $totalDebt = $user->total_debt ?? 0;    
+        $totals = Income::where('source', $id)
+            ->selectRaw('SUM(debt) as total_debt, SUM(amount) as total_income')
+            ->first();
+
+        $totalDebt = $totals->total_debt ?? 0;
+        $totalIncome = $totals->total_income ?? 0;
 
         return view('user.partials.show', compact('user', 'income','totalDebt','totalIncome')); 
     }
