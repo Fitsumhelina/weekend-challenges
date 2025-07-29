@@ -11,6 +11,8 @@ class KitatSeeder extends Seeder
 {
     public function run(): void
     {
-        Kitat::factory()->count(5)->create();
-    }
+    Kitat::create([
+        'interest_rate' => 50,
+    ]);
+}
 }

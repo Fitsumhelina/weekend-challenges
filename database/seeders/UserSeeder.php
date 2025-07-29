@@ -10,23 +10,27 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        $roles = ['admin', 'member'];
+        // Create admin user
+        $adminRole = Role::where('name', 'admin')->first();
+        $admin = User::create([
+            'name' => 'Abel',
+            'email' => 'abel@gmail.com',
+            'password' => bcrypt('12345678'),
+        ]);
+        if ($adminRole) {
+            $admin->assignRole($adminRole);
+        }
 
-        foreach ($roles as $roleName) {
-            $role = Role::where('name', $roleName)->first();
-
-            if ($role) {
-                for ($i = 1; $i <= 3; $i++) {
-                    $user = User::factory()->make([
-                        'email' => "{$roleName}{$i}@gmail.com",
-                        'name' => ucfirst($roleName) . " User {$i}",
-                    ]);
-
-                    $user->save();
-
-                    $user->assignRole($role);
-                }
-            }
+        // Create member user
+        $memberRole = Role::where('name', 'member')->first();
+        $member = User::create([
+            'name' => 'Fitsum',
+            'email' => 'fitsum@gmail.com',
+            'password' => bcrypt('12345678'),
+        ]);
+        if ($memberRole) {
+            $member->assignRole($memberRole);
         }
     }
 }
+

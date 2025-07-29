@@ -13,8 +13,8 @@ class DatabaseSeeder extends Seeder
        $this->call([
            PermissionSeeder::class,
            UserSeeder::class,
-           ExpenseSeeder::class,
-           IncomeSeeder::class,
+        //    ExpenseSeeder::class,
+        //    IncomeSeeder::class,
            KitatSeeder::class,
        ]);
 
