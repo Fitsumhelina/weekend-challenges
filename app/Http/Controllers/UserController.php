@@ -61,7 +61,7 @@ class UserController extends Controller
     public function show($id): View // Changed type hint to match route model binding expectation for ID
     {
         $user = User::with('roles')->findOrFail($id);
-        if (!$this->genericPolicy->view(Auth::user(), new User())) { // Policy check on a new User instance if $id is not a model
+        if (!$this->genericPolicy->view(Auth::user(), $user)) {
             abort(403, 'Unauthorized action.');
         }
         $income = Income::where('source', $id)
