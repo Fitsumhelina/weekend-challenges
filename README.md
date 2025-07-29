@@ -73,10 +73,10 @@ Visit [http://localhost:8000](http://localhost:8000) in your browser.
 # For testing 
 ## admin access 
 
->admin1@gmail.com
+>abel@gmail.com
 >12345678
 
 ## member access
->member1@gmail.com
+>fitsum@gmail.com
 >12345678
 
