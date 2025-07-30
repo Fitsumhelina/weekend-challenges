@@ -19,7 +19,7 @@
                             <p class="text-xs text-gray-400 italic">Status: {{ ucwords(str_replace('_', ' ', $todo->status)) }}</p>
                             <button onclick="editTodo({{ $todo->id }})" class="text-blue-500 text-sm mt-1">Edit</button>
                         </div>
-                    @endforeach
+                    @endforeach 
                 </div>
             </div>
         @endforeach
