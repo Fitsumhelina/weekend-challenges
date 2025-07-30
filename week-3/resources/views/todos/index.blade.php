@@ -27,4 +27,41 @@
 
 {{-- Modals (New + Edit) --}}
 @include('todos.partials.modals')
+
+{{-- Include SortableJS + Drag-and-Drop Script --}}
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+
+<script>
+    const statuses = ['not_started', 'todo', 'in_progress', 'finished'];
+
+    statuses.forEach(status => {
+        new Sortable(document.getElementById('column-' + status), {
+            group: 'shared',
+            animation: 150,
+            onEnd: function (evt) {
+                const column = evt.to;
+                const movedStatus = column.parentElement.getAttribute('data-status');
+                const todoIds = [...column.querySelectorAll('.todo-card')].map(card => card.dataset.id);
+
+                fetch("{{ route('todos.updateStatus') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        status: movedStatus,
+                        todos: todoIds
+                    })
+                }).then(response => response.json())
+                  .then(data => {
+                      console.log('Updated:', data.message);
+                  }).catch(err => {
+                      alert('Failed to update. Try again.');
+                      console.error(err);
+                  });
+            }
+        });
+    });
+</script>
 @endsection

@@ -93,7 +93,7 @@ class TodoController extends Controller
     }
 
 
-        public function updateStatus(Request $request)
+    public function updateStatus(Request $request)
     {
         $request->validate([
             'todos' => 'required|array',
@@ -101,9 +101,9 @@ class TodoController extends Controller
         ]);
 
         foreach ($request->todos as $todoId) {
-            $currentUser = \Illuminate\Support\Facades\Auth::user();
             $todo = Todo::find($todoId);
-            if ($todo && ($todo->user_id === $currentUser->id || $currentUser->is_admin)) {
+
+            if ($todo && ($todo->user_id === auth()->id() || auth()->user()->is_admin)) {
                 $todo->update(['status' => $request->status]);
             }
         }
