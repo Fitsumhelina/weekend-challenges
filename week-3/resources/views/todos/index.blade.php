@@ -16,6 +16,7 @@
                         <div class="bg-white p-3 rounded shadow todo-card" data-id="{{ $todo->id }}">
                             <h3 class="font-bold">{{ $todo->title }}</h3>
                             <p class="text-sm text-gray-600">{{ $todo->description }}</p>
+                            <p class="text-xs text-gray-400 italic">Status: {{ ucwords(str_replace('_', ' ', $todo->status)) }}</p>
                             <button onclick="editTodo({{ $todo->id }})" class="text-blue-500 text-sm mt-1">Edit</button>
                         </div>
                     @endforeach
