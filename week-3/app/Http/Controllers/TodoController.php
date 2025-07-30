@@ -115,7 +115,10 @@ class TodoController extends Controller
 
     public function destroy(Todo $todo)
     {
+        $this->authorize('delete', $todo);
         $todo->delete();
+
         return redirect()->route('todos.index')->with('success', 'Todo deleted!');
     }
+
 }

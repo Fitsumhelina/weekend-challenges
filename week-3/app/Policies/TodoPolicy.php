@@ -44,10 +44,11 @@ class TodoPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Todo $todo): bool
+   public function delete(User $user, Todo $todo)
     {
-        return false;
+        return $user->id === $todo->user_id || $user->is_admin;
     }
+
 
     /**
      * Determine whether the user can restore the model.
