@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Todo;
 use Illuminate\Http\Request;
 
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+
 class TodoController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
      */
@@ -99,6 +102,7 @@ class TodoController extends Controller
 
         foreach ($request->todos as $todoId) {
             $currentUser = \Illuminate\Support\Facades\Auth::user();
+            $todo = Todo::find($todoId);
             if ($todo && ($todo->user_id === $currentUser->id || $currentUser->is_admin)) {
                 $todo->update(['status' => $request->status]);
             }
