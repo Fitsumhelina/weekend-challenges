@@ -57,7 +57,11 @@
                 }).then(response => response.json())
                   .then(data => {
                       console.log('Updated:', data.message);
-                  }).catch(err => {
+                  })
+                  .then(() => {
+                      location.reload();
+                  })
+                  .catch(err => {
                       alert('Failed to update. Try again.');
                       console.error(err);
                   });
