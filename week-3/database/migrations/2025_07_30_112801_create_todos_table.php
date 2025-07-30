@@ -17,6 +17,7 @@ return new class extends Migration
                 $table->text('description')->nullable();
                 $table->enum('status', ['not_started', 'todo', 'in_progress', 'finished'])->default('not_started');
                 $table->foreignId('user_id')->constrained()->onDelete('cascade');
+                $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('set null');
                 $table->timestamps();
             });
         }

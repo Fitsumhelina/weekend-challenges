@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Todo;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Auth;
 
 class TodoController extends Controller
 {
@@ -15,7 +17,7 @@ class TodoController extends Controller
      */
         public function index()
         {
-            $user = \Illuminate\Support\Facades\Auth::user();
+            $user = User::find(auth()->id());
 
             $todos = $user->is_admin
                 ? Todo::with('user')->get()->groupBy('status')
@@ -49,7 +51,7 @@ class TodoController extends Controller
             'title' => $request->title,
             'description' => $request->description,
             'status' => $request->status,
-            'user_id' => \Illuminate\Support\Facades\Auth::id(),
+            'user_id' => Auth::id(),
         ]);
 
         return redirect()->route('todos.index')->with('success', 'Todo created!');
@@ -86,6 +88,8 @@ class TodoController extends Controller
             'description' => 'nullable|string',
             'status' => 'required|in:not_started,todo,in_progress,finished',
         ]);
+        $todo->updated_by = Auth::id();
+        $todo->updated_at = now();
 
         $todo->update($request->only('title', 'description', 'status'));
 

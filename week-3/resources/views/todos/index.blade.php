@@ -17,6 +17,9 @@
                             <h3 class="font-bold">{{ $todo->title }}</h3>
                             <p class="text-sm text-gray-600">{{ $todo->description }}</p>
                             <p class="text-xs text-gray-400 italic">Status: {{ ucwords(str_replace('_', ' ', $todo->status)) }}</p>
+                            <p class="text-xs text-gray-400 italic">Created by: {{ $todo->user->name }}</p>
+                            <p class="text-xs text-gray-400 italic">Updated by: {{ $todo->updated_by ? $todo->updatedBy->name : 'N/A' }}</p>
+                            <p class="text-xs text-gray-400 italic">Updated at: {{ $todo->updated_at ? $todo->updated_at->format('Y-m-d H:i') : 'N/A' }}</p>
                             <button onclick="editTodo({{ $todo->id }})" class="text-blue-500 text-sm mt-1">Edit</button>
                         </div>
                     @endforeach 
