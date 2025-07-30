@@ -60,7 +60,7 @@
                 }).then(response => response.json())
                   .then(data => {
                       console.log('Updated:', data.message);
-                  })
+                  })    
                   .then(() => {
                       location.reload();
                   })

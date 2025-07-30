@@ -16,12 +16,16 @@ class Todo extends Model
         'user_id',
         'updated_by',
         'updated_at',
-        
+
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+    public function updatedBy()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
     }
 }
 
