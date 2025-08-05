@@ -20,4 +20,4 @@ WORKDIR /var/www/html
 COPY . .
 
 # Set proper permissions
-RUN chown -R www-data:www-data /var/www/html
+# RUN chown -R www-data:www-data /var/www/html
