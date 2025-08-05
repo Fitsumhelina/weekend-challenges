@@ -30,9 +30,9 @@ services:
     image: postgres:14
     container_name: laravel_postgres
     environment:
-      POSTGRES_DB: laravel
-      POSTGRES_USER: laravel
-      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: week_4
+      POSTGRES_USER: permin
+      POSTGRES_PASSWORD: 4488
     volumes:
       - ./pgdata:/var/lib/postgresql/data
     networks:
