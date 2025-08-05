@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   app:
-    image: laravelphp/php-fpm
+    image: php:8.2-fpm
     container_name: laravel_app
     restart: unless-stopped
     working_dir: /var/www/html
