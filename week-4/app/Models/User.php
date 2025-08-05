@@ -21,16 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'is_admin',
     ];
-
-
-    public function todos()
-    {
-        return $this->hasMany(Todo::class);
-    }
-
-    
 
     /**
      * The attributes that should be hidden for serialization.
