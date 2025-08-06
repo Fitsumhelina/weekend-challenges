@@ -1,0 +1,682 @@
+/* BBC Amharic Custom Styles */
+:root {
+    --bbc-red: #BB1919;
+    --bbc-dark-red: #990000;
+    --bbc-black: #000000;
+    --bbc-gray: #333333;
+    --bbc-light-gray: #F2F2F2;
+    --bbc-border: #E5E5E5;
+}
+
+body {
+    font-family: 'Noto Sans Ethiopic', sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: white;
+    padding-top: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar {
+    padding: 0;
+    margin: 0;
+}
+
+.container-fluid {
+    padding: 0;
+    margin: 0;
+}
+
+.logo-section {
+    width: 100%;
+    margin: 0;
+}
+
+.nav-section {
+    width: 100%;
+    margin: 0;
+}
+
+.bbc-logo {
+    display: flex;
+    display:inline-flex;
+    align-items: center;
+    padding-left: 0;
+}
+
+.navbar-nav {
+    flex-wrap: wrap;
+    width: 100%;
+    margin: 0;
+    gap: 10px;
+    padding-left: 0;
+}
+
+.nav-item {
+    margin: 0;
+    padding: 0;
+}
+
+.nav-link {
+    color: black !important;
+    padding: 5px 10px;
+    font-size: 16px;
+    white-space: nowrap;
+}
+
+.nav-link:hover {
+    color: #BB1919 !important;
+}
+
+.nav-link.active {
+    font-weight: bold;
+    border-bottom: 2px solid #BB1919;
+    color: #BB1919 !important;
+}
+
+.nav-link i {
+    color: black !important;
+}
+
+.navbar-toggler {
+    border-color: white;
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+.hero-section {
+    margin-bottom: 2rem;
+}
+
+.hero-image {
+    width: 100%;
+    width:400px;
+    height: 450px;
+    object-fit: cover;
+    border-radius: 0;
+}
+
+.hero-headline {
+    font-size: 2.25rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 1rem 0;
+    color: var(--bbc-black);
+}
+
+.hero-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 0 0 5px 5px;
+}
+
+.news-card {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    height: 100%;
+    transition: transform 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.news-card .position-relative {
+    height: 400px;
+    overflow: hidden;
+}
+
+.news-card .card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.news-card .card-content {
+    padding: 20px;
+}
+
+.news-card .card-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    line-height: 1.4;
+}
+
+.news-card .card-text {
+    font-size: 16px;
+    color: #666;
+    line-height: 1.6;
+}
+
+/* Category Badge */
+.category-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: var(--bbc-red);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 0;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* Section Titles */
+.section-title {
+    color: #000;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+}
+
+/* Sidebar */
+.sidebar {
+    background-color: var(--bbc-light-gray);
+    padding: 1.5rem;
+    border-radius: 0;
+}
+
+.sidebar-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 15px;
+    padding: 10px;
+}
+
+.sidebar-item .number {
+    color: #BB1919;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.sidebar-item a {
+    color: #333;
+    text-decoration: none;
+    font-size: 16px;
+    line-height: 1.4;
+}
+
+.sidebar-item a:hover {
+    color: #BB1919;
+}
+
+/* Social Media Section */
+.social-section {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.social-links {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.social-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #333;
+    text-decoration: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    background-color:white;
+}
+
+.social-link:hover {
+    background-color: white;
+    color: #BB1919;
+}
+
+.social-link i {
+    font-size: 1.2rem;
+}
+
+.social-link i.fa-whatsapp {
+    color: #25D366;
+}
+
+.social-link i.fa-facebook {
+    color: #1877F2;
+}
+
+/* Footer */
+footer {
+    background-color: var(--bbc-black);
+    color: white;
+    padding: 3rem 0;
+    margin-top: 3rem;
+}
+
+footer h5 {
+    color: white;
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+}
+
+footer ul li {
+    margin-bottom: 0.75rem;
+}
+
+footer a {
+    color: white;
+    text-decoration: none;
+}
+
+footer a:hover {
+    color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 991.98px) {
+    .hero-headline {
+        font-size: 1.75rem;
+    }
+    
+    .sidebar {
+        margin-top: 2rem;
+    }
+    
+    .nav-link {
+        padding: 0.5rem 0.5rem !important;
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .hero-headline {
+        font-size: 1.5rem;
+    }
+    
+    .hero-image {
+        height: 300px;
+    }
+    
+    .card-img {
+        height: 180px;
+    }
+    
+    .navbar-nav {
+        margin-top: 1rem;
+    }
+    
+    .nav-link {
+        padding: 0.5rem 0 !important;
+    }
+    
+    .news-section .col-md-4 {
+        margin-bottom: 1.5rem;
+    }
+}
+
+.header-separator {
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-top: 2px solid #e6e6e6;
+    width: 100%;
+}
+
+.side-news {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.news-item {
+    padding: 10px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.news-item:last-child {
+    border-bottom: none;
+}
+
+.side-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.side-text {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 0;
+}
+
+.side-news .news-item img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px 8px 0 0;
+    display: block;
+}
+
+.side-news .news-item:hover img {
+    transform: scale(1.02);
+}
+
+.most-read-section {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    margin-top: 30px;
+}
+
+.most-read-section .section-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #333;
+    border-bottom: 2px solid #BB1919;
+    padding-bottom: 10px;
+}
+
+.most-read-section .sidebar-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.most-read-section .sidebar-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.most-read-section .number {
+    background-color: #BB1919;
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: bold;
+    margin-right: 12px;
+    flex-shrink: 0;
+}
+
+.most-read-section .sidebar-item a {
+    color: #333;
+    text-decoration: none;
+    font-size: 1rem;
+    line-height: 1.4;
+    transition: color 0.2s ease;
+    display: block;
+}
+
+.most-read-section .sidebar-item a:hover {
+    color: #BB1919;
+}
+
+.breaking-news-section {
+    background-color: white;
+    margin-top: 30px;
+}
+
+.breaking-news-section .section-title {
+    color: #BB1919;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #BB1919;
+}
+
+.breaking-news-section .news-card {
+    height: 100%;
+    transition: transform 0.3s ease;
+}
+
+.breaking-news-section .news-card:hover {
+    transform: translateY(-5px);
+}
+
+.breaking-news-section .card-content {
+    padding: 15px;
+}
+
+.breaking-news-section .card-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+
+.breaking-news-section .card-text {
+    color: #666;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.side-news .news-item {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    height: 100%;
+}
+
+.side-news .position-relative {
+    height: 225px;
+    overflow: hidden;
+}
+
+.side-news .img-fluid {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.side-news .side-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 15px 15px 10px;
+    line-height: 1.4;
+}
+
+.side-news .side-text {
+    font-size: 15px;
+    color: #666;
+    margin: 0 15px 15px;
+    line-height: 1.5;
+}
+
+/* Make side-news images in hero-section equal size */
+.hero-section .side-news .news-item img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px 8px 0 0;
+  display: block;
+}
+
+/* Make left and right sides of hero-content image equal size */
+.hero-equal-sides {
+  display: flex !important;
+  flex-direction: row;
+  align-items: stretch;
+  width: 100%;
+}
+.hero-equal-sides > .side-news-equal,
+.hero-equal-sides > .main-news-wide {
+    float: none;
+    display: flex;
+    flex-direction: column;
+}
+.hero-equal-sides > .col-md-8,
+.hero-equal-sides > .col-md-4 {
+  flex: 1 1 0;
+  max-width: 50%;
+  display: flex;
+  flex-direction: column;
+}
+@media (max-width: 991.98px) {
+  .hero-equal-sides {
+    flex-direction: column;
+  }
+  .hero-equal-sides > .col-md-8,
+  .hero-equal-sides > .col-md-4 {
+    max-width: 100%;
+  }
+}
+
+/* Fix overflow and hidden content in hero-equal-sides */
+.hero-equal-sides > .col-md-8,
+.hero-equal-sides > .col-md-4 {
+  min-width: 0;
+  overflow-wrap: break-word;
+  overflow-y: auto;
+}
+.hero-equal-sides {
+  align-items: flex-start;
+}
+
+/* Equal height for hero-content and side-news in hero-section */
+.hero-section .hero-equal-sides {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    height: 100%;
+}
+.hero-section .hero-equal-sides > .col-md-7,
+.hero-section .hero-equal-sides > .col-md-5 {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+.hero-section .hero-content {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+.side-news-equal {
+    margin-right: 0 !important;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 0.5rem;
+}
+.side-news-equal .side-news-item {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: none;
+    border: none;
+    box-shadow: none;
+    margin-bottom: 0 !important;
+    padding: 0 !important;
+}
+.side-news-equal .side-news-item img {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+}
+
+/* Equal height for 2 side news items in sidebar */
+.side-news-equal-2 {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 0.5rem;
+}
+.side-news-equal-2 .side-news-item-2 {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: none;
+    border: none;
+    box-shadow: none;
+    margin-bottom: 0 !important;
+    padding: 0 !important;
+}
+.side-news-equal-2 .side-news-item-2 img {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+}
+
+/* Tighter spacing for sidebar news items */
+.side-news-equal-2 .side-news-item-2 .position-relative.mb-2 {
+    margin-bottom: 0.1rem !important;
+}
+.side-news-equal-2 .side-news-item-2 .side-title {
+    margin-top: 0 !important;
+    margin-bottom: 0.1rem !important;
+}
+.side-news-equal-2 .side-news-item-2 .side-text {
+    margin-top: 0 !important;
+}
+.side-news-equal-2 .side-news-item-2 {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Extra large space above social-section in sidebar */
+.col-lg-4 .social-section {
+    margin-top: 5rem !important;
+}
+
+/* Larger images and text for side news in hero-section */
+.hero-section .side-news-item img {
+    height: 160px !important;
+}
+.hero-section .side-title {
+    font-size: 1.15rem !important;
+}
+.hero-section .side-text {
+    font-size: 1rem !important;
+}
+
+/* Larger and left-aligned main news headline and paragraph */
+.hero-section .hero-content h1 {
+    font-size: 3.2rem !important;
+    text-align: left !important;
+}
+.hero-section .hero-content p.lead {
+    font-size: 1.5rem !important;
+    text-align: left !important;
+}
+
+.main-news-right-space {
+    margin-right: 3rem !important;
+}
+
+.main-news-wide {
+    width: auto;
+    margin-right: 0 !important;
+}
+
+.side-news-item .position-relative { margin-bottom: 0 !important; }
+.side-news-item .side-title, .side-news-item .side-text { margin-top: 0 !important; }
+
+.hero-section .side-news-item img, .hero-section .hero-main .position-relative img {
+    border: 0 !important;
+}
+
+.hero-section .side-news-item .side-title {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+.hero-section .side-news-item .position-relative {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
+    
+    
