@@ -6,6 +6,7 @@ services:
     volumes:
       - ./:/var/www/html
       - ./storage:/var/www/html/storage
+      - ./logs:/var/www/html/storage/logs
     container_name: laravel_app
     working_dir: /var/www/html
     ports:
