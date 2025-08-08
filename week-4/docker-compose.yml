@@ -29,8 +29,10 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - ./:/var/www/html:ro                          # ✅ read-only
-      - ./nginx/conf.d:/etc/nginx/conf.d:ro          # ✅ read-only
+      - ./:/var/www/html:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/certs:/etc/nginx/certs:ro   # ✅ Add this
+
     depends_on:
       - app
     networks:
