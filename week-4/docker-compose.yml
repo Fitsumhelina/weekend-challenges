@@ -11,6 +11,8 @@ services:
     working_dir: /var/www/html
     ports:
       - "8000:8000"
+    mem_limit: 512m         
+    cpus: 0.50 
     networks:
       - app-network
     depends_on:
@@ -41,6 +43,8 @@ services:
       POSTGRES_PASSWORD: 4488
     volumes:
       - pgdata:/var/lib/postgresql/data
+    mem_limit: 512m
+    cpus: 0.50
     networks:
       - app-network
 
@@ -64,9 +68,3 @@ volumes:
 networks:
   app-network:
     driver: bridge
-    
-deploy:
-      resources:
-        limits:
-          cpus: '0.50'
-          memory: 512M
