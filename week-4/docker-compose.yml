@@ -1,24 +1,27 @@
+version: "3.8"
+
 services:
+  # Laravel PHP App
   app:
     build:
       context: .
       dockerfile: Dockerfile.app
+    container_name: laravel_app
+    working_dir: /var/www/html
     volumes:
       - ./:/var/www/html
       - ./storage:/var/www/html/storage
       - ./logs:/var/www/html/storage/logs
-    container_name: laravel_app
-    working_dir: /var/www/html
     ports:
-      - "8000:8000"
-    mem_limit: 512m         
-    cpus: 0.50 
-    networks:
-      - app-network
+      - "8000:8000"  # for artisan serve (dev use only)
+    mem_limit: 512m
+    cpus: 0.5
     depends_on:
       - db
+    networks:
+      - app-network
 
-
+  # NGINX Web Server
   webserver:
     image: nginx:alpine
     container_name: week_4_nginx
@@ -26,13 +29,15 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - ./:/var/www/html
-      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./:/var/www/html:ro                          # ✅ read-only
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro          # ✅ read-only
     depends_on:
       - app
     networks:
       - app-network
+    read_only: true                                  # ✅ secure nginx container
 
+  # PostgreSQL Database
   db:
     image: postgres:15-alpine
     container_name: week_4_db
@@ -44,10 +49,11 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     mem_limit: 512m
-    cpus: 0.50
+    cpus: 0.5
     networks:
       - app-network
 
+  # pgAdmin GUI
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin
