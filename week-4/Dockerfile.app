@@ -1,19 +1,24 @@
-# Use official PHP image with FPM
 FROM php:8.2-fpm
 
-# Install system dependencies and PHP extensions
+# Install dependencies
 RUN apt-get update && apt-get install -y \
     libpq-dev zip unzip git curl \
     && docker-php-ext-install pdo pdo_pgsql
 
-# Add Composer
+# Add composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Set working directory
+# Create non-root user
+RUN useradd -m -d /home/laravel -s /bin/bash laravel
+
+# Set workdir
 WORKDIR /var/www/html
 
-# Copy only essential files
+# Copy project
 COPY . .
 
 # Set permissions
-RUN chown -R www-data:www-data /var/www/html
+RUN chown -R laravel:laravel /var/www/html
+
+# Switch to non-root user
+USER laravel
