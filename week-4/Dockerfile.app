@@ -1,24 +1,24 @@
 FROM php:8.2-fpm
 
-# Install dependencies
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     libpq-dev zip unzip git curl \
     && docker-php-ext-install pdo pdo_pgsql
 
-# Add composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# Add user (UID 1000 = same as host default user)
+RUN useradd -u 1000 -m laraveluser
 
-# Create non-root user
-RUN useradd -m -d /home/laravel -s /bin/bash laravel
-
-# Set workdir
+# Set working directory
 WORKDIR /var/www/html
 
-# Copy project
+# Copy Composer from base image
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Copy all project files
 COPY . .
 
-# Set permissions
-RUN chown -R laravel:laravel /var/www/html
+# Give permissions to non-root user
+RUN chown -R laraveluser:laraveluser /var/www/html
 
 # Switch to non-root user
-USER laravel
+USER laraveluser
