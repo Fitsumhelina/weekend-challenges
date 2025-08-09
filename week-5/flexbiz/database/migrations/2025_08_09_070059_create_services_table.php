@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('title');
             $table->text('description');
             $table->text('service_list');
+            $table->decimal('price', 10, 2);
             $table->string('icon')->nullable();
             $table->timestamps();
         });
