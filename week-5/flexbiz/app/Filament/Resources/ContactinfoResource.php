@@ -23,15 +23,25 @@ class ContactinfoResource extends Resource
     {
         return $form
             ->schema([
-                //
-            ]);
+                Forms\Components\TextInput::make('name')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('detail')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('icon')
+                    ->label('Icon (CSS class)')
+                    ->maxLength(255),
+            ])->columns(2);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('name')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('detail')->sortable(),
+                Tables\Columns\TextColumn::make('icon')->label('Icon'),
             ])
             ->filters([
                 //
