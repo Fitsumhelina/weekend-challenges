@@ -1639,34 +1639,20 @@
         <div class="row gy-4">
 
 
-        <!-- TOBE done  -->
 
-          <div class="col-lg-5">
-            <div class="info-item d-flex">
-              <i class="bi bi-geo-alt flex-shrink-0"></i>
+        @foreach($contactinfos as $contact)
+          <div class="col-lg-5 d-flex align-items-center">
+            <div class="info-item d-flex align-items-center mb-4">
+              <i class="{{ $contact->icon }} flex-shrink-0"></i>
               <div>
-                <h3>Address</h3>
-                <p>A108 Adam Street, New York, NY 535022</p>
+                <h4 class="mb-1">{{ $contact->name }}</h4>
+                <p class="mb-0">{{ $contact->detail }}</p>
               </div>
-            </div><!-- End Info Item -->
-
-            <div class="info-item d-flex">
-              <i class="bi bi-telephone flex-shrink-0"></i>
-              <div>
-                <h3>Call Us</h3>
-                <p>+1 5589 55488 55</p>
-              </div>
-            </div><!-- End Info Item -->
-
-            <div class="info-item d-flex">
-              <i class="bi bi-envelope flex-shrink-0"></i>
-              <div>
-                <h3>Email Us</h3>
-                <p>info@example.com</p>
-              </div>
-            </div><!-- End Info Item -->
-
+            </div>
           </div>
+        @endforeach
+
+
 
           <div class="col-lg-7">
             <form action="forms/contact.php" method="post" class="php-email-form" data-aos="fade-up" data-aos-delay="200">
