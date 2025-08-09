@@ -13,6 +13,9 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
+use App\Policies\GenericPolicy;
+use Illuminate\Support\Facades\Auth;
+
 class ContactinfoResource extends Resource
 {
     protected static ?string $model = Contactinfo::class;
@@ -33,6 +36,33 @@ class ContactinfoResource extends Resource
                     ->label('Icon (CSS class)')
                     ->maxLength(255),
             ])->columns(2);
+    }
+
+    /**
+     * Authorization using GenericPolicy
+     */
+    public static function canViewAny(): bool
+    {
+        $user = Auth::user();
+        return $user ? (new GenericPolicy)->view($user, Contactinfo::class) : false;
+    }
+
+    public static function canCreate(): bool
+    {
+        $user = Auth::user();
+        return $user ? (new GenericPolicy)->create($user, Contactinfo::class) : false;
+    }
+
+    public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
+    {
+        $user = Auth::user();
+        return $user ? (new GenericPolicy)->update($user, $record) : false;
+    }
+
+    public static function canDelete(\Illuminate\Database\Eloquent\Model $record): bool
+    {
+        $user = Auth::user();
+        return $user ? (new GenericPolicy)->delete($user, $record) : false;
     }
 
     public static function table(Table $table): Table
