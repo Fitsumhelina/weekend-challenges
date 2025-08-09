@@ -23,7 +23,24 @@ class ServiceResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Forms\Components\TextInput::make('title')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\Textarea::make('description')
+                    ->required(),
+                Forms\Components\Repeater::make('service_list')
+                    ->label('Service List')
+                    ->schema([
+                        Forms\Components\TextInput::make('item')->label('Service Item')->required(),
+                    ])
+                    ->default([])
+                    ->columnSpanFull(),
+                Forms\Components\TextInput::make('price')
+                    ->required()
+                    ->numeric(),
+                Forms\Components\TextInput::make('icon')
+                    ->label('Icon (CSS class)')
+                    ->maxLength(255),
             ]);
     }
 
@@ -31,7 +48,9 @@ class ServiceResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('title')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('price')->sortable(),
+                Tables\Columns\TextColumn::make('icon')->label('Icon'),
             ])
             ->filters([
                 //
