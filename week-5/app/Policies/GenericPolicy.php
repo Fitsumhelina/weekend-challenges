@@ -10,11 +10,6 @@ class GenericPolicy
 {
     use HandlesAuthorization;
 
-    public function view(User $user, $model)
-    {
-        $permission = 'view ' . Str::kebab(class_basename($model));
-        return $user->hasPermissionTo($permission);
-    }
 
     public function create(User $user, $model)
     {

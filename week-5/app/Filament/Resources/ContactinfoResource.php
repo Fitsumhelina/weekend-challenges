@@ -41,11 +41,6 @@ class ContactinfoResource extends Resource
     /**
      * Authorization using GenericPolicy
      */
-    public static function canViewAny(): bool
-    {
-        $user = Auth::user();
-        return $user ? (new GenericPolicy)->view($user, Contactinfo::class) : false;
-    }
 
     public static function canCreate(): bool
     {
