@@ -19,5 +19,4 @@ class Service extends Model
         'service_list' => 'array',
     ];
 
-    // Define any relationships or additional methods if needed
 }

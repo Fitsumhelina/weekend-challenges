@@ -1638,6 +1638,9 @@
 
         <div class="row gy-4">
 
+
+        <!-- TOBE done  -->
+
           <div class="col-lg-5">
             <div class="info-item d-flex">
               <i class="bi bi-geo-alt flex-shrink-0"></i>
