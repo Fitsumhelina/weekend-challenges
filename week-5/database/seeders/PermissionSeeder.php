@@ -12,9 +12,9 @@ class PermissionSeeder extends Seeder
     {
       
         // Permissions
-        Permission::firstOrCreate(['name' => 'create-contact-info']);
-        Permission::firstOrCreate(['name' => 'edit-contact-info']);
-        Permission::firstOrCreate(['name' => 'delete-contact-info']);
+        Permission::firstOrCreate(['name' => 'create-contactinfo']);
+        Permission::firstOrCreate(['name' => 'edit-contactinfo']);
+        Permission::firstOrCreate(['name' => 'delete-contactinfo']);
         Permission::firstOrCreate(['name' => 'create-service']);
         Permission::firstOrCreate(['name' => 'edit-service']);
         Permission::firstOrCreate(['name' => 'delete-service']);
@@ -24,7 +24,7 @@ class PermissionSeeder extends Seeder
         $admin2 = Role::firstOrCreate(['name' => 'admin2']);
 
         // Assign permissions to roles
-        $admin1->syncPermissions(['create-contact-info', 'edit-contact-info', 'delete-contact-info']);
+        $admin1->syncPermissions(['create-contactinfo', 'edit-contactinfo', 'delete-contactinfo']);
         $admin2->syncPermissions(['create-service', 'edit-service', 'delete-service']);
     }
 }
